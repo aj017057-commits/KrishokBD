@@ -1,6 +1,7 @@
 import { Feather } from "@expo/vector-icons";
 import React, { useState } from "react";
 import {
+  Image,
   Platform,
   ScrollView,
   StyleSheet,
@@ -17,7 +18,7 @@ import { useApp } from "@/context/AppContext";
 
 export default function AccountScreen() {
   const insets = useSafeAreaInsets();
-  const { currentCustomer, currentFarmer, getCustomerOrders, getFarmerOrders, products } = useApp();
+  const { currentCustomer, currentFarmer, getCustomerOrders, getFarmerOrders, getFarmerProducts } = useApp();
   const [showCustomer, setShowCustomer] = useState(false);
   const [showFarmer, setShowFarmer] = useState(false);
 
@@ -26,6 +27,9 @@ export default function AccountScreen() {
 
   const customerOrders = currentCustomer ? getCustomerOrders(currentCustomer.id) : [];
   const farmerOrders = currentFarmer ? getFarmerOrders(currentFarmer.id) : [];
+  const farmerProducts = currentFarmer ? getFarmerProducts(currentFarmer.id) : [];
+  const totalRevenue = farmerOrders.reduce((s, o) => s + o.subtotal, 0);
+  const totalCustomerSpent = customerOrders.reduce((s, o) => s + o.grandTotal, 0);
 
   return (
     <View style={[styles.container, { paddingTop: topPad }]}>
@@ -33,103 +37,150 @@ export default function AccountScreen() {
         <Text style={styles.headerTitle}>অ্যাকাউন্ট</Text>
       </View>
 
-      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 20, gap: 16, paddingBottom: bottomPad + 80 }}>
-        {/* Customer Section */}
-        <TouchableOpacity style={styles.panelCard} onPress={() => setShowCustomer(true)} activeOpacity={0.85}>
-          <View style={styles.panelIcon}>
-            <Feather name="user" size={24} color={colors.light.primary} />
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={{ padding: 16, gap: 14, paddingBottom: bottomPad + 80 }}>
+
+        {/* Customer Panel Card */}
+        <View style={styles.sectionLabel}>
+          <Text style={styles.sectionLabelText}>গ্রাহক প্যানেল</Text>
+        </View>
+        <TouchableOpacity
+          style={[styles.panelCard, currentCustomer && styles.panelCardActive]}
+          onPress={() => setShowCustomer(true)}
+          activeOpacity={0.88}
+        >
+          <View style={styles.panelIconBox}>
+            <Feather name="user" size={22} color={colors.light.primary} />
           </View>
-          <View style={styles.panelInfo}>
-            {currentCustomer ? (
-              <>
-                <Text style={styles.panelTitle}>{currentCustomer.name}</Text>
-                <Text style={styles.panelSub}>{currentCustomer.phone}</Text>
-                <View style={styles.panelBadge}>
-                  <Text style={styles.panelBadgeText}>{customerOrders.length}টি অর্ডার</Text>
+          {currentCustomer ? (
+            <View style={styles.panelContent}>
+              <Text style={styles.panelName}>{currentCustomer.name}</Text>
+              <Text style={styles.panelSub}>{currentCustomer.phone}</Text>
+              <View style={styles.miniStats}>
+                <View style={styles.miniStat}>
+                  <Text style={styles.miniStatNum}>{customerOrders.length}</Text>
+                  <Text style={styles.miniStatLabel}>অর্ডার</Text>
                 </View>
-              </>
-            ) : (
-              <>
-                <Text style={styles.panelTitle}>গ্রাহক প্যানেল</Text>
-                <Text style={styles.panelSub}>লগইন বা রেজিস্ট্রেশন করুন</Text>
-              </>
-            )}
-          </View>
+                <View style={styles.miniStatDiv} />
+                <View style={styles.miniStat}>
+                  <Text style={styles.miniStatNum}>৳{totalCustomerSpent}</Text>
+                  <Text style={styles.miniStatLabel}>ব্যয়</Text>
+                </View>
+              </View>
+            </View>
+          ) : (
+            <View style={styles.panelContent}>
+              <Text style={styles.panelName}>গ্রাহক হিসেবে লগইন করুন</Text>
+              <Text style={styles.panelSub}>অর্ডার ট্র্যাক করুন, ইতিহাস দেখুন</Text>
+            </View>
+          )}
           <Feather name="chevron-right" size={20} color={colors.light.mutedForeground} />
         </TouchableOpacity>
 
-        {/* Farmer Section */}
-        <TouchableOpacity style={styles.panelCard} onPress={() => setShowFarmer(true)} activeOpacity={0.85}>
-          <View style={[styles.panelIcon, { backgroundColor: "#fef3c7" }]}>
-            <Feather name="truck" size={24} color="#d97706" />
+        {/* Farmer Panel Card */}
+        <View style={styles.sectionLabel}>
+          <Text style={styles.sectionLabelText}>কৃষক প্যানেল</Text>
+        </View>
+        <TouchableOpacity
+          style={[styles.panelCard, styles.farmerCard, currentFarmer && styles.panelCardActive]}
+          onPress={() => setShowFarmer(true)}
+          activeOpacity={0.88}
+        >
+          <View style={[styles.panelIconBox, styles.farmerIconBox]}>
+            <Feather name="sun" size={22} color="#d97706" />
           </View>
-          <View style={styles.panelInfo}>
-            {currentFarmer ? (
-              <>
-                <Text style={styles.panelTitle}>{currentFarmer.name}</Text>
-                <Text style={styles.panelSub}>{currentFarmer.address}</Text>
-                <View style={[styles.panelBadge, { backgroundColor: "#fef3c7" }]}>
-                  <Text style={[styles.panelBadgeText, { color: "#d97706" }]}>{farmerOrders.length}টি অর্ডার</Text>
+          {currentFarmer ? (
+            <View style={styles.panelContent}>
+              <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                <Text style={styles.panelName}>{currentFarmer.name}</Text>
+                {currentFarmer.verified && <Feather name="check-circle" size={14} color={colors.light.primary} />}
+              </View>
+              <Text style={styles.panelSub}>{currentFarmer.address}</Text>
+              <View style={styles.miniStats}>
+                <View style={styles.miniStat}>
+                  <Text style={[styles.miniStatNum, { color: "#d97706" }]}>{farmerProducts.length}</Text>
+                  <Text style={styles.miniStatLabel}>পণ্য</Text>
                 </View>
-              </>
-            ) : (
-              <>
-                <Text style={styles.panelTitle}>কৃষক প্যানেল</Text>
-                <Text style={styles.panelSub}>পণ্য যোগ করুন ও অর্ডার দেখুন</Text>
-                <View style={styles.demoHint}>
-                  <Text style={styles.demoText}>ডেমো: 01700000001 / 1234</Text>
+                <View style={styles.miniStatDiv} />
+                <View style={styles.miniStat}>
+                  <Text style={[styles.miniStatNum, { color: "#d97706" }]}>{farmerOrders.length}</Text>
+                  <Text style={styles.miniStatLabel}>অর্ডার</Text>
                 </View>
-              </>
-            )}
-          </View>
+                <View style={styles.miniStatDiv} />
+                <View style={styles.miniStat}>
+                  <Text style={[styles.miniStatNum, { color: "#d97706" }]}>৳{totalRevenue}</Text>
+                  <Text style={styles.miniStatLabel}>আয়</Text>
+                </View>
+              </View>
+            </View>
+          ) : (
+            <View style={styles.panelContent}>
+              <Text style={styles.panelName}>কৃষক হিসেবে যোগ দিন</Text>
+              <Text style={styles.panelSub}>পণ্য লিস্ট করুন, AI দিয়ে আপলোড করুন</Text>
+              <View style={styles.demoTag}>
+                <Text style={styles.demoTagText}>ডেমো: 01700000001 / পাসওয়ার্ড: 1234</Text>
+              </View>
+            </View>
+          )}
           <Feather name="chevron-right" size={20} color={colors.light.mutedForeground} />
         </TouchableOpacity>
 
-        {/* Info Cards */}
-        <View style={styles.infoGrid}>
-          <View style={styles.infoCard}>
-            <Feather name="truck" size={20} color={colors.light.primary} />
-            <Text style={styles.infoTitle}>ডেলিভারি</Text>
-            <Text style={styles.infoText}>ঢাকা সিটি: ৳৬০{"\n"}ঢাকার বাইরে: ৳১২০{"\n"}৫ কেজি+ : অতিরিক্ত ৳৩০/কেজি</Text>
-          </View>
-          <View style={styles.infoCard}>
-            <Feather name="phone" size={20} color={colors.light.primary} />
-            <Text style={styles.infoTitle}>সাপোর্ট</Text>
-            <Text style={styles.infoText}>01931-355398{"\n"}WhatsApp: +8801931355398{"\n"}সকাল ৮টা - রাত ১০টা</Text>
-          </View>
-        </View>
-
-        {/* AI Feature Highlight */}
-        <View style={styles.aiCard}>
-          <View style={styles.aiHeader}>
-            <Feather name="cpu" size={18} color={colors.light.primary} />
-            <Text style={styles.aiTitle}>AI সহায়তা সক্রিয়</Text>
-          </View>
-          <Text style={styles.aiDesc}>
-            রিক্তাজ AI চ্যাটবট — কৃষি, রেসিপি ও পারিবারিক সবজি পরিকল্পনায় সাহায্য করে।{"\n"}
-            হোম স্ক্রিনে সবুজ বাটনে ক্লিক করুন।
-          </Text>
-        </View>
-
-        {/* Recent Orders for Customer */}
+        {/* Recent Orders */}
         {currentCustomer && customerOrders.length > 0 && (
-          <View style={styles.recentSection}>
-            <Text style={styles.recentTitle}>সাম্প্রতিক অর্ডার</Text>
+          <>
+            <View style={styles.sectionLabel}>
+              <Text style={styles.sectionLabelText}>সাম্প্রতিক অর্ডার</Text>
+            </View>
             {customerOrders.slice(-3).reverse().map((o) => (
               <View key={o.id} style={styles.recentOrder}>
-                <View style={{ flex: 1 }}>
-                  <Text style={styles.recentProduct}>{o.productName}</Text>
-                  <Text style={styles.recentMeta}>{o.qty} {o.unit} · {new Date(o.date).toLocaleDateString("bn-BD")}</Text>
+                <View style={styles.recentOrderLeft}>
+                  <Text style={styles.recentOrderId}>#{o.id.slice(-6).toUpperCase()}</Text>
+                  <Text style={styles.recentOrderItems} numberOfLines={1}>
+                    {o.items.map(i => i.title).join(", ")}
+                  </Text>
+                  <Text style={styles.recentOrderDate}>{new Date(o.date).toLocaleDateString("bn-BD")}</Text>
                 </View>
-                <Text style={styles.recentAmount}>৳{o.grandTotal}</Text>
+                <View style={styles.recentOrderRight}>
+                  <Text style={styles.recentOrderAmount}>৳{o.grandTotal}</Text>
+                  <View style={styles.statusBadge}>
+                    <Text style={styles.statusBadgeText}>কনফার্ম</Text>
+                  </View>
+                </View>
               </View>
             ))}
             <TouchableOpacity style={styles.viewAllBtn} onPress={() => setShowCustomer(true)}>
-              <Text style={styles.viewAllText}>সব অর্ডার দেখুন</Text>
+              <Text style={styles.viewAllBtnText}>সব অর্ডার দেখুন</Text>
               <Feather name="arrow-right" size={14} color={colors.light.primary} />
             </TouchableOpacity>
-          </View>
+          </>
         )}
+
+        {/* Info Cards */}
+        <View style={styles.sectionLabel}>
+          <Text style={styles.sectionLabelText}>তথ্য</Text>
+        </View>
+        <View style={styles.infoGrid}>
+          <View style={styles.infoCard}>
+            <Feather name="truck" size={18} color={colors.light.primary} />
+            <Text style={styles.infoTitle}>ডেলিভারি নীতি</Text>
+            <Text style={styles.infoBody}>ঢাকা সিটি: ৳৬০{"\n"}ঢাকার বাইরে: ৳১২০{"\n"}৫ কেজি+: ৳৩০/কেজি</Text>
+          </View>
+          <View style={styles.infoCard}>
+            <Feather name="package" size={18} color={colors.light.primary} />
+            <Text style={styles.infoTitle}>পেমেন্ট পদ্ধতি</Text>
+            <Text style={styles.infoBody}>ক্যাশ অন ডেলিভারি{"\n"}বিকাশ{"\n"}নগদ</Text>
+          </View>
+        </View>
+
+        {/* AI Feature Banner */}
+        <View style={styles.aiBanner}>
+          <Image source={require("@/assets/images/icon.png")} style={styles.aiBannerIcon} />
+          <View style={{ flex: 1 }}>
+            <Text style={styles.aiBannerTitle}>রিক্তাজ AI সহায়ক</Text>
+            <Text style={styles.aiBannerBody}>
+              পরিবারের সাইজ বললে সাপ্তাহিক সবজির তালিকা তৈরি করে দেবে। রেসিপি ও পুষ্টিতথ্যও জানতে পারবেন।
+            </Text>
+          </View>
+        </View>
       </ScrollView>
 
       <CustomerModal visible={showCustomer} onClose={() => setShowCustomer(false)} />
@@ -139,101 +190,78 @@ export default function AccountScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: { flex: 1, backgroundColor: "#fff" },
+  container: { flex: 1, backgroundColor: "#f9fafb" },
   headerRow: {
-    paddingHorizontal: 20,
-    paddingBottom: 12,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.light.border,
+    paddingHorizontal: 20, paddingBottom: 14,
+    backgroundColor: "#fff",
+    borderBottomWidth: 1, borderBottomColor: colors.light.border,
   },
   headerTitle: { fontSize: 22, fontWeight: "800" as const, color: colors.light.text },
+  sectionLabel: { flexDirection: "row", alignItems: "center" },
+  sectionLabelText: {
+    fontSize: 12, fontWeight: "700" as const,
+    color: colors.light.mutedForeground, textTransform: "uppercase" as const, letterSpacing: 0.8,
+  },
   panelCard: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: "#fff",
-    borderRadius: 18,
-    padding: 16,
-    gap: 14,
-    borderWidth: 1,
-    borderColor: colors.light.border,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.06,
-    shadowRadius: 8,
-    elevation: 2,
+    flexDirection: "row", alignItems: "center", gap: 14,
+    backgroundColor: "#fff", borderRadius: 20, padding: 16,
+    borderWidth: 1, borderColor: colors.light.border,
+    shadowColor: "#000", shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.05, shadowRadius: 8, elevation: 2,
   },
-  panelIcon: {
-    width: 52,
-    height: 52,
-    borderRadius: 26,
-    backgroundColor: colors.light.primarySoft,
-    alignItems: "center",
-    justifyContent: "center",
+  farmerCard: { borderColor: "#fde68a" },
+  panelCardActive: { borderColor: colors.light.primary, borderWidth: 1.5 },
+  panelIconBox: {
+    width: 52, height: 52, borderRadius: 26,
+    backgroundColor: colors.light.primarySoft, alignItems: "center", justifyContent: "center",
   },
-  panelInfo: { flex: 1, gap: 2 },
-  panelTitle: { fontSize: 16, fontWeight: "700" as const, color: colors.light.text },
+  farmerIconBox: { backgroundColor: "#fef3c7" },
+  panelContent: { flex: 1, gap: 3 },
+  panelName: { fontSize: 15, fontWeight: "700" as const, color: colors.light.text },
   panelSub: { fontSize: 12, color: colors.light.mutedForeground },
-  panelBadge: {
-    alignSelf: "flex-start",
+  miniStats: { flexDirection: "row", alignItems: "center", gap: 10, marginTop: 4 },
+  miniStat: { alignItems: "center" },
+  miniStatDiv: { width: 1, height: 18, backgroundColor: colors.light.border },
+  miniStatNum: { fontSize: 14, fontWeight: "800" as const, color: colors.light.primary },
+  miniStatLabel: { fontSize: 9, color: colors.light.mutedForeground },
+  demoTag: {
+    alignSelf: "flex-start", backgroundColor: "#fef3c7",
+    paddingHorizontal: 8, paddingVertical: 2, borderRadius: 8, marginTop: 4,
+  },
+  demoTagText: { fontSize: 10, color: "#92400e" },
+  recentOrder: {
+    flexDirection: "row", justifyContent: "space-between", alignItems: "center",
+    backgroundColor: "#fff", borderRadius: 14, padding: 14,
+    borderWidth: 1, borderColor: colors.light.border,
+  },
+  recentOrderLeft: { flex: 1, gap: 2 },
+  recentOrderId: { fontSize: 11, fontWeight: "700" as const, color: colors.light.primary },
+  recentOrderItems: { fontSize: 13, fontWeight: "600" as const, color: colors.light.text },
+  recentOrderDate: { fontSize: 10, color: colors.light.mutedForeground },
+  recentOrderRight: { alignItems: "flex-end", gap: 6 },
+  recentOrderAmount: { fontSize: 16, fontWeight: "800" as const, color: colors.light.primary },
+  statusBadge: { backgroundColor: colors.light.primarySoft, paddingHorizontal: 8, paddingVertical: 2, borderRadius: 20 },
+  statusBadgeText: { fontSize: 10, color: colors.light.primary, fontWeight: "600" as const },
+  viewAllBtn: {
+    flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6,
+    paddingVertical: 11, borderRadius: 14,
+    borderWidth: 1, borderColor: colors.light.primary,
     backgroundColor: colors.light.primarySoft,
-    paddingHorizontal: 10,
-    paddingVertical: 3,
-    borderRadius: 20,
-    marginTop: 4,
   },
-  panelBadgeText: { fontSize: 11, color: colors.light.primary, fontWeight: "600" as const },
-  demoHint: {
-    alignSelf: "flex-start",
-    backgroundColor: "#fef3c7",
-    paddingHorizontal: 8,
-    paddingVertical: 2,
-    borderRadius: 8,
-    marginTop: 4,
-  },
-  demoText: { fontSize: 10, color: "#92400e" },
+  viewAllBtnText: { fontSize: 13, color: colors.light.primary, fontWeight: "700" as const },
   infoGrid: { flexDirection: "row", gap: 12 },
   infoCard: {
-    flex: 1,
-    backgroundColor: colors.light.primarySoft,
-    borderRadius: 16,
-    padding: 14,
-    gap: 6,
+    flex: 1, backgroundColor: "#fff", borderRadius: 16, padding: 14, gap: 6,
+    borderWidth: 1, borderColor: colors.light.border,
   },
-  infoTitle: { fontSize: 14, fontWeight: "700" as const, color: colors.light.primary },
-  infoText: { fontSize: 11, color: colors.light.text, lineHeight: 18 },
-  aiCard: {
-    backgroundColor: "#f0fdf4",
-    borderRadius: 16,
-    padding: 16,
-    borderWidth: 1,
-    borderColor: colors.light.primaryLight,
-    gap: 8,
+  infoTitle: { fontSize: 13, fontWeight: "700" as const, color: colors.light.text },
+  infoBody: { fontSize: 12, color: colors.light.mutedForeground, lineHeight: 19 },
+  aiBanner: {
+    flexDirection: "row", alignItems: "flex-start", gap: 14,
+    backgroundColor: colors.light.primarySoft, borderRadius: 18, padding: 16,
+    borderWidth: 1, borderColor: colors.light.primaryLight,
   },
-  aiHeader: { flexDirection: "row", alignItems: "center", gap: 8 },
-  aiTitle: { fontSize: 15, fontWeight: "700" as const, color: colors.light.primary },
-  aiDesc: { fontSize: 13, color: colors.light.text, lineHeight: 20 },
-  recentSection: { gap: 10 },
-  recentTitle: { fontSize: 16, fontWeight: "700" as const, color: colors.light.text },
-  recentOrder: {
-    flexDirection: "row",
-    alignItems: "center",
-    backgroundColor: colors.light.muted,
-    borderRadius: 12,
-    padding: 12,
-    gap: 10,
-  },
-  recentProduct: { fontSize: 14, fontWeight: "600" as const, color: colors.light.text },
-  recentMeta: { fontSize: 11, color: colors.light.mutedForeground },
-  recentAmount: { fontSize: 16, fontWeight: "800" as const, color: colors.light.primary },
-  viewAllBtn: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "center",
-    gap: 6,
-    paddingVertical: 10,
-    borderRadius: 12,
-    borderWidth: 1,
-    borderColor: colors.light.primary,
-  },
-  viewAllText: { fontSize: 14, color: colors.light.primary, fontWeight: "600" as const },
+  aiBannerIcon: { width: 44, height: 44, borderRadius: 22 },
+  aiBannerTitle: { fontSize: 15, fontWeight: "700" as const, color: colors.light.primary, marginBottom: 4 },
+  aiBannerBody: { fontSize: 12, color: colors.light.text, lineHeight: 18 },
 });

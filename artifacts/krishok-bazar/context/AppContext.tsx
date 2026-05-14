@@ -33,7 +33,12 @@ interface AppContextType {
   removeFromCart: (id: number) => void;
   updateQty: (id: number, delta: number) => void;
   clearCart: () => void;
-  checkout: (deliveryArea: "dhaka" | "outside") => { success: boolean; grandTotal: number; deliveryCharge: number };
+  checkout: (
+    deliveryArea: "dhaka" | "outside",
+    customerName: string,
+    customerPhone: string,
+    customerAddress: string
+  ) => { success: boolean; grandTotal: number; deliveryCharge: number; orderId: string };
   cartCount: number;
   customerRegister: (name: string, phone: string, address: string, password: string) => { success: boolean; error?: string };
   customerLogin: (phone: string, password: string) => { success: boolean; error?: string };
@@ -51,12 +56,12 @@ interface AppContextType {
 const AppContext = createContext<AppContextType | null>(null);
 
 const KEYS = {
-  products: "krishok_products",
-  farmers: "krishok_farmers",
-  orders: "krishok_orders",
-  cart: "krishok_cart",
-  customers: "krishok_customers",
-  currentCustomer: "krishok_current_customer",
+  products: "krishok_products_v2",
+  farmers: "krishok_farmers_v2",
+  orders: "krishok_orders_v2",
+  cart: "krishok_cart_v2",
+  customers: "krishok_customers_v2",
+  currentCustomer: "krishok_current_customer_v2",
 };
 
 export function AppProvider({ children }: { children: React.ReactNode }) {
@@ -156,57 +161,61 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     return total;
   };
 
-  const checkout = useCallback((deliveryArea: "dhaka" | "outside") => {
-    if (cart.length === 0) return { success: false, grandTotal: 0, deliveryCharge: 0 };
-    if (!currentCustomer) return { success: false, grandTotal: 0, deliveryCharge: 0 };
+  const checkout = useCallback(
+    (
+      deliveryArea: "dhaka" | "outside",
+      customerName: string,
+      customerPhone: string,
+      customerAddress: string
+    ) => {
+      if (cart.length === 0) return { success: false, grandTotal: 0, deliveryCharge: 0, orderId: "" };
 
-    const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
-    const weight = getDeliveryWeight(cart, products);
-    const base = deliveryArea === "dhaka" ? 60 : 120;
-    const extra = weight > 5 ? (weight - 5) * 30 : 0;
-    const deliveryCharge = base + extra;
-    const grandTotal = subtotal + deliveryCharge;
+      const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+      const weight = getDeliveryWeight(cart, products);
+      const base = deliveryArea === "dhaka" ? 60 : 120;
+      const extra = weight > 5 ? Math.round((weight - 5) * 30) : 0;
+      const deliveryCharge = base + extra;
+      const grandTotal = subtotal + deliveryCharge;
+      const orderId = Date.now().toString(36) + Math.random().toString(36).substr(2, 6);
 
-    const newOrders: Order[] = cart.map((item) => {
-      const p = products.find((pr) => pr.id === item.id);
-      return {
-        id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
-        productName: item.title,
-        qty: item.qty,
-        unit: item.unit,
-        total: item.price * item.qty,
-        farmerName: item.farmer,
-        farmerId: p?.farmerId,
-        customerId: currentCustomer.id,
-        customerName: currentCustomer.name,
-        customerPhone: currentCustomer.phone,
-        customerAddress: currentCustomer.address,
+      const newOrder: Order = {
+        id: orderId,
+        items: cart.map((item) => ({
+          title: item.title,
+          qty: item.qty,
+          unit: item.unit,
+          price: item.price,
+        })),
+        subtotal,
         deliveryCharge,
         grandTotal,
+        deliveryArea,
+        customerName,
+        customerPhone,
+        customerAddress,
+        customerId: currentCustomer?.id ?? "guest",
+        farmerId: undefined,
+        farmerName: cart.length === 1 ? cart[0].farmer : "মিক্স অর্ডার",
         date: new Date().toISOString(),
+        status: "confirmed",
       };
-    });
 
-    setOrders((prev) => {
-      const next = [...prev, ...newOrders];
-      save(KEYS.orders, next);
-      return next;
-    });
-    clearCart();
-    return { success: true, grandTotal, deliveryCharge };
-  }, [cart, currentCustomer, products, clearCart, save]);
+      setOrders((prev) => {
+        const next = [...prev, newOrder];
+        save(KEYS.orders, next);
+        return next;
+      });
+      clearCart();
+      return { success: true, grandTotal, deliveryCharge, orderId };
+    },
+    [cart, products, currentCustomer, clearCart, save]
+  );
 
   const customerRegister = useCallback((name: string, phone: string, address: string, password: string) => {
     if (customers.find((c) => c.phone === phone)) {
       return { success: false, error: "এই নম্বরে ইতিমধ্যে অ্যাকাউন্ট আছে" };
     }
-    const newCustomer: Customer = {
-      id: Date.now().toString(),
-      name,
-      phone,
-      address,
-      password,
-    };
+    const newCustomer: Customer = { id: Date.now().toString(), name, phone, address, password };
     const next = [...customers, newCustomer];
     setCustomers(next);
     save(KEYS.customers, next);
@@ -234,10 +243,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     }
     const newFarmer: Farmer = {
       id: Date.now(),
-      name,
-      phone,
-      address,
-      password,
+      name, phone, address, password,
       verified: false,
       avatar: `https://randomuser.me/api/portraits/${Math.random() > 0.5 ? "men" : "women"}/${Math.floor(Math.random() * 50) + 10}.jpg`,
       sales: 0,
@@ -264,10 +270,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, []);
 
   const addProduct = useCallback((product: Omit<Product, "id">) => {
-    const newProduct: Product = {
-      ...product,
-      id: Date.now(),
-    };
+    const newProduct: Product = { ...product, id: Date.now() };
     setProducts((prev) => {
       const next = [...prev, newProduct];
       save(KEYS.products, next);
@@ -288,8 +291,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   }, [products]);
 
   const getFarmerOrders = useCallback((farmerId: number) => {
-    const farmerProducts = products.filter((p) => p.farmerId === farmerId).map((p) => p.title);
-    return orders.filter((o) => farmerProducts.includes(o.productName) || o.farmerId === farmerId);
+    const farmerProductTitles = new Set(products.filter((p) => p.farmerId === farmerId).map((p) => p.title));
+    return orders.filter((o) =>
+      o.items.some((i) => farmerProductTitles.has(i.title))
+    );
   }, [orders, products]);
 
   const getCustomerOrders = useCallback((customerId: string) => {
