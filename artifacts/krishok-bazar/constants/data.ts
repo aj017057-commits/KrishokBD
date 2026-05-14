@@ -8,12 +8,13 @@ export interface Product {
   title: string;
   price: number;
   unit: string;
-  cat: "vege" | "fruit" | "leafy" | "fish" | "ready";
+  cat: "vege" | "fruit" | "leafy" | "fish" | "meat" | "dairy" | "spice" | "ready";
   farmer: string;
   farmerId: number;
   desc: string;
   img: string;
   badge?: string;
+  bestSeller?: boolean;
 }
 
 export interface Farmer {
@@ -66,221 +67,315 @@ export interface Order {
 }
 
 export const INITIAL_PRODUCTS: Product[] = [
-  // Vegetables
+  // ───────────────── সবজি ─────────────────
   {
-    id: 1, title: "তাজা আলু", price: 35, unit: "কেজি", cat: "vege",
-    farmer: "করিম মিয়া", farmerId: 1,
-    desc: "মিষ্টি দেশি আলু, খেত থেকে সদ্য তোলা। রান্না ও ভাজায় আদর্শ।",
-    img: "https://cdn.shopify.com/s/files/1/0761/6600/4933/files/wounds_and_cracks-potatoes-411975_1920.jpg?v=1773958204",
-    badge: "টাটকা"
-  },
-  {
-    id: 2, title: "জৈব টমেটো", price: 45, unit: "কেজি", cat: "vege",
-    farmer: "রহিমা বেগম", farmerId: 2,
-    desc: "রসালো টমেটো, কোনো কীটনাশক ছাড়া চাষ করা। সালাদ ও রান্নায় সেরা।",
-    img: "https://cdn.shopify.com/s/files/1/0761/6600/4933/files/elementus-tomato-371906_1920.jpg?v=1773958166",
-    badge: "জৈব"
-  },
-  {
-    id: 3, title: "দেশি পেঁয়াজ", price: 55, unit: "কেজি", cat: "vege",
-    farmer: "করিম মিয়া", farmerId: 1,
-    desc: "মিষ্টি ঝাঁঝালো পেঁয়াজ, দীর্ঘস্থায়ী। সব রান্নার জন্য অপরিহার্য।",
-    img: "https://cdn.shopify.com/s/files/1/0761/6600/4933/files/hans-red-vegetable-onions-499066_1920.jpg?v=1773958168",
-    badge: "টাটকা"
-  },
-  {
-    id: 4, title: "খাঁটি রসুন", price: 80, unit: "কেজি", cat: "vege",
-    farmer: "ছালাম মিয়া", farmerId: 3,
-    desc: "সুগন্ধি দেশি রসুন, প্রাকৃতিক চাষ। রান্নার স্বাদ বাড়ায়।",
-    img: "https://cdn.shopify.com/s/files/1/0761/6600/4933/files/publicdomainpictures-garlic-84691_1920.jpg?v=1773958167",
-    badge: "খাঁটি"
-  },
-  {
-    id: 5, title: "সাদা ফুলকপি", price: 45, unit: "পিস", cat: "vege",
+    id: 1,
+    title: "কচি বেগুন",
+    price: 60, unit: "কেজি", cat: "vege",
     farmer: "শামীম আহমেদ", farmerId: 4,
-    desc: "বড় সাদা ফুলকপি, কচি ও মিষ্টি। তরকারি ও ভাজায় সুস্বাদু।",
-    img: "https://cdn.shopify.com/s/files/1/0761/6600/4933/files/matthiasboeckel-cauliflower-6993499_1920.jpg?v=1773958169",
-    badge: "টাটকা"
+    desc: "কোমল কালো বেগুন, সদ্য তোলা। ভর্তা ও তরকারিতে অতুলনীয় স্বাদ।",
+    img: "https://images.pexels.com/photos/2325844/pexels-photo-2325844.jpeg?auto=compress&w=600",
+    badge: "টাটকা", bestSeller: true,
   },
   {
-    id: 6, title: "তাজা বাঁধাকপি", price: 35, unit: "পিস", cat: "vege",
-    farmer: "রহিমা বেগম", farmerId: 2,
-    desc: "খাস্তা সবুজ বাঁধাকপি, পুষ্টিগুণ সমৃদ্ধ। সালাদ ও রান্নায় দারুণ।",
-    img: "https://cdn.shopify.com/s/files/1/0761/6600/4933/files/pexels-cabbage-1850722_1920.jpg?v=1773958204",
-    badge: "টাটকা"
-  },
-  {
-    id: 7, title: "কচি বেগুন", price: 40, unit: "কেজি", cat: "vege",
+    id: 2,
+    title: "তিতা করলা",
+    price: 70, unit: "কেজি", cat: "vege",
     farmer: "শামীম আহমেদ", farmerId: 4,
-    desc: "কোমল কালো বেগুন, সদ্য তোলা। ভর্তা ও তরকারিতে সেরা স্বাদ।",
-    img: "https://images.pexels.com/photos/2325844/pexels-photo-2325844.jpeg?auto=compress&w=400",
-    badge: "কচি"
+    desc: "স্বাস্থ্যকর তিতা করলা, ডায়াবেটিস ও রক্তচাপ নিয়ন্ত্রণে বিশেষ উপকারী।",
+    img: "https://images.pexels.com/photos/4110252/pexels-photo-4110252.jpeg?auto=compress&w=600",
+    badge: "স্বাস্থ্যকর",
   },
   {
-    id: 8, title: "তিতা করলা", price: 50, unit: "কেজি", cat: "vege",
-    farmer: "শামীম আহমেদ", farmerId: 4,
-    desc: "স্বাস্থ্যকর তিতা করলা, ডায়াবেটিস ও রক্তচাপে উপকারী।",
-    img: "https://images.pexels.com/photos/4110252/pexels-photo-4110252.jpeg?auto=compress&w=400",
-    badge: "স্বাস্থ্যকর"
-  },
-  {
-    id: 9, title: "মিষ্টি কুমড়া", price: 30, unit: "কেজি", cat: "vege",
+    id: 3,
+    title: "মিষ্টি কুমড়া",
+    price: 40, unit: "কেজি", cat: "vege",
     farmer: "করিম মিয়া", farmerId: 1,
     desc: "হলুদ মিষ্টি কুমড়া, ভিটামিন এ সমৃদ্ধ। শিশুদের জন্য বিশেষ উপকারী।",
-    img: "https://images.pexels.com/photos/5945557/pexels-photo-5945557.jpeg?auto=compress&w=400",
-    badge: "ভিটামিন এ"
+    img: "https://images.pexels.com/photos/5945557/pexels-photo-5945557.jpeg?auto=compress&w=600",
+    badge: "ভিটামিন এ",
   },
   {
-    id: 10, title: "দেশি লাউ", price: 45, unit: "পিস", cat: "vege",
+    id: 4,
+    title: "দেশি লাউ",
+    price: 50, unit: "পিস", cat: "vege",
     farmer: "আব্দুর রহিম", farmerId: 12,
     desc: "সবুজ কচি লাউ, হালকা ও পুষ্টিকর। তরকারি ও লাউ-ডাল করার জন্য আদর্শ।",
-    img: "https://images.pexels.com/photos/6158088/pexels-photo-6158088.jpeg?auto=compress&w=400",
-    badge: "কচি"
+    img: "https://images.pexels.com/photos/6158088/pexels-photo-6158088.jpeg?auto=compress&w=600",
+    badge: "কচি",
   },
   {
-    id: 11, title: "ক্যাপসিকাম", price: 90, unit: "কেজি", cat: "vege",
-    farmer: "রহিমা বেগম", farmerId: 2,
-    desc: "রঙিন মিষ্টি ক্যাপসিকাম, ভিটামিন সি ভরপুর। সালাদ ও স্টারফ্রাইতে সেরা।",
-    img: "https://images.pexels.com/photos/594137/pexels-photo-594137.jpeg?auto=compress&w=400",
-    badge: "ভিটামিন সি"
+    id: 5,
+    title: "মিক্স সবজি প্যাক",
+    price: 120, unit: "কেজি", cat: "vege",
+    farmer: "ফারুক হোসেন", farmerId: 14,
+    desc: "মিশ্র সবজির প্যাক — আলু, গাজর, পটল, মটর। রান্নায় সরাসরি ব্যবহারযোগ্য।",
+    img: "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&w=600",
+    badge: "মিক্স",
   },
   {
-    id: 12, title: "দেশি আদা", price: 120, unit: "কেজি", cat: "vege",
-    farmer: "ছালাম মিয়া", farmerId: 3,
-    desc: "সুগন্ধি দেশি আদা, ঔষধিগুণে ভরা। চা, রান্না ও ঠান্ডায় অত্যন্ত উপকারী।",
-    img: "https://images.pexels.com/photos/161556/ginger-root-plant-161556.jpeg?auto=compress&w=400",
-    badge: "ঔষধি"
+    id: 6,
+    title: "কাটা পেঁয়াজ প্যাক",
+    price: 80, unit: "৫০০ গ্রাম", cat: "vege",
+    farmer: "করিম মিয়া", farmerId: 1,
+    desc: "পরিষ্কার করে কাটা পেঁয়াজ। সরাসরি ভাজায় ব্যবহার করুন — সময় বাঁচান।",
+    img: "https://images.pexels.com/photos/175753/pexels-photo-175753.jpeg?auto=compress&w=600",
+    badge: "রেডি",
   },
-  // Fruits
+  // ───────────────── শাক ─────────────────
   {
-    id: 13, title: "হিমসাগর আম", price: 120, unit: "কেজি", cat: "fruit",
-    farmer: "সিরাজ মিয়া", farmerId: 6,
-    desc: "সুমিষ্ট হিমসাগর আম, চাঁপাইনবাবগঞ্জ থেকে সংগ্রহ করা।",
-    img: "https://cdn.shopify.com/s/files/1/0761/6600/4933/files/swidaalba-mango-8283262_1920.jpg?v=1773958170",
-    badge: "মিষ্টি"
-  },
-  {
-    id: 14, title: "চম্পা কলা", price: 80, unit: "ডজন", cat: "fruit",
-    farmer: "মোস্তাফিজ", farmerId: 7,
-    desc: "পাকা চম্পা কলা, শক্তির দারুণ উৎস। শিশু ও বড় সবার জন্য উপকারী।",
-    img: "https://cdn.shopify.com/s/files/1/0761/6600/4933/files/couleur-bananas-3474872_1920.jpg?v=1773958166",
-    badge: "পাকা"
-  },
-  {
-    id: 15, title: "রসালো কমলা", price: 150, unit: "কেজি", cat: "fruit",
-    farmer: "মিনারা বেগম", farmerId: 8,
-    desc: "তাজা দেশি কমলা, ভিটামিন সি সমৃদ্ধ। রোগ প্রতিরোধে অত্যন্ত কার্যকর।",
-    img: "https://images.pexels.com/photos/894713/orange-fruit-citrus-organic-894713.jpeg?auto=compress&w=400",
-    badge: "রসালো"
-  },
-  {
-    id: 16, title: "দেশি লিচু", price: 200, unit: "কেজি", cat: "fruit",
-    farmer: "মিনারা বেগম", farmerId: 8,
-    desc: "সুমিষ্ট লিচু, রাজশাহী থেকে সংগ্রহ। অ্যান্টিঅক্সিডেন্টে ভরপুর।",
-    img: "https://images.pexels.com/photos/156598/lychee-fruit-sweet-tropical-156598.jpeg?auto=compress&w=400",
-    badge: "দেশি"
-  },
-  {
-    id: 17, title: "সবুজ পেয়ারা", price: 80, unit: "কেজি", cat: "fruit",
-    farmer: "কামাল হোসেন", farmerId: 9,
-    desc: "ভিটামিন সি সমৃদ্ধ দেশি পেয়ারা। ডায়াবেটিস নিয়ন্ত্রণে সহায়ক।",
-    img: "https://images.pexels.com/photos/5945755/pexels-photo-5945755.jpeg?auto=compress&w=400",
-    badge: "ভিটামিন সি"
-  },
-  // Leafy
-  {
-    id: 18, title: "পালং শাক", price: 20, unit: "আটি", cat: "leafy",
-    farmer: "আব্দুর রহিম", farmerId: 12,
-    desc: "নরম পালং শাক, আয়রন ও ফলেট সমৃদ্ধ। রক্তাল্পতা দূর করে।",
-    img: "https://images.pexels.com/photos/2325843/pexels-photo-2325843.jpeg?auto=compress&w=400",
-    badge: "আয়রন"
-  },
-  {
-    id: 19, title: "লাল শাক", price: 25, unit: "আটি", cat: "leafy",
-    farmer: "সামসুল হক", farmerId: 13,
-    desc: "উজ্জ্বল লাল শাক, ভিটামিন ও মিনারেলে ভরপুর। ভর্তা ও ভাজায় সুস্বাদু।",
-    img: "https://images.pexels.com/photos/1656663/pexels-photo-1656663.jpeg?auto=compress&w=400",
-    badge: "পুষ্টিকর"
-  },
-  {
-    id: 20, title: "পুঁই শাক", price: 20, unit: "আটি", cat: "leafy",
+    id: 7,
+    title: "পুঁই শাক",
+    price: 30, unit: "আঁটি", cat: "leafy",
     farmer: "আব্দুর রহিম", farmerId: 12,
     desc: "মসৃণ পুঁই শাক, ক্যালসিয়াম সমৃদ্ধ। চিংড়ি দিয়ে রান্না করলে অপূর্ব স্বাদ।",
-    img: "https://images.pexels.com/photos/5529597/pexels-photo-5529597.jpeg?auto=compress&w=400",
-    badge: "ক্যালসিয়াম"
+    img: "https://images.pexels.com/photos/5529597/pexels-photo-5529597.jpeg?auto=compress&w=600",
+    badge: "ক্যালসিয়াম", bestSeller: true,
   },
   {
-    id: 21, title: "মুলা শাক", price: 15, unit: "আটি", cat: "leafy",
+    id: 8,
+    title: "লাল শাক",
+    price: 20, unit: "আঁটি", cat: "leafy",
+    farmer: "সামসুল হক", farmerId: 13,
+    desc: "উজ্জ্বল লাল শাক, ভিটামিন ও মিনারেলে ভরপুর। ভর্তা ও ভাজায় সুস্বাদু।",
+    img: "https://images.pexels.com/photos/1656663/pexels-photo-1656663.jpeg?auto=compress&w=600",
+    badge: "পুষ্টিকর",
+  },
+  {
+    id: 9,
+    title: "মুলা শাক",
+    price: 25, unit: "আঁটি", cat: "leafy",
     farmer: "সামসুল হক", farmerId: 13,
     desc: "কচি মুলার পাতা, ডিটক্সে সহায়ক। ভাজা ও ডালে মিশিয়ে খাওয়া যায়।",
-    img: "https://images.pexels.com/photos/4871125/pexels-photo-4871125.jpeg?auto=compress&w=400",
-    badge: "ডিটক্স"
+    img: "https://images.pexels.com/photos/4871125/pexels-photo-4871125.jpeg?auto=compress&w=600",
+    badge: "ডিটক্স",
   },
-  // Fish
+  // ───────────────── মাছ ─────────────────
   {
-    id: 22, title: "পদ্মার ইলিশ", price: 800, unit: "কেজি", cat: "fish",
+    id: 10,
+    title: "পদ্মার ইলিশ",
+    price: 1600, unit: "কেজি", cat: "fish",
     farmer: "মৎস্য আড়ত", farmerId: 10,
     desc: "বিশ্বখ্যাত পদ্মার ইলিশ, তেলে ভরা ও সুস্বাদু। ভাপে বা ভাজায় অতুলনীয়।",
-    img: "https://images.pexels.com/photos/3296434/pexels-photo-3296434.jpeg?auto=compress&w=400",
-    badge: "পদ্মার"
+    img: "https://images.pexels.com/photos/3296434/pexels-photo-3296434.jpeg?auto=compress&w=600",
+    badge: "পদ্মার", bestSeller: true,
   },
   {
-    id: 23, title: "দেশি শিং মাছ", price: 350, unit: "কেজি", cat: "fish",
+    id: 11,
+    title: "দেশি শিং মাছ",
+    price: 700, unit: "কেজি", cat: "fish",
     farmer: "আলমগীর হোসেন", farmerId: 11,
     desc: "জীবন্ত দেশি শিং মাছ, কাদায় লালিত। অসুস্থদের জন্য বিশেষ পুষ্টিকর।",
-    img: "https://images.pexels.com/photos/6026712/pexels-photo-6026712.jpeg?auto=compress&w=400",
-    badge: "জীবন্ত"
+    img: "https://images.pexels.com/photos/6026712/pexels-photo-6026712.jpeg?auto=compress&w=600",
+    badge: "জীবন্ত",
   },
   {
-    id: 24, title: "কালো মাগুর মাছ", price: 400, unit: "কেজি", cat: "fish",
+    id: 12,
+    title: "কালো মাগুর মাছ",
+    price: 600, unit: "কেজি", cat: "fish",
     farmer: "আলমগীর হোসেন", farmerId: 11,
-    desc: "দেশি কালো মাগুর, শক্তিবর্ধক ও রোগ নিরাময়ে উপকারী।",
-    img: "https://images.pexels.com/photos/1382394/pexels-photo-1382394.jpeg?auto=compress&w=400",
-    badge: "দেশি"
+    desc: "দেশি কালো মাগুর, শক্তিবর্ধক ও রোগ নিরাময়ে উপকারী। প্রোটিনে ভরপুর।",
+    img: "https://images.pexels.com/photos/1382394/pexels-photo-1382394.jpeg?auto=compress&w=600",
+    badge: "দেশি",
   },
-  // Ready to cook
+  // ───────────────── ফল ─────────────────
   {
-    id: 25, title: "মিক্স সবজি প্যাক", price: 150, unit: "প্যাক", cat: "ready",
-    farmer: "ফারুক হোসেন", farmerId: 14,
-    desc: "কাটা আলু, গাজর, পটল, মটর — রান্নার জন্য সম্পূর্ণ প্রস্তুত।",
-    img: "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&w=400",
-    badge: "রেডি"
-  },
-  {
-    id: 26, title: "ধোয়া পালং প্যাক", price: 50, unit: "প্যাক", cat: "ready",
-    farmer: "হামিদুল ইসলাম", farmerId: 15,
-    desc: "৩ বার পরিষ্কার করে কাটা পালং শাক — সরাসরি রান্নায় দিন।",
-    img: "https://images.pexels.com/photos/2325843/pexels-photo-2325843.jpeg?auto=compress&w=400",
-    badge: "ধোয়া"
-  },
-  {
-    id: 27, title: "মিক্স ফ্রুট প্যাক", price: 250, unit: "প্যাক", cat: "ready",
+    id: 13,
+    title: "রসালো কমলা",
+    price: 220, unit: "কেজি", cat: "fruit",
     farmer: "মিনারা বেগম", farmerId: 8,
-    desc: "আম, কলা, কমলা, লিচু মিশিয়ে তৈরি স্বাস্থ্যকর ফলের প্যাক।",
-    img: "https://images.pexels.com/photos/1092730/pexels-photo-1092730.jpeg?auto=compress&w=400",
-    badge: "মিক্স"
+    desc: "তাজা দেশি কমলা, ভিটামিন সি সমৃদ্ধ। রোগ প্রতিরোধে অত্যন্ত কার্যকর।",
+    img: "https://images.pexels.com/photos/161559/background-bitter-breakfast-bright-161559.jpeg?auto=compress&w=600",
+    badge: "রসালো", bestSeller: true,
   },
   {
-    id: 28, title: "কাটা পেঁয়াজ প্যাক", price: 60, unit: "প্যাক", cat: "ready",
-    farmer: "করিম মিয়া", farmerId: 1,
-    desc: "পরিষ্কার করে কাটা পেঁয়াজ, সরাসরি ভাজায় ব্যবহার করুন।",
-    img: "https://images.pexels.com/photos/175753/pexels-photo-175753.jpeg?auto=compress&w=400",
-    badge: "রেডি"
+    id: 14,
+    title: "দেশি লিচু",
+    price: 400, unit: "১০০ পিস", cat: "fruit",
+    farmer: "মিনারা বেগম", farmerId: 8,
+    desc: "সুমিষ্ট লিচু, রাজশাহী থেকে সংগ্রহ। অ্যান্টিঅক্সিডেন্টে ভরপুর।",
+    img: "https://images.pexels.com/photos/1028950/pexels-photo-1028950.jpeg?auto=compress&w=600",
+    badge: "দেশি",
   },
+  {
+    id: 15,
+    title: "সবুজ পেয়ারা",
+    price: 80, unit: "কেজি", cat: "fruit",
+    farmer: "কামাল হোসেন", farmerId: 9,
+    desc: "ভিটামিন সি সমৃদ্ধ দেশি পেয়ারা। ডায়াবেটিস নিয়ন্ত্রণে সহায়ক।",
+    img: "https://images.pexels.com/photos/5945755/pexels-photo-5945755.jpeg?auto=compress&w=600",
+    badge: "ভিটামিন সি",
+  },
+  // ───────────────── মাংস ─────────────────
+  {
+    id: 16,
+    title: "গরুর মাংস",
+    price: 750, unit: "কেজি", cat: "meat",
+    farmer: "হালাল মাংস", farmerId: 16,
+    desc: "তাজা হালাল গরুর মাংস, রান্নার জন্য প্রস্তুত। গ্রাম থেকে সরাসরি সংগৃহীত।",
+    img: "https://images.pexels.com/photos/1639562/pexels-photo-1639562.jpeg?auto=compress&w=600",
+    badge: "হালাল", bestSeller: true,
+  },
+  {
+    id: 17,
+    title: "খাসির মাংস",
+    price: 1050, unit: "কেজি", cat: "meat",
+    farmer: "হালাল মাংস", farmerId: 16,
+    desc: "দেশি খাসির মাংস, কুরবানির মৌসুমে বিশেষ চাহিদা। নরম ও সুস্বাদু।",
+    img: "https://images.pexels.com/photos/65175/pexels-photo-65175.jpeg?auto=compress&w=600",
+    badge: "দেশি",
+  },
+  {
+    id: 18,
+    title: "দেশি মুরগি",
+    price: 550, unit: "কেজি", cat: "meat",
+    farmer: "পোলট্রি খামার", farmerId: 17,
+    desc: "বাড়িতে লালিত দেশি মুরগি। ঝোল রান্নায় অতুলনীয় স্বাদ ও পুষ্টি।",
+    img: "https://images.pexels.com/photos/2338407/pexels-photo-2338407.jpeg?auto=compress&w=600",
+    badge: "দেশি",
+  },
+  {
+    id: 19,
+    title: "ফার্মের মুরগি",
+    price: 190, unit: "কেজি", cat: "meat",
+    farmer: "পোলট্রি খামার", farmerId: 17,
+    desc: "সাশ্রয়ী ও পুষ্টিকর ফার্মের মুরগি। প্রতিদিনের রান্নার জন্য আদর্শ।",
+    img: "https://images.pexels.com/photos/6107614/pexels-photo-6107614.jpeg?auto=compress&w=600",
+    badge: "সাশ্রয়ী",
+  },
+  // ───────────────── ডিম / দুগ্ধ ─────────────────
+  {
+    id: 20,
+    title: "ফার্মের ডিম",
+    price: 145, unit: "ডজন", cat: "dairy",
+    farmer: "পোলট্রি খামার", farmerId: 17,
+    desc: "তাজা ফার্মের ডিম, প্রতিদিন সংগৃহীত। প্রোটিনের সেরা উৎস।",
+    img: "https://images.pexels.com/photos/162712/egg-white-food-protein-162712.jpeg?auto=compress&w=600",
+    badge: "তাজা", bestSeller: true,
+  },
+  {
+    id: 21,
+    title: "দেশি ডিম",
+    price: 210, unit: "ডজন", cat: "dairy",
+    farmer: "গ্রামীণ খামার", farmerId: 18,
+    desc: "দেশি মুরগির ডিম, গভীর কুসুম ও অধিক পুষ্টিগুণ সম্পন্ন।",
+    img: "https://images.pexels.com/photos/1556707/pexels-photo-1556707.jpeg?auto=compress&w=600",
+    badge: "দেশি",
+  },
+  {
+    id: 22,
+    title: "গরুর দুধ",
+    price: 90, unit: "লিটার", cat: "dairy",
+    farmer: "গ্রামীণ গোচারণ", farmerId: 19,
+    desc: "বিশুদ্ধ গরুর কাঁচা দুধ, প্রতিদিন সকালে সংগৃহীত। ক্যালসিয়ামে ভরপুর।",
+    img: "https://images.pexels.com/photos/236010/pexels-photo-236010.jpeg?auto=compress&w=600",
+    badge: "খাঁটি",
+  },
+  {
+    id: 23,
+    title: "মিষ্টি দই",
+    price: 260, unit: "কেজি", cat: "dairy",
+    farmer: "বগুড়া দুগ্ধ", farmerId: 20,
+    desc: "বগুড়ার বিখ্যাত মিষ্টি দই। ঐতিহ্যবাহী মাটির পাত্রে তৈরি, অপূর্ব স্বাদ।",
+    img: "https://images.pexels.com/photos/4021983/pexels-photo-4021983.jpeg?auto=compress&w=600",
+    badge: "বগুড়ার",
+  },
+  {
+    id: 24,
+    title: "দেশি ঘি",
+    price: 1600, unit: "কেজি", cat: "dairy",
+    farmer: "গ্রামীণ গোচারণ", farmerId: 19,
+    desc: "খাঁটি গরুর দুধের ঘি, হাতে তৈরি। রান্না ও স্বাস্থ্যের জন্য অমূল্য।",
+    img: "https://images.pexels.com/photos/4033639/pexels-photo-4033639.jpeg?auto=compress&w=600",
+    badge: "খাঁটি",
+  },
+  // ───────────────── মশলা ─────────────────
+  {
+    id: 25,
+    title: "দেশি আদা",
+    price: 210, unit: "কেজি", cat: "spice",
+    farmer: "ছালাম মিয়া", farmerId: 3,
+    desc: "সুগন্ধি দেশি আদা, ঔষধিগুণে ভরা। চা, রান্না ও ঠান্ডা-সর্দিতে অত্যন্ত উপকারী।",
+    img: "https://images.pexels.com/photos/161556/ginger-root-plant-161556.jpeg?auto=compress&w=600",
+    badge: "ঔষধি", bestSeller: true,
+  },
+];
+
+export const BEST_SELLERS: { cat: Product["cat"]; label: string; emoji: string }[] = [
+  { cat: "vege",  label: "সবজি",      emoji: "🥦" },
+  { cat: "leafy", label: "শাক",       emoji: "🌿" },
+  { cat: "fish",  label: "মাছ",       emoji: "🐟" },
+  { cat: "fruit", label: "ফল",        emoji: "🍊" },
+  { cat: "meat",  label: "মাংস",      emoji: "🥩" },
+  { cat: "dairy", label: "ডিম/দুগ্ধ", emoji: "🥚" },
+  { cat: "spice", label: "মশলা",      emoji: "🫚" },
 ];
 
 export const INITIAL_FARMERS: Farmer[] = [
   {
-    id: 1, name: "করিম মিয়া", phone: "01700000001", address: "রাজশাহী", password: "1234",
-    verified: true, avatar: "", sales: 1250, products: "আলু, পেঁয়াজ, মিষ্টি কুমড়া", rating: 4.9, gender: "male"
+    id: 1,  name: "করিম মিয়া",      phone: "01700000001", address: "রাজশাহী",
+    password: "1234", verified: true, avatar: "", sales: 1250,
+    products: "সবজি, পেঁয়াজ, কুমড়া", rating: 4.9, gender: "male",
   },
   {
-    id: 2, name: "রহিমা বেগম", phone: "01700000002", address: "ঢাকা", password: "1234",
-    verified: true, avatar: "", sales: 980, products: "টমেটো, বাঁধাকপি, ক্যাপসিকাম", rating: 4.8, gender: "female"
+    id: 2,  name: "রহিমা বেগম",      phone: "01700000002", address: "ঢাকা",
+    password: "1234", verified: true, avatar: "", sales: 980,
+    products: "টমেটো, বাঁধাকপি, ক্যাপসিকাম", rating: 4.8, gender: "female",
   },
   {
-    id: 3, name: "শামীম আহমেদ", phone: "01700000003", address: "নরসিংদী", password: "1234",
-    verified: true, avatar: "", sales: 450, products: "বেগুন, করলা, রসুন", rating: 4.7, gender: "male"
+    id: 3,  name: "ছালাম মিয়া",      phone: "01700000003", address: "নরসিংদী",
+    password: "1234", verified: true, avatar: "", sales: 450,
+    products: "আদা, রসুন, মশলা", rating: 4.7, gender: "male",
+  },
+  {
+    id: 4,  name: "শামীম আহমেদ",     phone: "01700000004", address: "গাজীপুর",
+    password: "1234", verified: true, avatar: "", sales: 620,
+    products: "বেগুন, করলা, শাকসবজি", rating: 4.6, gender: "male",
+  },
+  {
+    id: 8,  name: "মিনারা বেগম",     phone: "01700000005", address: "চাঁপাইনবাবগঞ্জ",
+    password: "1234", verified: true, avatar: "", sales: 890,
+    products: "কমলা, লিচু, মৌসুমী ফল", rating: 4.9, gender: "female",
+  },
+  {
+    id: 10, name: "মৎস্য আড়ত",      phone: "01700000006", address: "পদ্মা তীর",
+    password: "1234", verified: true, avatar: "", sales: 3200,
+    products: "ইলিশ, নদীর মাছ", rating: 4.8, gender: "male",
+  },
+  {
+    id: 11, name: "আলমগীর হোসেন",    phone: "01700000007", address: "ময়মনসিংহ",
+    password: "1234", verified: false, avatar: "", sales: 210,
+    products: "শিং, মাগুর, দেশি মাছ", rating: 4.5, gender: "male",
+  },
+  {
+    id: 12, name: "আব্দুর রহিম",     phone: "01700000008", address: "সিলেট",
+    password: "1234", verified: true, avatar: "", sales: 380,
+    products: "লাউ, পালং, পুঁই শাক", rating: 4.7, gender: "male",
+  },
+  {
+    id: 16, name: "হালাল মাংস",      phone: "01700000009", address: "ঢাকা",
+    password: "1234", verified: true, avatar: "", sales: 1100,
+    products: "গরু, খাসি, হালাল মাংস", rating: 4.8, gender: "male",
+  },
+  {
+    id: 17, name: "পোলট্রি খামার",   phone: "01700000010", address: "নারায়ণগঞ্জ",
+    password: "1234", verified: true, avatar: "", sales: 2400,
+    products: "মুরগি, ফার্মের ডিম", rating: 4.6, gender: "male",
+  },
+  {
+    id: 18, name: "নূর বেগম",        phone: "01700000011", address: "মানিকগঞ্জ",
+    password: "1234", verified: false, avatar: "", sales: 160,
+    products: "দেশি ডিম, হাঁসের ডিম", rating: 4.4, gender: "female",
+  },
+  {
+    id: 19, name: "গ্রামীণ গোচারণ",  phone: "01700000012", address: "পাবনা",
+    password: "1234", verified: true, avatar: "", sales: 750,
+    products: "গরুর দুধ, ঘি, মাখন", rating: 4.9, gender: "male",
+  },
+  {
+    id: 20, name: "বগুড়া দুগ্ধ",    phone: "01700000013", address: "বগুড়া",
+    password: "1234", verified: true, avatar: "", sales: 920,
+    products: "মিষ্টি দই, ছানা, রসগোল্লা", rating: 5.0, gender: "male",
   },
 ];
 
@@ -291,12 +386,14 @@ export const VIDEO_IDS = [
 ];
 
 export const CATEGORIES = [
-  { key: "all", label: "সব পণ্য" },
-  { key: "vege", label: "সবজি" },
-  { key: "fruit", label: "ফল" },
-  { key: "leafy", label: "শাক" },
-  { key: "fish", label: "মাছ" },
-  { key: "ready", label: "রেডি টু কুক" },
+  { key: "all",   label: "সব",        emoji: "🛒" },
+  { key: "vege",  label: "সবজি",      emoji: "🥦" },
+  { key: "leafy", label: "শাক",       emoji: "🌿" },
+  { key: "fish",  label: "মাছ",       emoji: "🐟" },
+  { key: "fruit", label: "ফল",        emoji: "🍊" },
+  { key: "meat",  label: "মাংস",      emoji: "🥩" },
+  { key: "dairy", label: "ডিম/দুগ্ধ", emoji: "🥚" },
+  { key: "spice", label: "মশলা",      emoji: "🫚" },
 ];
 
 export const SUPPORT_PHONE = "8801931355398";
