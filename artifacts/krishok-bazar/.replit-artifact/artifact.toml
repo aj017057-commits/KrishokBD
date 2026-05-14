@@ -1,0 +1,27 @@
+kind = "mobile"
+previewPath = "/"
+title = "কৃষক বাজার"
+version = "1.0.0"
+id = "artifacts/krishok-bazar"
+router = "expo-domain"
+
+[[integratedSkills]]
+name = "expo"
+version = "1.0.0"
+
+[[services]]
+ensurePreviewReachable = "/status"
+name = "expo"
+paths = [ "/" ]
+localPort = 18119
+
+[services.development]
+run = "pnpm --filter @workspace/krishok-bazar run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/krishok-bazar", "run", "build" ]
+run = [ "pnpm", "--filter", "@workspace/krishok-bazar", "run", "serve" ]
+
+[services.env]
+PORT = "18119"
+BASE_PATH = "/"

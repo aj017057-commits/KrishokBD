@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
+  <title>কৃষক বাজার – পেশাদার কৃষি ই-কমার্স</title>
+  <link rel="icon" type="image/png" href="https://cdn.shopify.com/s/files/1/0761/6600/4933/files/Gemini_Generated_Image_k0x5bek0x5bek0x5.png?v=1774036946">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Serif+Bengali&display=swap" rel="stylesheet">
+  <style>
+    *{margin:0;padding:0;box-sizing:border-box;}
+    body{background:white;font-family:'Noto Serif Bengali',serif;color:#1f2937;}
+    :root{--primary:#1b5e20;--primary-dark:#0d3e10;--primary-light:#4caf50;--primary-soft:#e8f5e9;--white:#fff;--gray-100:#f3f4f6;--gray-200:#e5e7eb;--gray-600:#4b5563;--shadow-sm:0 1px 2px 0 rgba(0,0,0,0.05);--shadow-md:0 4px 6px -1px rgba(0,0,0,0.1);}
+    
+    /* Splash Screen */
+    .splash{position:fixed;inset:0;background:white;z-index:1000;display:flex;align-items:center;justify-content:center;flex-direction:column;transition:opacity 0.5s;}
+    .splash img{width:120px;height:120px;border-radius:50%;object-fit:cover;margin-bottom:20px;}
+    .splash h1{color:var(--primary-dark);font-size:28px;margin-bottom:10px;}
+    .splash p{color:var(--gray-600);font-size:16px;}
+    /* Header */
+    .header{background:white;position:sticky;top:0;z-index:100;border-bottom:1px solid var(--gray-200);padding:12px 16px;}
+    .header-container{display:flex;align-items:center;justify-content:space-between;max-width:1400px;margin:0 auto;flex-wrap:wrap;gap:12px;}
+    .logo-area{display:flex;align-items:center;gap:12px;}
+    .logo-img{width:48px;height:48px;border-radius:50%;object-fit:cover;}
+    .brand-name{font-size:22px;font-weight:800;color:var(--primary-dark);}
+    @media (min-width:768px){.brand-name{font-size:28px;}}
+    .header-buttons{display:flex;gap:8px;flex-wrap:wrap;}
+    .btn{background:var(--primary);color:white;border:none;padding:8px 16px;border-radius:40px;font-weight:600;font-size:13px;cursor:pointer;transition:0.3s;display:inline-flex;align-items:center;gap:6px;}
+    .btn-outline{background:white;color:var(--primary);border:2px solid var(--primary);}
+    .btn-outline:hover{background:var(--primary);color:white;}
+    .cart-icon{position:relative;}
+    .cart-count{position:absolute;top:-8px;right:-12px;background:#e53935;color:white;border-radius:50%;width:18px;height:18px;font-size:10px;display:flex;align-items:center;justify-content:center;}
+    /* Search */
+    .search-section{background:white;padding:0 16px 12px;border-bottom:1px solid var(--gray-200);}
+    .search-bar{display:flex;align-items:center;background:var(--gray-100);border-radius:40px;padding:10px 16px;border:1px solid var(--gray-200);max-width:600px;margin:0 auto;}
+    .search-bar i{margin-right:10px;color:var(--gray-600);}
+    .search-bar input{flex:1;border:none;background:none;outline:none;}
+    /* Hero */
+    .hero-carousel{position:relative;width:100%;height:300px;overflow:hidden;margin:0;}
+    @media (min-width:768px){.hero-carousel{height:420px;}}
+    .carousel-slides{display:flex;transition:transform 0.5s ease;height:100%;}
+    .carousel-slide{flex:0 0 100%;background-size:cover;background-position:center;position:relative;}
+    .carousel-slide::before{content:'';position:absolute;inset:0;background:linear-gradient(90deg,rgba(0,0,0,0.5),rgba(0,0,0,0.3));}
+    .slide-content{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;color:white;z-index:2;width:90%;}
+    .slide-content h2{font-size:22px;font-weight:800;margin-bottom:8px;}
+    @media (min-width:768px){.slide-content h2{font-size:34px;}}
+    .hero-buttons{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin-top:10px;}
+    .hero-btn{padding:8px 14px;border-radius:40px;font-weight:600;font-size:11px;display:inline-flex;align-items:center;gap:5px;cursor:pointer;border:none;}
+    .hero-btn-primary{background:var(--primary);color:white;}
+    /* Sections */
+    .section{padding:30px 16px;}
+    .section-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;}
+    .section-header h2{font-size:20px;font-weight:700;position:relative;}
+    .section-header h2:after{content:'';position:absolute;bottom:-6px;left:0;width:40px;height:3px;background:var(--primary);border-radius:2px;}
+    .category-tabs{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:25px;justify-content:center;}
+    .category-tab{background:white;border:1px solid var(--gray-200);padding:6px 16px;border-radius:40px;font-weight:500;font-size:13px;cursor:pointer;}
+    .category-tab.active{background:var(--primary);color:white;border-color:var(--primary);}
+    .product-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;}
+    @media (min-width:640px){.product-grid{gap:16px;}}
+    @media (min-width:1024px){.product-grid{grid-template-columns:repeat(5,1fr);}}
+    .product-card{background:white;border-radius:14px;overflow:hidden;box-shadow:var(--shadow-sm);border:1px solid var(--gray-200);transition:0.3s;}
+    .product-card:hover{transform:translateY(-4px);box-shadow:var(--shadow-md);}
+    .product-img{width:100%;aspect-ratio:1/1;background-size:cover;background-position:center;position:relative;}
+    .product-badge{position:absolute;top:6px;left:6px;background:var(--primary);color:white;padding:2px 8px;border-radius:20px;font-size:9px;}
+    .product-info{padding:10px;}
+    .product-title{font-size:13px;font-weight:600;margin-bottom:3px;}
+    .product-price{font-size:15px;font-weight:700;color:var(--primary);margin-bottom:2px;}
+    .product-price small{font-size:9px;font-weight:400;color:var(--gray-600);}
+    .product-actions{display:flex;gap:8px;margin-top:6px;}
+    .cart-btn{background:var(--primary);color:white;border:none;padding:6px;border-radius:30px;flex:1;font-weight:600;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:3px;}
+    .whatsapp-btn{background:#25D366;color:white;border:none;padding:6px;border-radius:30px;flex:1;font-weight:600;font-size:10px;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:3px;}
+    /* Farmer & Video Carousels */
+    .farmer-carousel,.video-carousel{display:flex;gap:12px;overflow-x:auto;padding:5px 0;}
+    .farmer-card{flex:0 0 240px;background:white;border-radius:18px;padding:12px;text-align:center;border:1px solid var(--gray-200);}
+    .farmer-card.verified{border:2px solid var(--primary);}
+    .farmer-avatar{width:80px;height:80px;border-radius:50%;margin:0 auto 10px;background-size:cover;}
+    .farmer-contact{background:#25D366;color:white;border:none;padding:6px;border-radius:30px;width:100%;margin-top:8px;font-size:11px;cursor:pointer;}
+    .video-card{flex:0 0 260px;background:black;border-radius:12px;overflow:hidden;}
+    .video-card iframe{width:100%;aspect-ratio:9/16;border:none;}
+    /* Footer */
+    .footer{background:#1b5e20;color:white;padding:30px 20px;margin-top:40px;}
+    .footer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;max-width:1200px;margin:0 auto;}
+    .footer a{color:white;text-decoration:none;}
+    /* Cart Drawer */
+    .cart-drawer{position:fixed;top:0;right:-100%;width:100%;max-width:450px;height:100%;background:white;z-index:200;box-shadow:-4px 0 20px rgba(0,0,0,0.1);transition:0.3s;padding:20px;overflow-y:auto;}
+    .cart-drawer.open{right:0;}
+    /* Modals */
+    .modal-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.5);z-index:300;align-items:center;justify-content:center;}
+    .modal-card{background:white;width:90%;max-width:500px;border-radius:28px;padding:24px;max-height:85vh;overflow-y:auto;}
+    .modal-close{float:right;font-size:24px;cursor:pointer;}
+    .form-input{width:100%;padding:10px 14px;border:1px solid #ddd;border-radius:40px;margin-bottom:12px;}
+    .hidden{display:none;}
+    .story-section{background:var(--primary-soft);padding:40px 20px;text-align:center;margin:20px;border-radius:32px;}
+    /* Chatbot */
+    .chatbot-btn{position:fixed;bottom:20px;right:20px;background:var(--primary);width:56px;height:56px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:white;font-size:24px;cursor:pointer;box-shadow:0 4px 12px rgba(0,0,0,0.2);z-index:150;}
+    .chat-window{position:fixed;bottom:90px;right:20px;width:340px;background:white;border-radius:20px;box-shadow:0 5px 20px rgba(0,0,0,0.3);display:none;flex-direction:column;z-index:151;overflow:hidden;}
+    .chat-header{background:var(--primary);color:white;padding:10px;display:flex;justify-content:space-between;}
+    .chat-body{height:350px;overflow-y:auto;padding:10px;display:flex;flex-direction:column;gap:8px;background:#f9f9f9;}
+    .chat-message{max-width:80%;padding:8px 12px;border-radius:18px;font-size:13px;}
+    .chat-message.user{background:var(--primary);color:white;align-self:flex-end;}
+    .chat-message.bot{background:#e5e7eb;align-self:flex-start;}
+    .chat-input{display:flex;padding:8px;border-top:1px solid #ddd;}
+    .chat-input input{flex:1;padding:8px;border:1px solid #ddd;border-radius:30px;outline:none;}
+    .chat-input button{background:var(--primary);color:white;border:none;padding:0 16px;border-radius:30px;margin-left:8px;}
+    @media (max-width:640px){.product-actions{flex-direction:column;gap:4px;}}
+  </style>
+</head>
+<body>
+
+<!-- Splash Screen -->
+<div id="splash" class="splash">
+  <img src="https://cdn.shopify.com/s/files/1/0761/6600/4933/files/Gemini_Generated_Image_k0x5bek0x5bek0x5.png?v=1774036946" alt="Logo">
+  <h1>কৃষক বাজার</h1>
+  <p>দালাল ছাড়া সরাসরি মাঠের পণ্য আপনার দুয়ারে</p>
+</div>
+
+<!-- Main App -->
+<div id="app" style="display:none;">
+  <header class="header">
+    <div class="header-container">
+      <div class="logo-area">
+        <img class="logo-img" src="https://cdn.shopify.com/s/files/1/0761/6600/4933/files/Gemini_Generated_Image_k0x5bek0x5bek0x5.png?v=1774036946" alt="Logo">
+        <span class="brand-name">কৃষক বাজার</span>
+      </div>
+      <div class="header-buttons">
+        <button class="btn" id="viewCartBtn"><i class="fas fa-shopping-cart"></i> কার্ট <span id="cartItemCount" class="cart-count">0</span></button>
+        <button class="btn btn-outline" onclick="openCustomerPanel()"><i class="fas fa-user"></i> গ্রাহক</button>
+        <button class="btn btn-outline" onclick="openFarmerLogin()"><i class="fas fa-tractor"></i> কৃষক</button>
+      </div>
+    </div>
+  </header>
+
+  <div class="search-section">
+    <div class="search-bar"><i class="fas fa-search"></i><input type="text" id="searchInput" placeholder="পণ্য খুঁজুন..."></div>
+  </div>
+
+  <div class="hero-carousel">
+    <div class="carousel-slides" id="heroSlider">
+      <div class="carousel-slide" style="background-image:url('https://images.pexels.com/photos/2255935/pexels-photo-2255935.jpeg?auto=compress&w=1200')">
+        <div class="slide-content"><h2>সরাসরি কৃষকের কাছ থেকে</h2><p>টাটকা সবজি, ফল, শাক</p><div class="hero-buttons"><button class="hero-btn hero-btn-primary" onclick="openQuickOrder()">অর্ডার করুন</button></div></div>
+      </div>
+      <div class="carousel-slide" style="background-image:url('https://images.pexels.com/photos/264537/pexels-photo-264537.jpeg?auto=compress&w=1200')">
+        <div class="slide-content"><h2>দালাল ছাড়া বাজার</h2><p>ন্যায্য দাম, নিশ্চিত মান</p></div>
+      </div>
+      <div class="carousel-slide" style="background-image:url('https://images.pexels.com/photos/533360/pexels-photo-533360.jpeg?auto=compress&w=1200')">
+        <div class="slide-content"><h2>রেডি-টু-কুক আইটেম</h2><p>কাটা, ধোয়া, মিক্সড</p></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><h2>🔥 সেরা বিক্রিত পণ্য</h2><a href="#">সব দেখুন</a></div>
+    <div class="product-grid" id="bestSellersGrid"></div>
+  </div>
+
+  <div class="category-tabs" id="categoryTabs">
+    <span class="category-tab active" data-cat="all">সব পণ্য</span>
+    <span class="category-tab" data-cat="vege">সবজি</span>
+    <span class="category-tab" data-cat="fruit">ফল</span>
+    <span class="category-tab" data-cat="leafy">শাক</span>
+    <span class="category-tab" data-cat="fish">মাছ</span>
+    <span class="category-tab" data-cat="ready">রেডি টু কুক</span>
+  </div>
+
+  <div id="allProductsGrid" class="product-grid"></div>
+
+  <div class="section">
+    <div class="section-header"><h2>🌾 আমাদের কৃষক</h2><a href="#">সব দেখুন</a></div>
+    <div id="farmerCarousel" class="farmer-carousel"></div>
+  </div>
+
+  <div class="section">
+    <div class="section-header"><h2>🎥 খেত থেকে লাইভ ভিডিও</h2></div>
+    <div id="videoCarousel" class="video-carousel"></div>
+  </div>
+
+  <div class="story-section">
+    <h2 style="color:var(--primary-dark);">🌱 আমাদের গল্প</h2>
+    <p style="margin-top:12px;">বাংলাদেশ একটি কৃষি প্রধান দেশ। কৃষকরা অক্লান্ত পরিশ্রম করে উৎপাদন করেন খাঁটি ফসল। কিন্তু দালাল চক্রের কারণে তারা ন্যায্য মূল্য পান না। <strong>"কৃষক আমাদের সম্পদ, দালাল নয়"</strong> — আমরা সরাসরি কৃষকের কাছ থেকে পণ্য সংগ্রহ করে গ্রাহকের দোরগোড়ায় পৌঁছে দিচ্ছি। ভেজালমুক্ত, সাশ্রয়ী মূল্যে।</p>
+  </div>
+
+  <footer class="footer">
+    <div class="footer-grid">
+      <div><h4>কৃষক বাজার</h4><p>সরাসরি কৃষকের কাছ থেকে টাটকা পণ্য</p></div>
+      <div><h4>সাপোর্ট</h4><p><i class="fas fa-phone-alt"></i> 01931-355398</p><p><i class="fab fa-whatsapp"></i> +8801931355398</p></div>
+      <div><h4>ডেলিভারি পলিসি</h4><p>ঢাকা সিটি: ৬০ টাকা (৫ কেজি পর্যন্ত)<br>ঢাকার বাইরে: ১২০ টাকা<br>৫ কেজির বেশি: অতিরিক্ত ৩০ টাকা/কেজি</p></div>
+    </div>
+    <div class="copyright" style="text-align:center; margin-top:30px;">© ২০২৫ কৃষক বাজার · একটি বাংলাদেশী উদ্যোগ</div>
+  </footer>
+</div>
+
+<!-- Cart Drawer -->
+<div id="cartDrawer" class="cart-drawer">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;"><h2><i class="fas fa-shopping-cart"></i> শপিং কার্ট</h2><button onclick="toggleCart()" style="background:none; border:none; font-size:24px;">✕</button></div>
+  <div id="cartItemsList"></div>
+  <div style="margin:15px 0; background:#f3f4f6; padding:12px; border-radius:16px;">
+    <label>ডেলিভারি এলাকা:</label>
+    <select id="deliveryArea" style="width:100%; padding:8px; border-radius:40px; border:1px solid #ddd; margin-top:8px;">
+      <option value="dhaka">ঢাকা শহরের ভিতরে</option>
+      <option value="outside">ঢাকার বাইরে</option>
+    </select>
+  </div>
+  <div id="cartTotalDisplay" style="font-weight:bold; margin:15px 0;"></div>
+  <button id="checkoutBtn" class="btn" style="width:100%;">অর্ডার কনফার্ম করুন</button>
+</div>
+
+<!-- Customer Panel Modal -->
+<div id="customerModal" class="modal-overlay">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeModal('customerModal')">✕</button>
+    <div id="customerLoginView">
+      <h3>গ্রাহক লগইন</h3>
+      <input type="tel" id="customerLoginPhone" class="form-input" placeholder="মোবাইল নম্বর">
+      <input type="password" id="customerLoginPassword" class="form-input" placeholder="পাসওয়ার্ড">
+      <button class="btn" style="width:100%;" onclick="customerLogin()">লগইন</button>
+      <p style="margin-top:12px; text-align:center;">নতুন? <a href="#" onclick="showCustomerRegister()">রেজিস্ট্রেশন করুন</a></p>
+    </div>
+    <div id="customerRegisterView" style="display:none;">
+      <h3>গ্রাহক রেজিস্ট্রেশন</h3>
+      <input type="text" id="regName" class="form-input" placeholder="আপনার নাম">
+      <input type="tel" id="regPhone" class="form-input" placeholder="মোবাইল নম্বর">
+      <input type="text" id="regAddress" class="form-input" placeholder="ঠিকানা">
+      <input type="password" id="regPassword" class="form-input" placeholder="পাসওয়ার্ড">
+      <button class="btn" style="width:100%;" onclick="customerRegister()">রেজিস্ট্রেশন</button>
+      <p style="margin-top:12px; text-align:center;">ইতিমধ্যে নিবন্ধিত? <a href="#" onclick="showCustomerLogin()">লগইন করুন</a></p>
+    </div>
+    <div id="customerOrderHistory" style="display:none; margin-top:20px;">
+      <h3>আমার অর্ডার ইতিহাস</h3>
+      <div id="orderHistoryList"></div>
+      <div id="totalSpent" style="margin-top:12px; font-weight:bold;"></div>
+      <button class="btn btn-outline" style="margin-top:12px; width:100%;" onclick="customerLogout()">লগআউট</button>
+    </div>
+  </div>
+</div>
+
+<!-- Farmer Panel Modal -->
+<div id="farmerModal" class="modal-overlay">
+  <div class="modal-card">
+    <button class="modal-close" onclick="closeModal('farmerModal')">✕</button>
+    <div id="farmerLoginView">
+      <h3>কৃষক লগইন</h3>
+      <input type="tel" id="farmerLoginPhone" class="form-input" placeholder="মোবাইল নম্বর">
+      <input type="password" id="farmerLoginPassword" class="form-input" placeholder="পাসওয়ার্ড">
+      <button class="btn" style="width:100%;" onclick="farmerLogin()">লগইন</button>
+      <p style="margin-top:12px; text-align:center;">ডেমো: 01700000001 / 1234</p>
+      <p>নতুন? <a href="#" onclick="showFarmerRegister()">কৃষক রেজিস্ট্রেশন</a></p>
+    </div>
+    <div id="farmerRegisterView" style="display:none;">
+      <h3>কৃষক রেজিস্ট্রেশন</h3>
+      <input type="text" id="farmerRegName" class="form-input" placeholder="আপনার নাম">
+      <input type="tel" id="farmerRegPhone" class="form-input" placeholder="মোবাইল নম্বর">
+      <input type="text" id="farmerRegAddress" class="form-input" placeholder="ঠিকানা">
+      <input type="text" id="farmerRegProductType" class="form-input" placeholder="পণ্যের ধরন (যেমন: সবজি, ফল)">
+      <input type="password" id="farmerRegPassword" class="form-input" placeholder="পাসওয়ার্ড">
+      <button class="btn" style="width:100%;" onclick="farmerRegister()">রেজিস্ট্রেশন</button>
+      <p style="margin-top:12px; text-align:center;">ইতিমধ্যে নিবন্ধিত? <a href="#" onclick="showFarmerLogin()">লগইন করুন</a></p>
+    </div>
+    <div id="farmerDashboard" style="display:none;">
+      <h3 id="farmerWelcome">স্বাগতম</h3>
+      <div style="display:flex; gap:16px; margin:16px 0;"><div><strong>মোট পণ্য:</strong> <span id="farmerTotalProducts">0</span></div><div><strong>মোট বিক্রি:</strong> ৳<span id="farmerTotalSales">0</span></div><div><strong>অর্ডার প্রাপ্ত:</strong> <span id="farmerTotalOrders">0</span></div></div>
+      <button class="btn" style="margin-bottom:12px;" onclick="toggleAddProductForm()">+ নতুন পণ্য যোগ করুন</button>
+      <div id="addProductForm" style="display:none; border:1px solid #ddd; padding:12px; border-radius:16px; margin-bottom:16px;">
+        <input type="file" id="prodImageFile" accept="image/*" style="margin-bottom:8px;">
+        <div id="aiGenStatus" style="font-size:12px; color:green; margin-bottom:8px;"></div>
+        <input type="text" id="prodName" class="form-input" placeholder="পণ্যের নাম (অটো জেনারেট)">
+        <textarea id="prodDesc" class="form-input" rows="2" placeholder="পণ্যের বিবরণ (অটো জেনারেট)"></textarea>
+        <input type="number" id="prodPrice" class="form-input" placeholder="দাম (টাকা)">
+        <select id="prodUnit" class="form-input"><option>কেজি</option><option>পিস</option><option>ডজন</option></select>
+        <select id="prodCat" class="form-input"><option value="vege">সবজি</option><option value="fruit">ফল</option><option value="leafy">শাক</option><option value="fish">মাছ</option><option value="ready">রেডি টু কুক</option></select>
+        <button class="btn" style="width:100%;" onclick="addProduct()">যোগ করুন</button>
+      </div>
+      <h4>📦 আমার পণ্য</h4>
+      <div id="farmerProductsList"></div>
+      <h4>📋 প্রাপ্ত অর্ডার</h4>
+      <div id="farmerOrdersList"></div>
+      <button class="btn btn-outline" style="margin-top:16px; width:100%;" onclick="farmerLogout()">লগআউট</button>
+    </div>
+  </div>
+</div>
+
+<!-- AI Chatbot -->
+<div class="chatbot-btn" onclick="toggleChat()"><img src="https://cdn.shopify.com/s/files/1/0761/6600/4933/files/Gemini_Generated_Image_k0x5bek0x5bek0x5.png?v=1774036946" style="width:40px; height:40px; border-radius:50%; object-fit:cover;"></div>
+<div id="chatWindow" class="chat-window">
+  <div class="chat-header"><span>🤖 রিক্তাজ - কৃষি সহায়ক AI</span><span style="cursor:pointer;" onclick="toggleChat()">✕</span></div>
+  <div class="chat-body" id="chatBody">
+    <div class="chat-message bot">আসসালামু আলাইকুম! আমি রিক্তাজ, আপনার কৃষি সহায়ক। ফসলের রোগ, সার, বাজার মূল্য, রেসিপি ও ফ্যামিলি প্ল্যানিং নিয়ে প্রশ্ন করতে পারেন।</div>
+  </div>
+  <div class="chat-input"><input type="text" id="chatInput" placeholder="আপনার প্রশ্ন..."><button onclick="sendChat()">পাঠান</button></div>
+</div>
+
+<script>
+  // ---------- GEMINI API KEY ----------
+  const GEMINI_API_KEY = "AIzaSyAq4mNr4-mdV7roUCSlqlRJbHxzT8IAFXM";
+  
+  // ---------- INITIAL DATA ----------
+  const initialProducts = [
+    {id:1, title:"আলু", price:35, unit:"কেজি", cat:"vege", farmer:"করিম মিয়া", desc:"মিষ্টি আলু, খেত থেকে সদ্য তোলা", img:"https://cdn.shopify.com/s/files/1/0761/6600/4933/files/wounds_and_cracks-potatoes-411975_1920.jpg?v=1773958204", farmerId:1},
+    {id:2, title:"টমেটো", price:45, unit:"কেজি", cat:"vege", farmer:"রহিমা বেগম", desc:"রসালো, টাটকা, জৈব", img:"https://cdn.shopify.com/s/files/1/0761/6600/4933/files/elementus-tomato-371906_1920.jpg?v=1773958166", farmerId:2},
+    {id:3, title:"পেঁয়াজ", price:55, unit:"কেজি", cat:"vege", farmer:"ফরহাদ আলী", desc:"মিষ্টি পেঁয়াজ", img:"https://cdn.shopify.com/s/files/1/0761/6600/4933/files/hans-red-vegetable-onions-499066_1920.jpg?v=1773958168", farmerId:1},
+    {id:4, title:"রসুন", price:80, unit:"কেজি", cat:"vege", farmer:"ছালাম মিয়া", desc:"খাঁটি রসুন", img:"https://cdn.shopify.com/s/files/1/0761/6600/4933/files/publicdomainpictures-garlic-84691_1920.jpg?v=1773958167", farmerId:3},
+    {id:5, title:"ফুলকপি", price:45, unit:"পিস", cat:"vege", farmer:"সাজ্জাদ হোসেন", desc:"সাদা, তাজা", img:"https://cdn.shopify.com/s/files/1/0761/6600/4933/files/matthiasboeckel-cauliflower-6993499_1920.jpg?v=1773958169", farmerId:4},
+    {id:6, title:"বাঁধাকপি", price:35, unit:"পিস", cat:"vege", farmer:"রহিমা বেগম", desc:"তাজা, খাস্তা", img:"https://cdn.shopify.com/s/files/1/0761/6600/4933/files/pexels-cabbage-1850722_1920.jpg?v=1773958204", farmerId:2},
+    {id:7, title:"বেগুন", price:40, unit:"কেজি", cat:"vege", farmer:"শামীম আহমেদ", desc:"কচি বেগুন", img:"https://images.pexels.com/photos/2325844/pexels-photo-2325844.jpeg?auto=compress&w=200", farmerId:5},
+    {id:8, title:"করলা", price:50, unit:"কেজি", cat:"vege", farmer:"শামীম আহমেদ", desc:"টাটকা করলা", img:"https://images.pexels.com/photos/428354/bitter-gourd-vegetable-food-428354.jpeg?auto=compress&w=200", farmerId:5},
+    {id:9, title:"আম", price:120, unit:"কেজি", cat:"fruit", farmer:"সিরাজ মিয়া", desc:"হিমসাগর", img:"https://cdn.shopify.com/s/files/1/0761/6600/4933/files/swidaalba-mango-8283262_1920.jpg?v=1773958170", farmerId:6},
+    {id:10, title:"কলা", price:80, unit:"ডজন", cat:"fruit", farmer:"মোস্তাফিজ", desc:"চম্পা কলা", img:"https://cdn.shopify.com/s/files/1/0761/6600/4933/files/couleur-bananas-3474872_1920.jpg?v=1773958166", farmerId:7},
+    {id:11, title:"কমলা", price:150, unit:"কেজি", cat:"fruit", farmer:"মিনারা বেগম", desc:"টাটকা কমলা", img:"https://images.pexels.com/photos/894713/orange-fruit-citrus-organic-894713.jpeg?auto=compress&w=200", farmerId:8},
+    {id:12, title:"লিচু", price:200, unit:"কেজি", cat:"fruit", farmer:"মিনারা বেগম", desc:"দেশি লিচু", img:"https://images.pexels.com/photos/156598/lychee-fruit-sweet-tropical-156598.jpeg?auto=compress&w=200", farmerId:8},
+    {id:13, title:"পেয়ারা", price:80, unit:"কেজি", cat:"fruit", farmer:"কামাল", desc:"সবুজ পেয়ারা", img:"https://cdn.shopify.com/s/files/1/0761/6600/4933/files/images_12.jpg?v=1774110110", farmerId:9},
+    {id:14, title:"ইলিশ", price:800, unit:"কেজি", cat:"fish", farmer:"মৎস্য আড়ত", desc:"পদ্মার ইলিশ", img:"https://cdn.shopify.com/s/files/1/0761/6600/4933/files/salo_1665140843.jpg?v=1774110112", farmerId:10},
+    {id:15, title:"শিং মাছ", price:350, unit:"কেজি", cat:"fish", farmer:"আলমগীর হোসেন", desc:"দেশি শিং", img:"https://images.pexels.com/photos/6026712/fresh-fish-market-stall-6026712.jpeg?auto=compress&w=200", farmerId:11},
+    {id:16, title:"মাগুর মাছ", price:400, unit:"কেজি", cat:"fish", farmer:"আলমগীর হোসেন", desc:"কালো মাগুর", img:"https://images.pexels.com/photos/3716335/fish-market-asia-food-3716335.jpeg?auto=compress&w=200", farmerId:11},
+    {id:17, title:"পালং শাক", price:20, unit:"আটি", cat:"leafy", farmer:"আব্দুর রহিম", desc:"নরম পালং", img:"https://cdn.shopify.com/s/files/1/0761/6600/4933/files/P-20231105073350.gif?v=1774038163", farmerId:12},
+    {id:18, title:"লাল শাক", price:25, unit:"আটি", cat:"leafy", farmer:"সামসুল হক", desc:"লাল শাক", img:"https://cdn.shopify.com/s/files/1/0761/6600/4933/files/images.jpg?v=1774038161", farmerId:13},
+    {id:19, title:"মিক্স সবজি প্যাক", price:150, unit:"প্যাক", cat:"ready", farmer:"ফারুক", desc:"কাটা আলু, গাজর, পটল", img:"https://cdn.shopify.com/s/files/1/0761/6600/4933/files/edar-vegetables-861363_1920.jpg", farmerId:14},
+    {id:20, title:"ধোয়া শাক", price:50, unit:"প্যাক", cat:"ready", farmer:"হামিদুল", desc:"৩ বার ধোয়া, কাটা", img:"https://cdn.shopify.com/s/files/1/0761/6600/4933/files/images.jpg?v=1774038161", farmerId:15},
+    {id:21, title:"মিক্স ফল প্যাক", price:250, unit:"প্যাক", cat:"ready", farmer:"ফল বাগান", desc:"আম, কলা, কমলা, লিচু", img:"https://images.pexels.com/photos/105188/pineapple-fruit-crown-sweet-105188.jpeg?auto=compress&w=200", farmerId:8}
+  ];
+  for(let i=22; i<=28; i++) initialProducts.push({id:i, title:`পণ্য ${i}`, price:50, unit:"কেজি", cat:"vege", farmer:"সাধারণ কৃষক", desc:"টাটকা পণ্য", img:"https://images.pexels.com/photos/2255935/pexels-photo-2255935.jpeg?auto=compress&w=200", farmerId:1});
+  
+  const initialFarmers = [
+    {id:1, name:"করিম মিয়া", phone:"01700000001", address:"চট্টগ্রাম", password:"1234", verified:true, avatar:"https://randomuser.me/api/portraits/men/1.jpg", sales:1250, products:"আলু, টমেটো, পেঁয়াজ", rating:4.9},
+    {id:2, name:"রহিমা বেগম", phone:"01700000002", address:"ঢাকা", password:"1234", verified:true, avatar:"https://randomuser.me/api/portraits/women/2.jpg", sales:980, products:"গাজর, বেগুন, ফুলকপি", rating:4.8},
+    {id:3, name:"শামীম আহমেদ", phone:"01700000003", address:"নরসিংদী", password:"1234", verified:true, avatar:"https://randomuser.me/api/portraits/men/3.jpg", sales:450, products:"বেগুন, করলা", rating:4.7}
+  ];
+  const videoUrls = [
+    "https://www.youtube.com/embed/5RE2Gx6643U", "https://www.youtube.com/embed/NRveNHaYbVU", "https://www.youtube.com/embed/Qd1SfGJxPk8",
+    "https://www.youtube.com/embed/8WOd3SfGXt0", "https://www.youtube.com/embed/d-lmVLO9I-M", "https://www.youtube.com/embed/Lp4F9gNm1zk",
+    "https://www.youtube.com/embed/HIHkgZezJus", "https://www.youtube.com/embed/116Yti89CKI", "https://www.youtube.com/embed/fJ9rUzIMcZQ",
+    "https://www.youtube.com/embed/3JZ_D3ELwOQ"
+  ];
+  
+  let products = JSON.parse(localStorage.getItem('krishok_products')) || initialProducts;
+  let farmers = JSON.parse(localStorage.getItem('krishok_farmers')) || initialFarmers;
+  let orders = JSON.parse(localStorage.getItem('krishok_orders')) || [];
+  let cart = JSON.parse(localStorage.getItem('krishok_cart')) || [];
+  let customers = JSON.parse(localStorage.getItem('krishok_customers')) || [];
+  let currentCustomer = JSON.parse(sessionStorage.getItem('currentCustomer')) || null;
+  let currentFarmer = null;
+  let currentFilter = "all";
+  
+  function saveAll(){
+    localStorage.setItem('krishok_products', JSON.stringify(products));
+    localStorage.setItem('krishok_farmers', JSON.stringify(farmers));
+    localStorage.setItem('krishok_orders', JSON.stringify(orders));
+    localStorage.setItem('krishok_cart', JSON.stringify(cart));
+    localStorage.setItem('krishok_customers', JSON.stringify(customers));
+    updateCartUI();
+    renderProductGrid();
+    renderFarmerCarousel();
+  }
+  
+  // Helper: product weight for delivery
+  function getProductWeight(product, qty){
+    if(product.unit === "কেজি") return qty;
+    if(product.unit === "পিস") return qty * 0.5;
+    if(product.unit === "ডজন") return qty * 1.5;
+    return qty * 0.8;
+  }
+  
+  // Cart functions
+  function updateCartUI(){
+    let totalItems = cart.reduce((s,i)=>s+i.qty,0);
+    document.getElementById('cartItemCount').innerText = totalItems;
+    renderCartItems();
+  }
+  function renderCartItems(){
+    let container = document.getElementById('cartItemsList');
+    if(cart.length===0){ container.innerHTML='<p>কার্ট খালি</p>'; document.getElementById('cartTotalDisplay').innerHTML=''; return; }
+    let html='';
+    cart.forEach((item,idx)=>{
+      let itemTotal = item.price * item.qty;
+      html+=`<div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #ddd; padding:10px 0;">
+        <div><strong>${item.title}</strong><br>৳${item.price} x ${item.qty} = ৳${itemTotal}</div>
+        <div><button onclick="updateQty(${idx},-1)" style="background:#e5e7eb; border:none; width:28px; border-radius:50%;">-</button><span style="margin:0 8px;">${item.qty}</span><button onclick="updateQty(${idx},1)" style="background:#e5e7eb; border:none; width:28px; border-radius:50%;">+</button><button onclick="removeFromCart(${idx})" style="margin-left:8px; background:#dc2626; color:white; border:none; width:28px; border-radius:50%;">✕</button></div>
+      </div>`;
+    });
+    container.innerHTML = html;
+    updateDeliveryCharge();
+  }
+  function updateQty(idx,delta){
+    let newQty = cart[idx].qty + delta;
+    if(newQty<=0) cart.splice(idx,1);
+    else cart[idx].qty = newQty;
+    saveAll();
+    renderCartItems();
+  }
+  function removeFromCart(idx){ cart.splice(idx,1); saveAll(); renderCartItems(); }
+  function updateDeliveryCharge(){
+    let totalWeight = 0;
+    cart.forEach(item=>{
+      let product = products.find(p=>p.id===item.id);
+      if(product) totalWeight += getProductWeight(product, item.qty);
+    });
+    let area = document.getElementById('deliveryArea').value;
+    let base = (area==='dhaka') ? 60 : 120;
+    let extra = totalWeight > 5 ? (totalWeight-5)*30 : 0;
+    let delivery = base + extra;
+    let subtotal = cart.reduce((s,i)=>s + i.price*i.qty,0);
+    let grand = subtotal + delivery;
+    document.getElementById('cartTotalDisplay').innerHTML = `<div>পণ্যের মূল্য: ৳${subtotal}</div><div>ডেলিভারি চার্জ: ৳${delivery}</div><div style="font-weight:bold;">মোট: ৳${grand}</div>`;
+  }
+  function checkout(){
+    if(cart.length===0){ alert("কার্ট খালি"); return; }
+    if(!currentCustomer){ alert("অর্ডার করতে লগইন করুন"); openCustomerPanel(); return; }
+    let subtotal = cart.reduce((s,i)=>s+i.price*i.qty,0);
+    let totalWeight = cart.reduce((s,i)=>{
+      let p = products.find(pr=>pr.id===i.id);
+      return s + (p ? getProductWeight(p, i.qty) : 0);
+    },0);
+    let area = document.getElementById('deliveryArea').value;
+    let base = area==='dhaka'?60:120;
+    let extra = totalWeight>5 ? (totalWeight-5)*30 : 0;
+    let delivery = base+extra;
+    let grand = subtotal+delivery;
+    let orderItems = cart.map(item=>({
+      id: Date.now()+Math.random(),
+      productName: item.title,
+      qty: item.qty,
+      unit: item.unit,
+      total: item.price*item.qty,
+      farmerName: item.farmer,
+      customerName: currentCustomer.name,
+      customerPhone: currentCustomer.phone,
+      customerAddress: currentCustomer.address,
+      deliveryCharge: delivery,
+      grandTotal: grand,
+      date: new Date().toISOString()
+    }));
+    orders.push(...orderItems);
+    saveAll();
+    cart = [];
+    saveAll();
+    toggleCart();
+    alert(`অর্ডার সম্পন্ন! মোট: ৳${grand}\nডেলিভারি চার্জ: ৳${delivery}`);
+  }
+  function toggleCart(){ document.getElementById('cartDrawer').classList.toggle('open'); }
+  
+  // Product rendering
+  function renderProductGrid(){
+    let filtered = products.filter(p=> currentFilter==='all' || p.cat===currentFilter);
+    let searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    if(searchTerm) filtered = filtered.filter(p=> p.title.toLowerCase().includes(searchTerm));
+    let bestSellers = filtered.slice(0,6);
+    document.getElementById('bestSellersGrid').innerHTML = bestSellers.map(p=>renderProductCard(p)).join('');
+    document.getElementById('allProductsGrid').innerHTML = filtered.map(p=>renderProductCard(p)).join('');
+  }
+  function renderProductCard(p){
+    return `<div class="product-card">
+      <div class="product-img" style="background-image:url('${p.img}')"><div class="product-badge">টাটকা</div></div>
+      <div class="product-info">
+        <div class="product-title">${p.title}</div>
+        <div class="product-price">৳ ${p.price}<small>/${p.unit}</small></div>
+        <div class="product-actions">
+          <button class="cart-btn" onclick="addToCart(${p.id})"><i class="fas fa-cart-plus"></i> কার্টে</button>
+          <button class="whatsapp-btn" onclick="whatsappOrder(${p.id})"><i class="fab fa-whatsapp"></i> অর্ডার</button>
+        </div>
+      </div>
+    </div>`;
+  }
+  function addToCart(id){
+    let p = products.find(p=>p.id===id);
+    let exist = cart.find(i=>i.id===id);
+    if(exist) exist.qty++;
+    else cart.push({id:p.id, title:p.title, price:p.price, unit:p.unit, farmer:p.farmer, qty:1});
+    saveAll();
+    alert(`${p.title} কার্টে যোগ হয়েছে`);
+  }
+  function whatsappOrder(id){
+    let p = products.find(p=>p.id===id);
+    let qty = prompt(`পরিমাণ (${p.unit}):`,'1');
+    if(!qty) return;
+    let name = currentCustomer ? currentCustomer.name : prompt("আপনার নাম:");
+    let phone = currentCustomer ? currentCustomer.phone : prompt("ফোন নম্বর:");
+    let address = currentCustomer ? currentCustomer.address : prompt("ঠিকানা:");
+    if(!name||!phone||!address) return;
+    let total = p.price * parseFloat(qty);
+    let msg = `অর্ডার: ${p.title}\nপরিমাণ: ${qty} ${p.unit}\nমোট: ৳${total}\nনাম: ${name}\nফোন: ${phone}\nঠিকানা: ${address}`;
+    window.open(`https://wa.me/8801931355398?text=${encodeURIComponent(msg)}`, '_blank');
+    orders.push({id:Date.now(), productName:p.title, qty:parseFloat(qty), unit:p.unit, total:total, farmerName:p.farmer, customerName:name, customerPhone:phone, customerAddress:address, deliveryCharge:0, grandTotal:total, date:new Date().toISOString()});
+    saveAll();
+    alert("অর্ডার প্রেরিত হয়েছে!");
+  }
+  function openQuickOrder(){
+    if(!currentCustomer){ alert("অর্ডার করতে লগইন করুন"); openCustomerPanel(); return; }
+    let name = currentCustomer.name, phone = currentCustomer.phone, address = currentCustomer.address;
+    let msg = `অর্ডার: সবজি প্যাক (হিরো স্লাইডার)\nমোট: ২০০ টাকা\nনাম: ${name}\nফোন: ${phone}\nঠিকানা: ${address}`;
+    window.open(`https://wa.me/8801931355398?text=${encodeURIComponent(msg)}`, '_blank');
+    orders.push({id:Date.now(), productName:"সবজি প্যাক", qty:1, unit:"প্যাক", total:200, farmerName:"কৃষক বাজার", customerName:name, customerPhone:phone, customerAddress:address, deliveryCharge:0, grandTotal:200, date:new Date().toISOString()});
+    saveAll();
+    alert("অর্ডার সম্পন্ন!");
+  }
+  
+  // Customer panel
+  function openCustomerPanel(){ document.getElementById('customerModal').style.display='flex'; showCustomerLogin(); }
+  function showCustomerLogin(){ document.getElementById('customerLoginView').style.display='block'; document.getElementById('customerRegisterView').style.display='none'; document.getElementById('customerOrderHistory').style.display='none'; }
+  function showCustomerRegister(){ document.getElementById('customerLoginView').style.display='none'; document.getElementById('customerRegisterView').style.display='block'; document.getElementById('customerOrderHistory').style.display='none'; }
+  function customerRegister(){
+    let name = document.getElementById('regName').value;
+    let phone = document.getElementById('regPhone').value;
+    let address = document.getElementById('regAddress').value;
+    let password = document.getElementById('regPassword').value;
+    if(!name||!phone||!address||!password){ alert("সব তথ্য দিন"); return; }
+    if(customers.find(c=>c.phone===phone)){ alert("এই ফোন নম্বর দিয়ে আগে রেজিস্ট্রেশন আছে"); return; }
+    customers.push({name, phone, address, password});
+    saveAll();
+    alert("রেজিস্ট্রেশন সফল! এখন লগইন করুন");
+    showCustomerLogin();
+  }
+  function customerLogin(){
+    let phone = document.getElementById('customerLoginPhone').value;
+    let password = document.getElementById('customerLoginPassword').value;
+    let cust = customers.find(c=>c.phone===phone && c.password===password);
+    if(!cust){ alert("মোবাইল বা পাসওয়ার্ড ভুল"); return; }
+    currentCustomer = cust;
+    sessionStorage.setItem('currentCustomer', JSON.stringify(cust));
+    showCustomerOrderHistory();
+  }
+  function showCustomerOrderHistory(){
+    document.getElementById('customerLoginView').style.display='none';
+    document.getElementById('customerRegisterView').style.display='none';
+    document.getElementById('customerOrderHistory').style.display='block';
+    let myOrders = orders.filter(o=>o.customerPhone === currentCustomer.phone);
+    let html = '';
+    let total = 0;
+    myOrders.forEach(o=>{
+      total += (o.grandTotal || o.total);
+      html += `<div style="border-bottom:1px solid #ddd; padding:8px;"><strong>${o.productName}</strong> x${o.qty} ${o.unit}<br>মোট: ৳${o.total}<br>তারিখ: ${new Date(o.date).toLocaleDateString()}</div>`;
+    });
+    document.getElementById('orderHistoryList').innerHTML = html || '<p>কোন অর্ডার নেই</p>';
+    document.getElementById('totalSpent').innerHTML = `<strong>মোট খরচ: ৳${total}</strong>`;
+  }
+  function customerLogout(){ currentCustomer=null; sessionStorage.removeItem('currentCustomer'); closeModal('customerModal'); alert("লগআউট সম্পন্ন"); }
+  
+  // Farmer panel
+  function openFarmerLogin(){ document.getElementById('farmerModal').style.display='flex'; showFarmerLogin(); }
+  function showFarmerLogin(){ document.getElementById('farmerLoginView').style.display='block'; document.getElementById('farmerRegisterView').style.display='none'; document.getElementById('farmerDashboard').style.display='none'; }
+  function showFarmerRegister(){ document.getElementById('farmerLoginView').style.display='none'; document.getElementById('farmerRegisterView').style.display='block'; }
+  function farmerLogin(){
+    let phone = document.getElementById('farmerLoginPhone').value;
+    let pwd = document.getElementById('farmerLoginPassword').value;
+    let f = farmers.find(f=>f.phone===phone && f.password===pwd);
+    if(f){ currentFarmer = f; document.getElementById('farmerLoginView').style.display='none'; document.getElementById('farmerDashboard').style.display='block'; document.getElementById('farmerWelcome').innerText = `স্বাগতম, ${f.name}`; loadFarmerDashboard(); }
+    else alert("মোবাইল বা পাসওয়ার্ড ভুল");
+  }
+  function farmerRegister(){
+    let name = document.getElementById('farmerRegName').value;
+    let phone = document.getElementById('farmerRegPhone').value;
+    let address = document.getElementById('farmerRegAddress').value;
+    let productType = document.getElementById('farmerRegProductType').value;
+    let password = document.getElementById('farmerRegPassword').value;
+    if(!name||!phone||!address||!productType||!password){ alert("সব তথ্য দিন"); return; }
+    if(farmers.find(f=>f.phone===phone)){ alert("এই ফোন নম্বর দিয়ে কৃষক রেজিস্ট্রেশন আছে"); return; }
+    let newId = farmers.length+1;
+    farmers.push({id:newId, name, phone, address, password, verified:false, avatar:"https://randomuser.me/api/portraits/"+(name.includes('া')||name.includes('ী')?'women':'men')+"/"+newId+".jpg", sales:0, products:productType, rating:0});
+    saveAll();
+    alert("রেজিস্ট্রেশন সফল! অ্যাডমিন অনুমোদনের পর লগইন করতে পারবেন (ডেমোতে অনুমোদন স্বয়ংক্রিয়)");
+    showFarmerLogin();
+  }
+  function loadFarmerDashboard(){
+    let myProducts = products.filter(p=>p.farmerId===currentFarmer.id);
+    let myOrders = orders.filter(o=>o.farmerName===currentFarmer.name);
+    let totalSales = myOrders.reduce((s,o)=>s+(o.total||0),0);
+    document.getElementById('farmerTotalProducts').innerText = myProducts.length;
+    document.getElementById('farmerTotalSales').innerText = totalSales;
+    document.getElementById('farmerTotalOrders').innerText = myOrders.length;
+    let prodHtml = '';
+    myProducts.forEach(p=>{
+      prodHtml += `<div style="border-bottom:1px solid #ddd; padding:8px 0; display:flex; justify-content:space-between;"><div><strong>${p.title}</strong><br>৳${p.price}/${p.unit}<br><small>${p.desc}</small></div><button onclick="deleteProduct(${p.id})" style="background:#dc2626; color:white; border:none; border-radius:30px; padding:4px 12px;">ডিলিট</button></div>`;
+    });
+    document.getElementById('farmerProductsList').innerHTML = prodHtml || '<p>কোন পণ্য নেই</p>';
+    let orderHtml = '';
+    myOrders.forEach(o=>{
+      orderHtml += `<div style="border-bottom:1px solid #ddd; padding:8px 0;"><strong>${o.productName}</strong> x${o.qty} ${o.unit}<br>মোট: ৳${o.total}<br>👤 ${o.customerName}, 📞 ${o.customerPhone}<br>📍 ${o.customerAddress}</div>`;
+    });
+    document.getElementById('farmerOrdersList').innerHTML = orderHtml || '<p>কোন অর্ডার নেই</p>';
+  }
+  function deleteProduct(id){
+    if(confirm('পণ্য ডিলিট করবেন?')){
+      products = products.filter(p=>p.id!==id);
+      saveAll();
+      loadFarmerDashboard();
+    }
+  }
+  function toggleAddProductForm(){ let form = document.getElementById('addProductForm'); form.style.display = form.style.display==='none'?'block':'none'; }
+  
+  // Auto-generate title & description from image using Gemini Vision
+  async function generateFromImage(file){
+    const statusDiv = document.getElementById('aiGenStatus');
+    statusDiv.innerText = 'AI বিশ্লেষণ করছে, দয়া করে অপেক্ষা করুন...';
+    statusDiv.style.color = 'blue';
+    const base64 = await new Promise((resolve) => {
+      const reader = new FileReader();
+      reader.onload = (e) => resolve(e.target.result.split(',')[1]);
+      reader.readAsDataURL(file);
+    });
+    try {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          contents: [{
+            parts: [
+              { text: "You are an agricultural expert. Look at this product image and generate a short product title (in Bengali) and a detailed description (in Bengali) about its taste, usage, benefits, and ideal for which cooking. Format: TITLE: ...\nDESCRIPTION: ..." },
+              { inline_data: { mime_type: file.type, data: base64 } }
+            ]
+          }]
+        })
+      });
+      const data = await response.json();
+      const text = data.candidates[0].content.parts[0].text;
+      const titleMatch = text.match(/TITLE:\s*(.+)/i);
+      const descMatch = text.match(/DESCRIPTION:\s*(.+)/i);
+      let title = titleMatch ? titleMatch[1].trim() : "তাজা পণ্য";
+      let desc = descMatch ? descMatch[1].trim() : "খেত থেকে সদ্য তোলা উচ্চ মানের পণ্য।";
+      document.getElementById('prodName').value = title;
+      document.getElementById('prodDesc').value = desc;
+      statusDiv.innerText = '✅ নাম ও বিবরণ অটো জেনারেট সম্পন্ন!';
+      statusDiv.style.color = 'green';
+    } catch(e){
+      console.error(e);
+      statusDiv.innerText = 'AI জেনারেট ব্যর্থ, ম্যানুয়ালি দিন';
+      statusDiv.style.color = 'red';
+    }
+  }
+  document.getElementById('prodImageFile').addEventListener('change', function(e){
+    if(e.target.files.length) generateFromImage(e.target.files[0]);
+  });
+  
+  function addProduct(){
+    let name = document.getElementById('prodName').value;
+    let price = parseInt(document.getElementById('prodPrice').value);
+    let unit = document.getElementById('prodUnit').value;
+    let cat = document.getElementById('prodCat').value;
+    let desc = document.getElementById('prodDesc').value;
+    if(!name || !price){ alert("নাম ও দাম দিন"); return; }
+    let file = document.getElementById('prodImageFile').files[0];
+    let img = 'https://via.placeholder.com/200';
+    let finish = (imgUrl)=>{
+      let newId = Date.now();
+      products.push({id:newId, title:name, price:price, unit:unit, cat:cat, farmer:currentFarmer.name, desc:desc, img:imgUrl, farmerId:currentFarmer.id});
+      saveAll();
+      loadFarmerDashboard();
+      alert("পণ্য যোগ হয়েছে!");
+      document.getElementById('addProductForm').style.display='none';
+      document.getElementById('prodImageFile').value = '';
+      document.getElementById('prodName').value = '';
+      document.getElementById('prodDesc').value = '';
+      document.getElementById('prodPrice').value = '';
+    };
+    if(file){
+      let reader = new FileReader();
+      reader.onload = (e)=> finish(e.target.result);
+      reader.readAsDataURL(file);
+    } else finish(img);
+  }
+  function farmerLogout(){ currentFarmer=null; closeModal('farmerModal'); alert("লগআউট সম্পন্ন"); }
+  
+  // Farmer carousel
+  function renderFarmerCarousel(){
+    let html = '';
+    farmers.forEach(f=>{
+      html += `<div class="farmer-card ${f.verified ? 'verified' : ''}">
+        <div class="farmer-avatar" style="background-image:url('${f.avatar}')"></div>
+        <div class="farmer-name">${f.name} ${f.verified ? '<i class="fas fa-check-circle" style="color:#2e7d32;"></i>' : ''}</div>
+        <div class="farmer-rating"><i class="fas fa-star" style="color:#fbbf24;"></i> ${f.rating}</div>
+        <div>বিক্রি: ${f.sales}+</div>
+        <div style="font-size:12px;">📦 ${f.products}</div>
+        <div>📍 ${f.address}</div>
+        <button class="farmer-contact" onclick="window.open('https://wa.me/8801931355398?text=আমি ${f.name} কৃষকের কাছ থেকে পণ্য নিতে চাই।','_blank')"><i class="fab fa-whatsapp"></i> যোগাযোগ</button>
+      </div>`;
+    });
+    document.getElementById('farmerCarousel').innerHTML = html;
+  }
+  function renderVideoCarousel(){
+    let html = '';
+    videoUrls.forEach(url=>{
+      html += `<div class="video-card"><iframe src="${url}" frameborder="0" allowfullscreen></iframe></div>`;
+    });
+    document.getElementById('videoCarousel').innerHTML = html;
+  }
+  
+  // AI Chatbot (Gemini)
+  async function sendChat(){
+    let input = document.getElementById('chatInput').value;
+    if(!input) return;
+    let chatBody = document.getElementById('chatBody');
+    chatBody.innerHTML += `<div class="chat-message user">${input}</div>`;
+    document.getElementById('chatInput').value='';
+    let loader = document.createElement('div'); loader.className='chat-message bot'; loader.innerText='লিখছি...'; chatBody.appendChild(loader);
+    chatBody.scrollTop = chatBody.scrollHeight;
+    try {
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          system_instruction: { parts: [{ text: "তুমি একজন দক্ষ কৃষি বিশেষজ্ঞ ও রান্না পরামর্শক। তোমার নাম 'রিক্তাজ'। তুমি বাংলায় উত্তর দেবে। পণ্যের ব্যবহার, পুষ্টিগুণ, রেসিপি, চাষাবাদের পরামর্শ, ফ্যামিলি প্ল্যানিং (কত সদস্যের জন্য কত কেজি সবজি লাগবে) ইত্যাদি বিষয়ে সাহায্য করবে। সংক্ষিপ্ত ও পয়েন্ট আকারে উত্তর দাও।" }] },
+          contents: [{ parts: [{ text: input }] }]
+        })
+      });
+      const data = await response.json();
+      const reply = data.candidates[0].content.parts[0].text;
+      loader.remove();
+      chatBody.innerHTML += `<div class="chat-message bot">${reply}</div>`;
+    } catch(e){
+      loader.remove();
+      chatBody.innerHTML += `<div class="chat-message bot">দুঃখিত, সার্ভার সমস্যা। পরে আবার চেষ্টা করুন।</div>`;
+    }
+    chatBody.scrollTop = chatBody.scrollHeight;
+  }
+  function toggleChat(){ let win = document.getElementById('chatWindow'); win.style.display = win.style.display==='flex' ? 'none' : 'flex'; }
+  
+  // Event listeners & initialization
+  document.getElementById('searchInput').addEventListener('input', ()=>renderProductGrid());
+  document.querySelectorAll('.category-tab').forEach(tab=>{
+    tab.addEventListener('click', function(){
+      document.querySelectorAll('.category-tab').forEach(t=>t.classList.remove('active'));
+      this.classList.add('active');
+      currentFilter = this.dataset.cat;
+      renderProductGrid();
+    });
+  });
+  document.getElementById('checkoutBtn').addEventListener('click', checkout);
+  document.getElementById('viewCartBtn').addEventListener('click', toggleCart);
+  document.getElementById('deliveryArea').addEventListener('change', ()=>updateDeliveryCharge());
+  
+  // Hero slider
+  let heroIndex = 0;
+  const heroSlides = document.querySelectorAll('.carousel-slide');
+  const heroSlider = document.getElementById('heroSlider');
+  setInterval(()=>{
+    heroIndex = (heroIndex+1) % heroSlides.length;
+    heroSlider.style.transform = `translateX(-${heroIndex*100}%)`;
+  }, 5000);
+  
+  function closeModal(id){ document.getElementById(id).style.display='none'; }
+  
+  // Splash screen
+  setTimeout(()=>{
+    document.getElementById('splash').style.opacity='0';
+    setTimeout(()=>{
+      document.getElementById('splash').style.display='none';
+      document.getElementById('app').style.display='block';
+    }, 500);
+  }, 3000);
+  
+  renderProductGrid();
+  renderFarmerCarousel();
+  renderVideoCarousel();
+  updateCartUI();
+  window.addEventListener('load', ()=>window.scrollTo(0,0));
+</script>
+</body>
+</html>

@@ -1,0 +1,325 @@
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import React, {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from "react";
+
+import {
+  CartItem,
+  Customer,
+  Farmer,
+  INITIAL_FARMERS,
+  INITIAL_PRODUCTS,
+  Order,
+  Product,
+} from "@/constants/data";
+
+interface AppContextType {
+  products: Product[];
+  farmers: Farmer[];
+  orders: Order[];
+  cart: CartItem[];
+  customers: Customer[];
+  currentCustomer: Customer | null;
+  currentFarmer: Farmer | null;
+  searchQuery: string;
+  activeCategory: string;
+  setSearchQuery: (q: string) => void;
+  setActiveCategory: (c: string) => void;
+  addToCart: (product: Product) => void;
+  removeFromCart: (id: number) => void;
+  updateQty: (id: number, delta: number) => void;
+  clearCart: () => void;
+  checkout: (deliveryArea: "dhaka" | "outside") => { success: boolean; grandTotal: number; deliveryCharge: number };
+  cartCount: number;
+  customerRegister: (name: string, phone: string, address: string, password: string) => { success: boolean; error?: string };
+  customerLogin: (phone: string, password: string) => { success: boolean; error?: string };
+  customerLogout: () => void;
+  farmerRegister: (name: string, phone: string, address: string, productType: string, password: string) => { success: boolean; error?: string };
+  farmerLogin: (phone: string, password: string) => { success: boolean; error?: string };
+  farmerLogout: () => void;
+  addProduct: (product: Omit<Product, "id">) => void;
+  deleteProduct: (id: number) => void;
+  getFarmerProducts: (farmerId: number) => Product[];
+  getFarmerOrders: (farmerId: number) => Order[];
+  getCustomerOrders: (customerId: string) => Order[];
+}
+
+const AppContext = createContext<AppContextType | null>(null);
+
+const KEYS = {
+  products: "krishok_products",
+  farmers: "krishok_farmers",
+  orders: "krishok_orders",
+  cart: "krishok_cart",
+  customers: "krishok_customers",
+  currentCustomer: "krishok_current_customer",
+};
+
+export function AppProvider({ children }: { children: React.ReactNode }) {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [farmers, setFarmers] = useState<Farmer[]>([]);
+  const [orders, setOrders] = useState<Order[]>([]);
+  const [cart, setCart] = useState<CartItem[]>([]);
+  const [customers, setCustomers] = useState<Customer[]>([]);
+  const [currentCustomer, setCurrentCustomer] = useState<Customer | null>(null);
+  const [currentFarmer, setCurrentFarmer] = useState<Farmer | null>(null);
+  const [searchQuery, setSearchQuery] = useState("");
+  const [activeCategory, setActiveCategory] = useState("all");
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const [p, f, o, c, cu, cc] = await Promise.all([
+          AsyncStorage.getItem(KEYS.products),
+          AsyncStorage.getItem(KEYS.farmers),
+          AsyncStorage.getItem(KEYS.orders),
+          AsyncStorage.getItem(KEYS.cart),
+          AsyncStorage.getItem(KEYS.customers),
+          AsyncStorage.getItem(KEYS.currentCustomer),
+        ]);
+        setProducts(p ? JSON.parse(p) : INITIAL_PRODUCTS);
+        setFarmers(f ? JSON.parse(f) : INITIAL_FARMERS);
+        setOrders(o ? JSON.parse(o) : []);
+        setCart(c ? JSON.parse(c) : []);
+        setCustomers(cu ? JSON.parse(cu) : []);
+        setCurrentCustomer(cc ? JSON.parse(cc) : null);
+      } catch {
+        setProducts(INITIAL_PRODUCTS);
+        setFarmers(INITIAL_FARMERS);
+      }
+      setLoaded(true);
+    })();
+  }, []);
+
+  const save = useCallback(async (key: string, value: unknown) => {
+    await AsyncStorage.setItem(key, JSON.stringify(value));
+  }, []);
+
+  const addToCart = useCallback((product: Product) => {
+    setCart((prev) => {
+      const existing = prev.find((i) => i.id === product.id);
+      let next: CartItem[];
+      if (existing) {
+        next = prev.map((i) => (i.id === product.id ? { ...i, qty: i.qty + 1 } : i));
+      } else {
+        next = [...prev, { id: product.id, title: product.title, price: product.price, unit: product.unit, farmer: product.farmer, qty: 1, img: product.img }];
+      }
+      save(KEYS.cart, next);
+      return next;
+    });
+  }, [save]);
+
+  const removeFromCart = useCallback((id: number) => {
+    setCart((prev) => {
+      const next = prev.filter((i) => i.id !== id);
+      save(KEYS.cart, next);
+      return next;
+    });
+  }, [save]);
+
+  const updateQty = useCallback((id: number, delta: number) => {
+    setCart((prev) => {
+      const item = prev.find((i) => i.id === id);
+      if (!item) return prev;
+      const newQty = item.qty + delta;
+      let next: CartItem[];
+      if (newQty <= 0) {
+        next = prev.filter((i) => i.id !== id);
+      } else {
+        next = prev.map((i) => (i.id === id ? { ...i, qty: newQty } : i));
+      }
+      save(KEYS.cart, next);
+      return next;
+    });
+  }, [save]);
+
+  const clearCart = useCallback(() => {
+    setCart([]);
+    save(KEYS.cart, []);
+  }, [save]);
+
+  const getDeliveryWeight = (cartItems: CartItem[], allProducts: Product[]) => {
+    let total = 0;
+    cartItems.forEach((item) => {
+      const p = allProducts.find((pr) => pr.id === item.id);
+      if (!p) return;
+      if (p.unit === "কেজি") total += item.qty;
+      else if (p.unit === "পিস") total += item.qty * 0.5;
+      else if (p.unit === "ডজন") total += item.qty * 1.5;
+      else total += item.qty * 0.8;
+    });
+    return total;
+  };
+
+  const checkout = useCallback((deliveryArea: "dhaka" | "outside") => {
+    if (cart.length === 0) return { success: false, grandTotal: 0, deliveryCharge: 0 };
+    if (!currentCustomer) return { success: false, grandTotal: 0, deliveryCharge: 0 };
+
+    const subtotal = cart.reduce((s, i) => s + i.price * i.qty, 0);
+    const weight = getDeliveryWeight(cart, products);
+    const base = deliveryArea === "dhaka" ? 60 : 120;
+    const extra = weight > 5 ? (weight - 5) * 30 : 0;
+    const deliveryCharge = base + extra;
+    const grandTotal = subtotal + deliveryCharge;
+
+    const newOrders: Order[] = cart.map((item) => {
+      const p = products.find((pr) => pr.id === item.id);
+      return {
+        id: Date.now().toString() + Math.random().toString(36).substr(2, 9),
+        productName: item.title,
+        qty: item.qty,
+        unit: item.unit,
+        total: item.price * item.qty,
+        farmerName: item.farmer,
+        farmerId: p?.farmerId,
+        customerId: currentCustomer.id,
+        customerName: currentCustomer.name,
+        customerPhone: currentCustomer.phone,
+        customerAddress: currentCustomer.address,
+        deliveryCharge,
+        grandTotal,
+        date: new Date().toISOString(),
+      };
+    });
+
+    setOrders((prev) => {
+      const next = [...prev, ...newOrders];
+      save(KEYS.orders, next);
+      return next;
+    });
+    clearCart();
+    return { success: true, grandTotal, deliveryCharge };
+  }, [cart, currentCustomer, products, clearCart, save]);
+
+  const customerRegister = useCallback((name: string, phone: string, address: string, password: string) => {
+    if (customers.find((c) => c.phone === phone)) {
+      return { success: false, error: "এই নম্বরে ইতিমধ্যে অ্যাকাউন্ট আছে" };
+    }
+    const newCustomer: Customer = {
+      id: Date.now().toString(),
+      name,
+      phone,
+      address,
+      password,
+    };
+    const next = [...customers, newCustomer];
+    setCustomers(next);
+    save(KEYS.customers, next);
+    setCurrentCustomer(newCustomer);
+    save(KEYS.currentCustomer, newCustomer);
+    return { success: true };
+  }, [customers, save]);
+
+  const customerLogin = useCallback((phone: string, password: string) => {
+    const customer = customers.find((c) => c.phone === phone && c.password === password);
+    if (!customer) return { success: false, error: "ভুল নম্বর বা পাসওয়ার্ড" };
+    setCurrentCustomer(customer);
+    save(KEYS.currentCustomer, customer);
+    return { success: true };
+  }, [customers, save]);
+
+  const customerLogout = useCallback(() => {
+    setCurrentCustomer(null);
+    AsyncStorage.removeItem(KEYS.currentCustomer);
+  }, []);
+
+  const farmerRegister = useCallback((name: string, phone: string, address: string, productType: string, password: string) => {
+    if (farmers.find((f) => f.phone === phone)) {
+      return { success: false, error: "এই নম্বরে ইতিমধ্যে কৃষক অ্যাকাউন্ট আছে" };
+    }
+    const newFarmer: Farmer = {
+      id: Date.now(),
+      name,
+      phone,
+      address,
+      password,
+      verified: false,
+      avatar: `https://randomuser.me/api/portraits/${Math.random() > 0.5 ? "men" : "women"}/${Math.floor(Math.random() * 50) + 10}.jpg`,
+      sales: 0,
+      products: productType,
+      rating: 4.5,
+      gender: "male",
+    };
+    const next = [...farmers, newFarmer];
+    setFarmers(next);
+    save(KEYS.farmers, next);
+    setCurrentFarmer(newFarmer);
+    return { success: true };
+  }, [farmers, save]);
+
+  const farmerLogin = useCallback((phone: string, password: string) => {
+    const farmer = farmers.find((f) => f.phone === phone && f.password === password);
+    if (!farmer) return { success: false, error: "ভুল নম্বর বা পাসওয়ার্ড" };
+    setCurrentFarmer(farmer);
+    return { success: true };
+  }, [farmers]);
+
+  const farmerLogout = useCallback(() => {
+    setCurrentFarmer(null);
+  }, []);
+
+  const addProduct = useCallback((product: Omit<Product, "id">) => {
+    const newProduct: Product = {
+      ...product,
+      id: Date.now(),
+    };
+    setProducts((prev) => {
+      const next = [...prev, newProduct];
+      save(KEYS.products, next);
+      return next;
+    });
+  }, [save]);
+
+  const deleteProduct = useCallback((id: number) => {
+    setProducts((prev) => {
+      const next = prev.filter((p) => p.id !== id);
+      save(KEYS.products, next);
+      return next;
+    });
+  }, [save]);
+
+  const getFarmerProducts = useCallback((farmerId: number) => {
+    return products.filter((p) => p.farmerId === farmerId);
+  }, [products]);
+
+  const getFarmerOrders = useCallback((farmerId: number) => {
+    const farmerProducts = products.filter((p) => p.farmerId === farmerId).map((p) => p.title);
+    return orders.filter((o) => farmerProducts.includes(o.productName) || o.farmerId === farmerId);
+  }, [orders, products]);
+
+  const getCustomerOrders = useCallback((customerId: string) => {
+    return orders.filter((o) => o.customerId === customerId);
+  }, [orders]);
+
+  const cartCount = cart.reduce((s, i) => s + i.qty, 0);
+
+  if (!loaded) return null;
+
+  return (
+    <AppContext.Provider value={{
+      products, farmers, orders, cart, customers,
+      currentCustomer, currentFarmer,
+      searchQuery, activeCategory,
+      setSearchQuery, setActiveCategory,
+      addToCart, removeFromCart, updateQty, clearCart, checkout,
+      cartCount,
+      customerRegister, customerLogin, customerLogout,
+      farmerRegister, farmerLogin, farmerLogout,
+      addProduct, deleteProduct,
+      getFarmerProducts, getFarmerOrders, getCustomerOrders,
+    }}>
+      {children}
+    </AppContext.Provider>
+  );
+}
+
+export function useApp() {
+  const ctx = useContext(AppContext);
+  if (!ctx) throw new Error("useApp must be used within AppProvider");
+  return ctx;
+}

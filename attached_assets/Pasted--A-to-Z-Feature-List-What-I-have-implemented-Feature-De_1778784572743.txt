@@ -1,0 +1,52 @@
+ A-to-Z Feature List (What I have implemented)
+#	Feature	Description
+1	Hero Carousel	3 slides with original images, auto‑slide + manual arrows
+2	Search & Category Filter	Search by product name; filter by সবজি, ফল, শাক, মাছ, রেডি টু কুক
+3	Product Grid	26+ real Bangladeshi products (images, prices, units, farmer names)
+4	Add to Cart & Order (WhatsApp)	Each product has “কার্টে” and “অর্ডার” button. WhatsApp sends product details + customer info
+5	Shopping Cart	Add/remove, quantity adjust, delivery charge (Dhaka inside/outside + extra >5kg), checkout saves order
+6	Customer Panel	Register/login with phone & password. Auto‑fills name/phone/address during order. View order history + total spent
+7	Farmer Panel	Register/login (demo: 01700000001 / 1234). Dashboard: total products, total sales, orders received (customer name, phone, address)
+8	Farmer Product Management	Add product with image upload. System auto‑generates product title & description using Gemini Vision API (or falls back to smart defaults). Delete products
+9	Farmer Carousel (Homepage)	Shows farmers with male/female avatars, rating, sales count, products they sell, verified badge. WhatsApp contact button
+10	Video Carousel	10 YouTube farming shorts (provided links)
+11	Ready‑to‑Cook Section	Each item has direct WhatsApp order with quantity prompt. Custom order form for kg/pieces
+12	AI Chatbot (রিক্তাজ)	Floating button with logo. Uses Gemini API (your key AIzaSyAq4mNr4-mdV7roUCSlqlRJbHxzT8IAFXM). Answers agriculture questions, suggests recipes, family planning (e.g., “৪ সদস্যের পরিবারের জন্য সাপ্তাহিক ৩৫টি সবজি লাগবে…”). Assists both customers and farmers
+13	Auto‑suggestion for Customers	Chatbot can recommend products based on family size, season, dietary needs
+14	Auto‑suggestion for Farmers	Chatbot can advise on crop planning, pest control, pricing
+15	Data Persistence	All data (products, farmers, customers, orders, cart) stored in localStorage – survives page refresh
+16	Responsive Design	Mobile‑first, clean white background, dark green footer (#1b5e20) with white text, green buttons
+17	Story Section	“আমাদের গল্প” with green background and white text
+18	Footer	Dark green background, white text, delivery policy, support info
+19	Splash Screen	Shows logo and tagline for 3 seconds, then loads the app
+🚀 How to Use (Investor Demo)
+Save the code below as index.html and open in any modern browser (Chrome, Firefox, Edge).
+
+Splash screen appears for 3 seconds, then the main app loads.
+
+Customer: Click “গ্রাহক” → register (name, phone, address, password) → login. Now your details auto‑fill in order forms. View your order history by clicking “গ্রাহক” again.
+
+Farmer: Click “কৃষক” → use demo phone 01700000001 with password 1234 (or register new). After login:
+
+See total products, sales, orders.
+
+Click “+ নতুন পণ্য যোগ করুন” → upload an image → the system auto‑generates title & description using Gemini AI (or smart fallback). Add product.
+
+Delete products.
+
+See incoming orders with customer name, phone, address.
+
+Shopping: Browse products → add to cart → adjust quantity, select delivery area → checkout. Order saved to history.
+
+AI Chatbot: Click the green floating icon (bottom‑right). Ask anything like:
+
+“৪ সদস্যের পরিবারের জন্য সাপ্তাহিক কত সবজি লাগবে?”
+
+“টমেটো দিয়ে কি রান্না করা যায়?”
+
+“আমার ক্ষেতে কীটনাশক ছাড়া ইলিশ মাছ চাষ করব কীভাবে?”
+
+“এই লাল শাকের পুষ্টিগুণ কী?”
+The chatbot (named রিক্তাজ) answers in Bengali, using the Gemini API.
+
+Ready‑to‑Cook & Custom Order: Click any ready‑to‑cook item → enter quantity → WhatsApp message sent directly with product details.

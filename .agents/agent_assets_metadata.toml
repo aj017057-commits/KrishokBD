@@ -1,0 +1,20 @@
+uploads = []
+outputs = []
+
+[[generated]]
+id = "4kZuKL2KqjhI3S7lpZtso"
+uri = "file://artifacts/krishok-bazar/assets/images/icon.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "gBnbSBjlOh47JDMy_czgW"
+uri = "file://artifacts/krishok-bazar/assets/images/hero1.png"
+type = "image"
+title = "generated_image"
+
+[[generated]]
+id = "4Vyep4Bl_YVUk_J_NWDcK"
+uri = "file://artifacts/krishok-bazar/assets/images/hero2.png"
+type = "image"
+title = "generated_image"
