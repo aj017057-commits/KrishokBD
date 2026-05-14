@@ -20,6 +20,9 @@ import colors from "@/constants/colors";
 import { GEMINI_API_KEY, Product } from "@/constants/data";
 import { useApp } from "@/context/AppContext";
 
+const MALE_LOGO = require("@/assets/images/farmer-male.png");
+const FEMALE_LOGO = require("@/assets/images/farmer-female.png");
+
 type FarmerView = "login" | "register" | "dashboard";
 
 const CATEGORIES: { key: Product["cat"]; label: string }[] = [
@@ -56,6 +59,7 @@ export default function FarmerModal({ visible, onClose }: Props) {
   const [regName, setRegName] = useState("");
   const [regPhone, setRegPhone] = useState("");
   const [regAddress, setRegAddress] = useState("");
+  const [regGender, setRegGender] = useState<"male" | "female">("male");
   const [regProductType, setRegProductType] = useState("");
   const [regPass, setRegPass] = useState("");
   const [showAddForm, setShowAddForm] = useState(false);
@@ -67,7 +71,6 @@ export default function FarmerModal({ visible, onClose }: Props) {
   const [prodUnit, setProdUnit] = useState("কেজি");
   const [prodCat, setProdCat] = useState<Product["cat"]>("vege");
   const [aiLoading, setAiLoading] = useState(false);
-  const [loading, setLoading] = useState(false);
 
   React.useEffect(() => {
     if (visible) setView(currentFarmer ? "dashboard" : "login");
@@ -115,23 +118,31 @@ export default function FarmerModal({ visible, onClose }: Props) {
       setProdImage(result.assets[0].uri);
       const base64 = result.assets[0].base64 ?? null;
       setProdImageBase64(base64);
-      if (base64) {
-        generateAIDescription(base64, result.assets[0].mimeType ?? "image/jpeg");
-      }
+      if (base64) generateAIDescription(base64, result.assets[0].mimeType ?? "image/jpeg");
     }
   };
 
   const generateAIDescription = async (base64: string, mimeType: string) => {
+    if (!GEMINI_API_KEY) {
+      Alert.alert("API Key নেই", "GEMINI_API_KEY সিস্টেমে সেট করুন।");
+      return;
+    }
     setAiLoading(true);
     try {
       const payload = {
         contents: [{
           parts: [
-            { text: "এটি কোন কৃষি পণ্য? পণ্যের নাম বাংলায় দাও এবং একটি আকর্ষণীয় বিক্রয় বিবরণ বাংলায় লেখো। Format: নাম: [পণ্যের নাম]\nবিবরণ: [১-২ বাক্যে বিবরণ]" },
+            {
+              text: `তুমি একজন বাংলাদেশি কৃষি বিশেষজ্ঞ। ছবিটি বিশ্লেষণ করো।
+এই পণ্যের জন্য নিচের ফরম্যাটে বাংলায় তথ্য দাও:
+নাম: [পণ্যের পেশাদার বাংলা নাম]
+বিবরণ: [২ বাক্যে আকর্ষণীয় বিক্রয় বিবরণ — তাজা, পুষ্টিগুণ, ব্যবহার উল্লেখ করো]
+মূল্য: [বাংলাদেশের বাজার মূল্য অনুযায়ী কেজি/পিস প্রতি সর্বোচ্চ যুক্তিসঙ্গত মূল্য শুধু সংখ্যায়]`,
+            },
             { inlineData: { mimeType, data: base64 } },
           ],
         }],
-        generationConfig: { temperature: 0.4, maxOutputTokens: 200 },
+        generationConfig: { temperature: 0.3, maxOutputTokens: 300 },
       };
       const resp = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${GEMINI_API_KEY}`,
@@ -140,11 +151,13 @@ export default function FarmerModal({ visible, onClose }: Props) {
       const data = await resp.json();
       const text: string = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? "";
       const nameMatch = text.match(/নাম:\s*(.+)/);
-      const descMatch = text.match(/বিবরণ:\s*(.+)/);
+      const descMatch = text.match(/বিবরণ:\s*([\s\S]+?)(?=মূল্য:|$)/);
+      const priceMatch = text.match(/মূল্য:\s*(\d+)/);
       if (nameMatch) setProdName(nameMatch[1].trim());
-      if (descMatch) setProdDesc(descMatch[1].trim());
+      if (descMatch) setProdDesc(descMatch[1].trim().replace(/\n/g, " "));
+      if (priceMatch) setProdPrice(priceMatch[1].trim());
     } catch {
-      setProdName("পণ্যের নাম লিখুন");
+      Alert.alert("AI ব্যর্থ", "ছবি বিশ্লেষণ করা যায়নি। হাতে তথ্য দিন।");
     } finally {
       setAiLoading(false);
     }
@@ -165,20 +178,17 @@ export default function FarmerModal({ visible, onClose }: Props) {
       badge: "টাটকা",
     });
     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
-    setProdImage(null);
-    setProdImageBase64(null);
-    setProdName("");
-    setProdDesc("");
-    setProdPrice("");
-    setProdUnit("কেজি");
-    setProdCat("vege");
+    setProdImage(null); setProdImageBase64(null);
+    setProdName(""); setProdDesc(""); setProdPrice("");
+    setProdUnit("কেজি"); setProdCat("vege");
     setShowAddForm(false);
-    Alert.alert("সফল!", "পণ্য যোগ করা হয়েছে");
+    Alert.alert("সফল!", "পণ্য যোগ করা হয়েছে।");
   };
 
   const farmerProducts = currentFarmer ? getFarmerProducts(currentFarmer.id) : [];
   const farmerOrders = currentFarmer ? getFarmerOrders(currentFarmer.id) : [];
-  const totalSales = farmerOrders.reduce((s, o) => s + o.total, 0);
+  const totalRevenue = farmerOrders.reduce((s, o) => s + o.grandTotal, 0);
+  const farmerAvatar = currentFarmer?.gender === "female" ? FEMALE_LOGO : MALE_LOGO;
 
   return (
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
@@ -186,20 +196,24 @@ export default function FarmerModal({ visible, onClose }: Props) {
         <View style={[styles.sheet, { paddingBottom: Math.max(insets.bottom, 20) }]}>
           <View style={styles.handle} />
           <View style={styles.headerRow}>
-            <Text style={styles.headerTitle}>
-              {view === "login" ? "কৃষক লগইন" : view === "register" ? "কৃষক রেজিস্ট্রেশন" : "কৃষক ড্যাশবোর্ড"}
-            </Text>
-            <TouchableOpacity onPress={onClose}>
-              <Feather name="x" size={22} color={colors.light.mutedForeground} />
+            <View style={styles.headerLeft}>
+              <Image source={require("@/assets/images/icon.png")} style={styles.headerLogo} />
+              <Text style={styles.headerTitle}>
+                {view === "login" ? "কৃষক লগইন" : view === "register" ? "কৃষক নিবন্ধন" : "কৃষক ড্যাশবোর্ড"}
+              </Text>
+            </View>
+            <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
+              <Feather name="x" size={20} color={colors.light.mutedForeground} />
             </TouchableOpacity>
           </View>
 
           <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
+            {/* LOGIN */}
             {view === "login" && (
               <View style={styles.form}>
                 <View style={styles.demoHint}>
                   <Feather name="info" size={12} color={colors.light.primary} />
-                  <Text style={styles.demoText}>ডেমো: 01700000001 / 1234</Text>
+                  <Text style={styles.demoText}>ডেমো: 01700000001 · পাসওয়ার্ড: 1234</Text>
                 </View>
                 <TextInput style={styles.input} placeholder="মোবাইল নম্বর" value={loginPhone} onChangeText={setLoginPhone} keyboardType="phone-pad" placeholderTextColor={colors.light.mutedForeground} />
                 <TextInput style={styles.input} placeholder="পাসওয়ার্ড" value={loginPass} onChangeText={setLoginPass} secureTextEntry placeholderTextColor={colors.light.mutedForeground} />
@@ -207,86 +221,122 @@ export default function FarmerModal({ visible, onClose }: Props) {
                   <Text style={styles.primaryBtnText}>লগইন</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => setView("register")}>
-                  <Text style={styles.linkText}>নতুন কৃষক? রেজিস্ট্রেশন করুন</Text>
+                  <Text style={styles.linkText}>নতুন কৃষক? নিবন্ধন করুন</Text>
                 </TouchableOpacity>
               </View>
             )}
 
+            {/* REGISTER */}
             {view === "register" && (
               <View style={styles.form}>
-                <TextInput style={styles.input} placeholder="আপনার নাম" value={regName} onChangeText={setRegName} placeholderTextColor={colors.light.mutedForeground} />
+                <TextInput style={styles.input} placeholder="আপনার পূর্ণ নাম" value={regName} onChangeText={setRegName} placeholderTextColor={colors.light.mutedForeground} />
                 <TextInput style={styles.input} placeholder="মোবাইল নম্বর" value={regPhone} onChangeText={setRegPhone} keyboardType="phone-pad" placeholderTextColor={colors.light.mutedForeground} />
-                <TextInput style={styles.input} placeholder="ঠিকানা" value={regAddress} onChangeText={setRegAddress} placeholderTextColor={colors.light.mutedForeground} />
-                <TextInput style={styles.input} placeholder="পণ্যের ধরন (যেমন: সবজি, ফল)" value={regProductType} onChangeText={setRegProductType} placeholderTextColor={colors.light.mutedForeground} />
-                <TextInput style={styles.input} placeholder="পাসওয়ার্ড" value={regPass} onChangeText={setRegPass} secureTextEntry placeholderTextColor={colors.light.mutedForeground} />
+                <TextInput style={styles.input} placeholder="আপনার ঠিকানা (জেলা)" value={regAddress} onChangeText={setRegAddress} placeholderTextColor={colors.light.mutedForeground} />
+                <TextInput style={styles.input} placeholder="কী পণ্য বিক্রি করেন?" value={regProductType} onChangeText={setRegProductType} placeholderTextColor={colors.light.mutedForeground} />
+                <View style={styles.genderRow}>
+                  <Text style={styles.selectLabel}>লিঙ্গ</Text>
+                  <View style={styles.genderBtns}>
+                    {(["male", "female"] as const).map((g) => (
+                      <TouchableOpacity
+                        key={g}
+                        style={[styles.genderBtn, regGender === g && styles.genderBtnActive]}
+                        onPress={() => setRegGender(g)}
+                      >
+                        <Image source={g === "male" ? MALE_LOGO : FEMALE_LOGO} style={styles.genderBtnImg} />
+                        <Text style={[styles.genderBtnText, regGender === g && styles.genderBtnTextActive]}>
+                          {g === "male" ? "পুরুষ" : "মহিলা"}
+                        </Text>
+                      </TouchableOpacity>
+                    ))}
+                  </View>
+                </View>
+                <TextInput style={styles.input} placeholder="পাসওয়ার্ড তৈরি করুন" value={regPass} onChangeText={setRegPass} secureTextEntry placeholderTextColor={colors.light.mutedForeground} />
                 <TouchableOpacity style={styles.primaryBtn} onPress={handleRegister}>
-                  <Text style={styles.primaryBtnText}>রেজিস্ট্রেশন</Text>
+                  <Text style={styles.primaryBtnText}>নিবন্ধন করুন</Text>
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => setView("login")}>
-                  <Text style={styles.linkText}>ইতিমধ্যে নিবন্ধিত? লগইন করুন</Text>
+                  <Text style={styles.linkText}>ইতিমধ্যে অ্যাকাউন্ট আছে? লগইন করুন</Text>
                 </TouchableOpacity>
               </View>
             )}
 
+            {/* DASHBOARD */}
             {view === "dashboard" && currentFarmer && (
               <View style={styles.form}>
-                <View style={styles.profileCard}>
-                  <View style={styles.profileIcon}>
-                    <Feather name="user" size={22} color={colors.light.primary} />
-                  </View>
+                {/* Profile Banner */}
+                <View style={styles.profileBanner}>
+                  <Image source={farmerAvatar} style={styles.profileAvatar} resizeMode="cover" />
                   <View style={{ flex: 1 }}>
                     <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
                       <Text style={styles.profileName}>{currentFarmer.name}</Text>
-                      {currentFarmer.verified && <Feather name="check-circle" size={14} color={colors.light.primary} />}
+                      {currentFarmer.verified && (
+                        <View style={styles.verifiedChip}>
+                          <Feather name="check-circle" size={12} color={colors.light.primary} />
+                          <Text style={styles.verifiedChipText}>যাচাইকৃত</Text>
+                        </View>
+                      )}
                     </View>
-                    <Text style={styles.profileAddress}>{currentFarmer.address}</Text>
+                    <Text style={styles.profileSub}>{currentFarmer.address}</Text>
+                    <Text style={styles.profileSub}>{currentFarmer.products}</Text>
                   </View>
                 </View>
 
+                {/* Stats */}
                 <View style={styles.statsRow}>
-                  <View style={styles.statCard}>
-                    <Text style={styles.statNum}>{farmerProducts.length}</Text>
-                    <Text style={styles.statLabel}>পণ্য</Text>
-                  </View>
-                  <View style={styles.statCard}>
-                    <Text style={styles.statNum}>৳{totalSales}</Text>
-                    <Text style={styles.statLabel}>বিক্রি</Text>
-                  </View>
-                  <View style={styles.statCard}>
-                    <Text style={styles.statNum}>{farmerOrders.length}</Text>
-                    <Text style={styles.statLabel}>অর্ডার</Text>
-                  </View>
+                  {[
+                    { num: farmerProducts.length, label: "পণ্য" },
+                    { num: farmerOrders.length, label: "অর্ডার" },
+                    { num: `৳${totalRevenue}`, label: "মোট আয়" },
+                  ].map(({ num, label }) => (
+                    <View key={label} style={styles.statCard}>
+                      <Text style={styles.statNum}>{num}</Text>
+                      <Text style={styles.statLabel}>{label}</Text>
+                    </View>
+                  ))}
                 </View>
 
-                <TouchableOpacity
-                  style={styles.addBtn}
-                  onPress={() => setShowAddForm(!showAddForm)}
-                >
-                  <Feather name={showAddForm ? "minus" : "plus"} size={16} color="#fff" />
-                  <Text style={styles.addBtnText}>{showAddForm ? "বাতিল" : "নতুন পণ্য যোগ করুন"}</Text>
+                {/* Add Product */}
+                <TouchableOpacity style={styles.addBtn} onPress={() => setShowAddForm(!showAddForm)}>
+                  <Feather name={showAddForm ? "minus-circle" : "plus-circle"} size={16} color="#fff" />
+                  <Text style={styles.addBtnText}>{showAddForm ? "ফর্ম বন্ধ করুন" : "নতুন পণ্য যোগ করুন"}</Text>
                 </TouchableOpacity>
 
                 {showAddForm && (
                   <View style={styles.addForm}>
+                    <View style={styles.aiLabel}>
+                      <Image source={require("@/assets/images/icon.png")} style={styles.aiLabelIcon} />
+                      <Text style={styles.aiLabelText}>রিক্তাজ AI — ছবি দেখে স্বয়ংক্রিয় তথ্য তৈরি করবে</Text>
+                    </View>
                     <TouchableOpacity style={styles.imagePicker} onPress={pickImage}>
                       {prodImage ? (
                         <Image source={{ uri: prodImage }} style={styles.pickedImage} />
                       ) : (
                         <View style={styles.imagePickerInner}>
-                          <Feather name="camera" size={24} color={colors.light.mutedForeground} />
-                          <Text style={styles.imagePickerText}>ছবি বেছে নিন</Text>
+                          <Feather name="camera" size={28} color={colors.light.primary} />
+                          <Text style={styles.imagePickerText}>পণ্যের ছবি আপলোড করুন</Text>
+                          <Text style={styles.imagePickerSub}>AI স্বয়ংক্রিয়ভাবে নাম, বিবরণ ও মূল্য তৈরি করবে</Text>
                         </View>
                       )}
                     </TouchableOpacity>
                     {aiLoading && (
                       <View style={styles.aiRow}>
+                        <Image source={require("@/assets/images/icon.png")} style={styles.aiRowIcon} />
                         <ActivityIndicator size="small" color={colors.light.primary} />
-                        <Text style={styles.aiText}>AI দিয়ে তথ্য তৈরি হচ্ছে...</Text>
+                        <Text style={styles.aiText}>রিক্তাজ AI ছবি বিশ্লেষণ করছে...</Text>
                       </View>
                     )}
+                    <View style={styles.fieldLabel}>
+                      <Text style={styles.fieldLabelText}>পণ্যের নাম</Text>
+                    </View>
                     <TextInput style={styles.input} placeholder="পণ্যের নাম" value={prodName} onChangeText={setProdName} placeholderTextColor={colors.light.mutedForeground} />
+                    <View style={styles.fieldLabel}>
+                      <Text style={styles.fieldLabelText}>বিবরণ</Text>
+                    </View>
                     <TextInput style={[styles.input, { height: 72 }]} placeholder="পণ্যের বিবরণ" value={prodDesc} onChangeText={setProdDesc} multiline placeholderTextColor={colors.light.mutedForeground} textAlignVertical="top" />
-                    <TextInput style={styles.input} placeholder="দাম (টাকা)" value={prodPrice} onChangeText={setProdPrice} keyboardType="numeric" placeholderTextColor={colors.light.mutedForeground} />
+                    <View style={styles.fieldLabel}>
+                      <Text style={styles.fieldLabelText}>মূল্য (টাকা)</Text>
+                    </View>
+                    <TextInput style={styles.input} placeholder="দাম লিখুন" value={prodPrice} onChangeText={setProdPrice} keyboardType="numeric" placeholderTextColor={colors.light.mutedForeground} />
                     <Text style={styles.selectLabel}>ইউনিট</Text>
                     <View style={styles.optionRow}>
                       {UNITS.map((u) => (
@@ -304,16 +354,18 @@ export default function FarmerModal({ visible, onClose }: Props) {
                       ))}
                     </View>
                     <TouchableOpacity style={styles.primaryBtn} onPress={handleAddProduct}>
+                      <Feather name="plus" size={16} color="#fff" />
                       <Text style={styles.primaryBtnText}>পণ্য যোগ করুন</Text>
                     </TouchableOpacity>
                   </View>
                 )}
 
+                {/* Products List */}
                 <Text style={styles.sectionLabel}>আমার পণ্য ({farmerProducts.length})</Text>
                 {farmerProducts.length === 0 ? (
                   <View style={styles.empty}>
                     <Feather name="package" size={28} color={colors.light.mutedForeground} />
-                    <Text style={styles.emptyText}>কোনো পণ্য নেই</Text>
+                    <Text style={styles.emptyText}>এখনো কোনো পণ্য নেই</Text>
                   </View>
                 ) : (
                   farmerProducts.map((p) => (
@@ -330,21 +382,25 @@ export default function FarmerModal({ visible, onClose }: Props) {
                   ))
                 )}
 
+                {/* Orders List */}
                 <Text style={styles.sectionLabel}>প্রাপ্ত অর্ডার ({farmerOrders.length})</Text>
                 {farmerOrders.length === 0 ? (
                   <View style={styles.empty}>
                     <Feather name="clipboard" size={28} color={colors.light.mutedForeground} />
-                    <Text style={styles.emptyText}>কোনো অর্ডার নেই</Text>
+                    <Text style={styles.emptyText}>এখনো কোনো অর্ডার নেই</Text>
                   </View>
                 ) : (
                   farmerOrders.slice().reverse().map((o) => (
                     <View key={o.id} style={styles.orderCard}>
                       <View style={styles.orderRow}>
-                        <Text style={styles.orderProduct}>{o.productName}</Text>
-                        <Text style={styles.orderAmount}>৳{o.total}</Text>
+                        <Text style={styles.orderId}>#{o.id.slice(-6).toUpperCase()}</Text>
+                        <Text style={styles.orderAmount}>৳{o.grandTotal}</Text>
                       </View>
+                      <Text style={styles.orderItems} numberOfLines={1}>
+                        {o.items.map(i => `${i.title} ×${i.qty}`).join(", ")}
+                      </Text>
                       <Text style={styles.orderMeta}>{o.customerName} · {o.customerPhone}</Text>
-                      <Text style={styles.orderAddress}>{o.customerAddress}</Text>
+                      <Text style={styles.orderAddress} numberOfLines={1}>📍 {o.customerAddress}</Text>
                       <Text style={styles.orderDate}>{new Date(o.date).toLocaleDateString("bn-BD")}</Text>
                     </View>
                   ))
@@ -365,44 +421,88 @@ export default function FarmerModal({ visible, onClose }: Props) {
 
 const styles = StyleSheet.create({
   overlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.5)", justifyContent: "flex-end" },
-  sheet: { backgroundColor: "#fff", borderTopLeftRadius: 28, borderTopRightRadius: 28, maxHeight: "92%", paddingHorizontal: 20 },
+  sheet: {
+    backgroundColor: "#fff", borderTopLeftRadius: 28, borderTopRightRadius: 28,
+    maxHeight: "94%", paddingHorizontal: 20,
+  },
   handle: { width: 40, height: 4, backgroundColor: colors.light.border, borderRadius: 2, alignSelf: "center", marginTop: 12, marginBottom: 8 },
   headerRow: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", marginBottom: 16 },
+  headerLeft: { flexDirection: "row", alignItems: "center", gap: 10 },
+  headerLogo: { width: 30, height: 30, borderRadius: 15 },
   headerTitle: { fontSize: 20, fontWeight: "700" as const, color: colors.light.text },
+  closeBtn: { width: 34, height: 34, borderRadius: 17, backgroundColor: colors.light.muted, alignItems: "center", justifyContent: "center" },
   form: { gap: 12, paddingBottom: 16 },
   demoHint: { flexDirection: "row", alignItems: "center", gap: 6, backgroundColor: colors.light.primarySoft, padding: 10, borderRadius: 10 },
   demoText: { fontSize: 12, color: colors.light.primary, fontWeight: "600" as const },
   input: {
-    backgroundColor: colors.light.muted,
-    borderRadius: 14,
-    paddingHorizontal: 16,
-    paddingVertical: 13,
-    fontSize: 14,
-    color: colors.light.text,
-    borderWidth: 1,
-    borderColor: colors.light.border,
+    backgroundColor: colors.light.muted, borderRadius: 14,
+    paddingHorizontal: 16, paddingVertical: 13,
+    fontSize: 14, color: colors.light.text,
+    borderWidth: 1, borderColor: colors.light.border,
   },
-  primaryBtn: { backgroundColor: colors.light.primary, borderRadius: 14, paddingVertical: 14, alignItems: "center" },
+  primaryBtn: {
+    backgroundColor: colors.light.primary, borderRadius: 14, paddingVertical: 14,
+    flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6,
+  },
   primaryBtnText: { color: "#fff", fontWeight: "700" as const, fontSize: 16 },
-  linkText: { textAlign: "center", color: colors.light.primary, fontSize: 14, fontWeight: "600" as const, paddingVertical: 4 },
-  profileCard: { flexDirection: "row", alignItems: "center", gap: 12, backgroundColor: colors.light.primarySoft, borderRadius: 16, padding: 14 },
-  profileIcon: { width: 44, height: 44, borderRadius: 22, backgroundColor: "#fff", alignItems: "center", justifyContent: "center" },
+  linkText: { textAlign: "center" as const, color: colors.light.primary, fontSize: 14, fontWeight: "600" as const, paddingVertical: 4 },
+  genderRow: { gap: 8 },
+  selectLabel: { fontSize: 13, fontWeight: "600" as const, color: colors.light.text },
+  genderBtns: { flexDirection: "row", gap: 10 },
+  genderBtn: {
+    flex: 1, flexDirection: "row", alignItems: "center", gap: 8,
+    padding: 10, borderRadius: 14,
+    borderWidth: 1.5, borderColor: colors.light.border, backgroundColor: "#fff",
+  },
+  genderBtnActive: { borderColor: colors.light.primary, backgroundColor: colors.light.primarySoft },
+  genderBtnImg: { width: 32, height: 32, borderRadius: 16 },
+  genderBtnText: { fontSize: 13, color: colors.light.mutedForeground, fontWeight: "600" as const },
+  genderBtnTextActive: { color: colors.light.primary },
+  profileBanner: {
+    flexDirection: "row", alignItems: "center", gap: 14,
+    backgroundColor: colors.light.primarySoft, borderRadius: 18, padding: 14,
+  },
+  profileAvatar: { width: 64, height: 64, borderRadius: 32, borderWidth: 2, borderColor: colors.light.primary },
   profileName: { fontSize: 16, fontWeight: "700" as const, color: colors.light.text },
-  profileAddress: { fontSize: 12, color: colors.light.mutedForeground },
+  profileSub: { fontSize: 12, color: colors.light.mutedForeground },
+  verifiedChip: {
+    flexDirection: "row", alignItems: "center", gap: 3,
+    backgroundColor: "#fff", paddingHorizontal: 7, paddingVertical: 2, borderRadius: 20,
+  },
+  verifiedChipText: { fontSize: 10, color: colors.light.primary, fontWeight: "600" as const },
   statsRow: { flexDirection: "row", gap: 10 },
   statCard: { flex: 1, backgroundColor: colors.light.primarySoft, borderRadius: 14, padding: 12, alignItems: "center" },
   statNum: { fontSize: 18, fontWeight: "800" as const, color: colors.light.primary },
   statLabel: { fontSize: 10, color: colors.light.mutedForeground, marginTop: 2 },
-  addBtn: { backgroundColor: colors.light.primary, borderRadius: 14, paddingVertical: 12, flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8 },
+  addBtn: {
+    backgroundColor: colors.light.primary, borderRadius: 14, paddingVertical: 12,
+    flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8,
+  },
   addBtnText: { color: "#fff", fontWeight: "700" as const, fontSize: 14 },
-  addForm: { backgroundColor: colors.light.muted, borderRadius: 16, padding: 14, gap: 10 },
-  imagePicker: { borderRadius: 12, overflow: "hidden", backgroundColor: "#e5e7eb", height: 120, alignItems: "center", justifyContent: "center" },
-  imagePickerInner: { alignItems: "center", gap: 8 },
-  imagePickerText: { fontSize: 12, color: colors.light.mutedForeground },
-  pickedImage: { width: "100%", height: 120, resizeMode: "cover" },
-  aiRow: { flexDirection: "row", alignItems: "center", gap: 8 },
+  addForm: { backgroundColor: colors.light.muted, borderRadius: 18, padding: 14, gap: 10 },
+  aiLabel: {
+    flexDirection: "row", alignItems: "center", gap: 8,
+    backgroundColor: colors.light.primarySoft, borderRadius: 10, padding: 10,
+  },
+  aiLabelIcon: { width: 24, height: 24, borderRadius: 12 },
+  aiLabelText: { fontSize: 12, color: colors.light.primary, fontWeight: "600" as const, flex: 1 },
+  imagePicker: {
+    borderRadius: 14, overflow: "hidden", backgroundColor: "#fff",
+    height: 130, alignItems: "center", justifyContent: "center",
+    borderWidth: 2, borderColor: colors.light.primary, borderStyle: "dashed",
+  },
+  imagePickerInner: { alignItems: "center", gap: 6, padding: 16 },
+  imagePickerText: { fontSize: 13, color: colors.light.primary, fontWeight: "600" as const },
+  imagePickerSub: { fontSize: 10, color: colors.light.mutedForeground, textAlign: "center" as const },
+  pickedImage: { width: "100%", height: 130 },
+  aiRow: {
+    flexDirection: "row", alignItems: "center", gap: 8,
+    backgroundColor: colors.light.primarySoft, borderRadius: 10, padding: 10,
+  },
+  aiRowIcon: { width: 22, height: 22, borderRadius: 11 },
   aiText: { fontSize: 12, color: colors.light.primary, fontWeight: "600" as const },
-  selectLabel: { fontSize: 13, fontWeight: "600" as const, color: colors.light.text },
+  fieldLabel: {},
+  fieldLabelText: { fontSize: 12, fontWeight: "700" as const, color: colors.light.mutedForeground, textTransform: "uppercase" as const, letterSpacing: 0.5 },
   optionRow: { flexDirection: "row", flexWrap: "wrap", gap: 6 },
   option: { paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20, borderWidth: 1, borderColor: colors.light.border, backgroundColor: "#fff" },
   optionActive: { backgroundColor: colors.light.primary, borderColor: colors.light.primary },
@@ -415,13 +515,14 @@ const styles = StyleSheet.create({
   productRowImg: { width: 44, height: 44, borderRadius: 8 },
   productRowName: { fontSize: 13, fontWeight: "600" as const, color: colors.light.text },
   productRowPrice: { fontSize: 12, color: colors.light.primary, fontWeight: "700" as const },
-  orderCard: { backgroundColor: colors.light.muted, borderRadius: 12, padding: 12, gap: 2 },
+  orderCard: { backgroundColor: colors.light.muted, borderRadius: 12, padding: 12, gap: 3, borderWidth: 1, borderColor: colors.light.border },
   orderRow: { flexDirection: "row", justifyContent: "space-between" },
-  orderProduct: { fontSize: 14, fontWeight: "600" as const, color: colors.light.text },
+  orderId: { fontSize: 11, fontWeight: "700" as const, color: colors.light.primary },
   orderAmount: { fontSize: 14, fontWeight: "700" as const, color: colors.light.primary },
+  orderItems: { fontSize: 13, fontWeight: "600" as const, color: colors.light.text },
   orderMeta: { fontSize: 12, color: colors.light.mutedForeground },
   orderAddress: { fontSize: 11, color: colors.light.mutedForeground },
   orderDate: { fontSize: 10, color: colors.light.mutedForeground },
-  logoutBtn: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, paddingVertical: 12, borderRadius: 14, borderWidth: 1, borderColor: colors.light.destructive },
+  logoutBtn: { flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, paddingVertical: 13, borderRadius: 14, borderWidth: 1, borderColor: "#fee2e2", backgroundColor: "#fff5f5" },
   logoutText: { color: colors.light.destructive, fontWeight: "600" as const, fontSize: 14 },
 });

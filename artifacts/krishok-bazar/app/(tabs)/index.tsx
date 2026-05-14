@@ -25,6 +25,9 @@ import colors from "@/constants/colors";
 import { VIDEO_IDS } from "@/constants/data";
 import { useApp } from "@/context/AppContext";
 
+const MALE_LOGO = require("@/assets/images/farmer-male.png");
+const FEMALE_LOGO = require("@/assets/images/farmer-female.png");
+
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
   const { products, farmers, searchQuery, setSearchQuery, activeCategory } = useApp();
@@ -61,11 +64,13 @@ export default function HomeScreen() {
           </View>
         </View>
         <View style={styles.headerBtns}>
-          <TouchableOpacity style={styles.headerBtn} onPress={() => setShowCustomer(true)}>
-            <Feather name="user" size={18} color={colors.light.primary} />
+          <TouchableOpacity style={styles.headerIconBtn} onPress={() => setShowCustomer(true)}>
+            <Image source={MALE_LOGO} style={styles.headerIconImg} resizeMode="cover" />
+            <Text style={styles.headerIconLabel}>গ্রাহক</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={styles.headerBtn} onPress={() => setShowFarmer(true)}>
-            <Feather name="sun" size={18} color={colors.light.primary} />
+          <TouchableOpacity style={[styles.headerIconBtn, styles.headerIconBtnFarmer]} onPress={() => setShowFarmer(true)}>
+            <Image source={MALE_LOGO} style={styles.headerIconImg} resizeMode="cover" />
+            <Text style={[styles.headerIconLabel, styles.headerIconLabelFarmer]}>কৃষক</Text>
           </TouchableOpacity>
         </View>
       </View>
@@ -321,12 +326,16 @@ const styles = StyleSheet.create({
   brandName: { fontSize: 20, fontWeight: "800" as const, color: colors.light.primary },
   brandTagline: { fontSize: 10, color: colors.light.mutedForeground },
   headerBtns: { flexDirection: "row", gap: 8 },
-  headerBtn: {
-    width: 38, height: 38, borderRadius: 19,
-    borderWidth: 1, borderColor: colors.light.border,
-    alignItems: "center", justifyContent: "center",
+  headerIconBtn: {
+    alignItems: "center", justifyContent: "center", gap: 2,
+    paddingHorizontal: 8, paddingVertical: 4,
+    borderRadius: 14, borderWidth: 1, borderColor: colors.light.border,
     backgroundColor: colors.light.primarySoft,
   },
+  headerIconBtnFarmer: { backgroundColor: "#fef3c7", borderColor: "#fde68a" },
+  headerIconImg: { width: 30, height: 30, borderRadius: 15 },
+  headerIconLabel: { fontSize: 9, color: colors.light.primary, fontWeight: "700" as const },
+  headerIconLabelFarmer: { color: "#92400e" },
   searchWrap: { paddingHorizontal: 16, paddingVertical: 10, backgroundColor: "#fff" },
   searchBar: {
     flexDirection: "row", alignItems: "center",

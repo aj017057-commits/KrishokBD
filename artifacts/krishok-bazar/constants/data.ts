@@ -1,3 +1,8 @@
+import Constants from "expo-constants";
+
+export const GEMINI_API_KEY: string =
+  (Constants.expoConfig?.extra?.geminiApiKey as string | undefined) ?? "";
+
 export interface Product {
   id: number;
   title: string;
@@ -78,7 +83,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 3, title: "দেশি পেঁয়াজ", price: 55, unit: "কেজি", cat: "vege",
-    farmer: "ফরহাদ আলী", farmerId: 1,
+    farmer: "করিম মিয়া", farmerId: 1,
     desc: "মিষ্টি ঝাঁঝালো পেঁয়াজ, দীর্ঘস্থায়ী। সব রান্নার জন্য অপরিহার্য।",
     img: "https://cdn.shopify.com/s/files/1/0761/6600/4933/files/hans-red-vegetable-onions-499066_1920.jpg?v=1773958168",
     badge: "টাটকা"
@@ -106,14 +111,14 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 7, title: "কচি বেগুন", price: 40, unit: "কেজি", cat: "vege",
-    farmer: "শামীম আহমেদ", farmerId: 5,
+    farmer: "শামীম আহমেদ", farmerId: 4,
     desc: "কোমল কালো বেগুন, সদ্য তোলা। ভর্তা ও তরকারিতে সেরা স্বাদ।",
     img: "https://images.pexels.com/photos/2325844/pexels-photo-2325844.jpeg?auto=compress&w=400",
     badge: "কচি"
   },
   {
     id: 8, title: "তিতা করলা", price: 50, unit: "কেজি", cat: "vege",
-    farmer: "শামীম আহমেদ", farmerId: 5,
+    farmer: "শামীম আহমেদ", farmerId: 4,
     desc: "স্বাস্থ্যকর তিতা করলা, ডায়াবেটিস ও রক্তচাপে উপকারী।",
     img: "https://images.pexels.com/photos/4110252/pexels-photo-4110252.jpeg?auto=compress&w=400",
     badge: "স্বাস্থ্যকর"
@@ -140,7 +145,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     badge: "ভিটামিন সি"
   },
   {
-    id: 12, title: "আদা", price: 120, unit: "কেজি", cat: "vege",
+    id: 12, title: "দেশি আদা", price: 120, unit: "কেজি", cat: "vege",
     farmer: "ছালাম মিয়া", farmerId: 3,
     desc: "সুগন্ধি দেশি আদা, ঔষধিগুণে ভরা। চা, রান্না ও ঠান্ডায় অত্যন্ত উপকারী।",
     img: "https://images.pexels.com/photos/161556/ginger-root-plant-161556.jpeg?auto=compress&w=400",
@@ -250,7 +255,7 @@ export const INITIAL_PRODUCTS: Product[] = [
   },
   {
     id: 27, title: "মিক্স ফ্রুট প্যাক", price: 250, unit: "প্যাক", cat: "ready",
-    farmer: "ফল বাগান", farmerId: 8,
+    farmer: "মিনারা বেগম", farmerId: 8,
     desc: "আম, কলা, কমলা, লিচু মিশিয়ে তৈরি স্বাস্থ্যকর ফলের প্যাক।",
     img: "https://images.pexels.com/photos/1092730/pexels-photo-1092730.jpeg?auto=compress&w=400",
     badge: "মিক্স"
@@ -267,18 +272,15 @@ export const INITIAL_PRODUCTS: Product[] = [
 export const INITIAL_FARMERS: Farmer[] = [
   {
     id: 1, name: "করিম মিয়া", phone: "01700000001", address: "রাজশাহী", password: "1234",
-    verified: true, avatar: "https://randomuser.me/api/portraits/men/1.jpg",
-    sales: 1250, products: "আলু, পেঁয়াজ, মিষ্টি কুমড়া", rating: 4.9, gender: "male"
+    verified: true, avatar: "", sales: 1250, products: "আলু, পেঁয়াজ, মিষ্টি কুমড়া", rating: 4.9, gender: "male"
   },
   {
     id: 2, name: "রহিমা বেগম", phone: "01700000002", address: "ঢাকা", password: "1234",
-    verified: true, avatar: "https://randomuser.me/api/portraits/women/2.jpg",
-    sales: 980, products: "টমেটো, বাঁধাকপি, ক্যাপসিকাম", rating: 4.8, gender: "female"
+    verified: true, avatar: "", sales: 980, products: "টমেটো, বাঁধাকপি, ক্যাপসিকাম", rating: 4.8, gender: "female"
   },
   {
     id: 3, name: "শামীম আহমেদ", phone: "01700000003", address: "নরসিংদী", password: "1234",
-    verified: true, avatar: "https://randomuser.me/api/portraits/men/5.jpg",
-    sales: 450, products: "বেগুন, করলা, রসুন", rating: 4.7, gender: "male"
+    verified: true, avatar: "", sales: 450, products: "বেগুন, করলা, রসুন", rating: 4.7, gender: "male"
   },
 ];
 
@@ -297,5 +299,4 @@ export const CATEGORIES = [
   { key: "ready", label: "রেডি টু কুক" },
 ];
 
-export const GEMINI_API_KEY = "AIzaSyAq4mNr4-mdV7roUCSlqlRJbHxzT8IAFXM";
 export const SUPPORT_PHONE = "8801931355398";
