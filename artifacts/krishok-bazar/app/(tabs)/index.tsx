@@ -1,6 +1,7 @@
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
 import * as Linking from "expo-linking";
+import { router } from "expo-router";
 import React, { useMemo, useState } from "react";
 import {
   FlatList,
@@ -357,7 +358,16 @@ export default function HomeScreen() {
         {/* ── Footer ── */}
         {!isSearching && (
           <View style={styles.footer}>
-            <Image source={require("@/assets/images/icon.png")} style={styles.footerLogo} />
+            <TouchableOpacity
+              onLongPress={() => {
+                Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                router.push("/admin");
+              }}
+              delayLongPress={5000}
+              activeOpacity={1}
+            >
+              <Image source={require("@/assets/images/icon.png")} style={styles.footerLogo} />
+            </TouchableOpacity>
             <Text style={styles.footerBrand}>কৃষক বাজার</Text>
             <Text style={styles.footerTagline}>সরাসরি কৃষকের কাছ থেকে টাটকা পণ্য</Text>
             <View style={styles.footerDivider} />

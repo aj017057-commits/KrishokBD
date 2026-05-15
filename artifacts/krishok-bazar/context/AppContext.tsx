@@ -49,6 +49,7 @@ interface AppContextType {
   farmerLogin: (phone: string, password: string) => { success: boolean; error?: string };
   farmerLogout: () => void;
   addProduct: (product: Omit<Product, "id">) => void;
+  updateProduct: (id: number, updates: Partial<Omit<Product, "id">>) => void;
   deleteProduct: (id: number) => void;
   getFarmerProducts: (farmerId: number) => Product[];
   getFarmerOrders: (farmerId: number) => Order[];
@@ -286,6 +287,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     });
   }, [save]);
 
+  const updateProduct = useCallback((id: number, updates: Partial<Omit<Product, "id">>) => {
+    setProducts((prev) => {
+      const next = prev.map((p) => p.id === id ? { ...p, ...updates } : p);
+      save(KEYS.products, next);
+      return next;
+    });
+  }, [save]);
+
   const deleteProduct = useCallback((id: number) => {
     setProducts((prev) => {
       const next = prev.filter((p) => p.id !== id);
@@ -321,10 +330,11 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       newOrdersCount,
       setSearchQuery, setActiveCategory,
       addToCart, removeFromCart, updateQty, clearCart, clearNewOrders, checkout,
+      updateProduct,
       cartCount,
       customerRegister, customerLogin, customerLogout,
       farmerRegister, farmerLogin, farmerLogout,
-      addProduct, deleteProduct,
+      addProduct, updateProduct, deleteProduct,
       getFarmerProducts, getFarmerOrders, getCustomerOrders,
     }}>
       {children}
