@@ -22,7 +22,7 @@ import FarmerModal from "@/components/FarmerModal";
 import HeroCarousel from "@/components/HeroCarousel";
 import ProductCard from "@/components/ProductCard";
 import colors from "@/constants/colors";
-import { BEST_SELLERS, CATEGORIES, Product, VIDEO_IDS } from "@/constants/data";
+import { BEST_SELLERS, CATEGORIES, Product, VIDEO_IDS, WHY_APP_VIDEO_IDS } from "@/constants/data";
 import { useApp } from "@/context/AppContext";
 
 const MALE_LOGO = require("@/assets/images/farmer-male.png");
@@ -256,6 +256,68 @@ export default function HomeScreen() {
                   </View>
                   <View style={styles.videoLabel}>
                     <Text style={styles.videoLabelText}>Shorts</Text>
+                  </View>
+                </TouchableOpacity>
+              )}
+            />
+          </View>
+        )}
+
+        {/* ── Why Use This App? ── */}
+        {!isSearching && (
+          <View style={styles.section}>
+            <View style={styles.sectionHeaderRow}>
+              <View style={styles.sectionTitleRow}>
+                <View style={styles.sectionAccent} />
+                <Text style={styles.sectionTitle}>কেন কৃষক বাজার?</Text>
+              </View>
+              <Text style={styles.sectionSub}>আমাদের গল্প</Text>
+            </View>
+
+            <View style={styles.whyCard}>
+              <Text style={styles.whyHeadline}>মধ্যস্বত্তাভোগী নেই, সরাসরি কৃষক থেকে আপনার কাছে</Text>
+              <Text style={styles.whyBody}>
+                বাংলাদেশের কোটি কৃষক প্রতিদিন মাঠে অক্লান্ত পরিশ্রম করেন — কিন্তু দালালের কারণে তারা ন্যায্য মূল্য পান না, আর আপনিও পান না টাটকা পণ্য।
+              </Text>
+              <View style={styles.whyPoints}>
+                {[
+                  ["✅", "সরাসরি কৃষকের কাছ থেকে"],
+                  ["🌱", "১০০% টাটকা ও প্রাকৃতিক"],
+                  ["💰", "ন্যায্য মূল্য, কোনো লুকানো চার্জ নেই"],
+                  ["🚚", "দ্রুত ডেলিভারি — ঢাকা ও সারাদেশে"],
+                  ["🔒", "নিরাপদ অনলাইন চেকআউট"],
+                ].map(([icon, text]) => (
+                  <View key={text} style={styles.whyPoint}>
+                    <Text style={styles.whyPointIcon}>{icon}</Text>
+                    <Text style={styles.whyPointText}>{text}</Text>
+                  </View>
+                ))}
+              </View>
+            </View>
+
+            <FlatList
+              data={WHY_APP_VIDEO_IDS}
+              horizontal
+              showsHorizontalScrollIndicator={false}
+              keyExtractor={(id) => id}
+              contentContainerStyle={[styles.horizontalList, { marginTop: 12 }]}
+              renderItem={({ item }) => (
+                <TouchableOpacity
+                  style={styles.whyVideoCard}
+                  onPress={() => Linking.openURL(`https://youtube.com/shorts/${item}?feature=share`)}
+                >
+                  <Image
+                    source={{ uri: `https://img.youtube.com/vi/${item}/hqdefault.jpg` }}
+                    style={styles.whyVideoThumb}
+                    resizeMode="cover"
+                  />
+                  <View style={styles.playOverlay}>
+                    <View style={styles.playBtnRed}>
+                      <Feather name="play" size={20} color="#fff" />
+                    </View>
+                  </View>
+                  <View style={styles.whyVideoLabel}>
+                    <Text style={styles.whyVideoLabelText}>▶ দেখুন</Text>
                   </View>
                 </TouchableOpacity>
               )}
@@ -526,6 +588,39 @@ const styles = StyleSheet.create({
   footerCatEmoji: { fontSize: 14 },
   footerCatLabel: { fontSize: 11, color: "rgba(255,255,255,0.9)", fontWeight: "600" as const },
   copyright: { fontSize: 10, color: "rgba(255,255,255,0.45)", marginTop: 6 },
+
+  /* Why Card */
+  whyCard: {
+    marginHorizontal: 16, marginBottom: 8,
+    backgroundColor: "#fff", borderRadius: 20, padding: 20,
+    borderWidth: 1, borderColor: colors.light.border,
+    shadowColor: "#000", shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.06, shadowRadius: 8, elevation: 2,
+  },
+  whyHeadline: { fontSize: 16, fontWeight: "800" as const, color: colors.light.primary, marginBottom: 8, lineHeight: 24 },
+  whyBody: { fontSize: 13, color: colors.light.mutedForeground, lineHeight: 21, marginBottom: 14 },
+  whyPoints: { gap: 10 },
+  whyPoint: { flexDirection: "row", alignItems: "center", gap: 10 },
+  whyPointIcon: { fontSize: 18, width: 26 },
+  whyPointText: { fontSize: 14, color: colors.light.text, fontWeight: "500" as const, flex: 1 },
+  whyVideoCard: {
+    width: 260, height: 150, borderRadius: 16, overflow: "hidden",
+    borderWidth: 1, borderColor: colors.light.border,
+    shadowColor: "#000", shadowOffset: { width: 0, height: 3 },
+    shadowOpacity: 0.12, shadowRadius: 8, elevation: 3,
+  },
+  whyVideoThumb: { width: "100%", height: "100%", backgroundColor: "#111" },
+  playBtnRed: {
+    width: 52, height: 52, borderRadius: 26,
+    backgroundColor: "rgba(220,0,0,0.9)", alignItems: "center", justifyContent: "center",
+    shadowColor: "#000", shadowOffset: { width: 0, height: 2 }, shadowOpacity: 0.3, shadowRadius: 4,
+  },
+  whyVideoLabel: {
+    position: "absolute", bottom: 10, left: 12,
+    backgroundColor: "rgba(0,0,0,0.6)",
+    paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20,
+  },
+  whyVideoLabelText: { fontSize: 12, color: "#fff", fontWeight: "700" as const },
 
   /* Chat FAB */
   chatFab: {

@@ -1,0 +1,66 @@
+"I am providing the final set of original links. DO NOT MODIFY any link or URL. Use them exactly as provided. Please update the app with the following:
+
+1. Replace Product Images (Original Shopify Links):
+Update the existing product catalog by replacing current images with these original links:
+
+মিক্স সবজি প্যাক: https://cdn.shopify.com/s/files/1/0991/0717/6761/files/download_9.jpg?v=1778788777
+
+মুলা শাক: https://cdn.shopify.com/s/files/1/0991/0717/6761/files/download_7.jpg?v=1778788779
+
+কাটা পেঁয়াজ প্যাক: https://cdn.shopify.com/s/files/1/0991/0717/6761/files/images_21.jpg?v=1778788778
+
+কালো মাগুর মাছ: https://cdn.shopify.com/s/files/1/0991/0717/6761/files/images_20.jpg?v=1778788779
+
+পুঁই শাক: https://cdn.shopify.com/s/files/1/0991/0717/6761/files/download_6.jpg?v=1778788778
+
+কচি বেগুন: https://cdn.shopify.com/s/files/1/0991/0717/6761/files/download.jpg?v=1778788778
+
+দেশি শিং মাছ: https://cdn.shopify.com/s/files/1/0991/0717/6761/files/images_19.jpg?v=1778788778
+
+দেশি লাউ: https://cdn.shopify.com/s/files/1/0991/0717/6761/files/download_2.jpg?v=1778788779
+
+রসালো কমলা: https://cdn.shopify.com/s/files/1/0991/0717/6761/files/images_18.jpg?v=1778788778
+
+তিতা করলা: https://cdn.shopify.com/s/files/1/0991/0717/6761/files/download_1.jpg?v=1778788778
+
+পদ্মার ইলিশ: https://cdn.shopify.com/s/files/1/0991/0717/6761/files/download_8.jpg?v=1778788778
+
+লাল শাক: https://cdn.shopify.com/s/files/1/0991/0717/6761/files/download_5.jpg?v=1778788778
+
+দেশি লিচু: https://cdn.shopify.com/s/files/1/0991/0717/6761/files/download_4.jpg?v=1778788779
+
+মিষ্টি কুমড়া: https://cdn.shopify.com/s/files/1/0991/0717/6761/files/images_17.jpg?v=1778788778
+
+দেশি আদা: https://cdn.shopify.com/s/files/1/0991/0717/6761/files/download_3.jpg?v=1778788779
+
+সবুজ পেয়ারা: https://cdn.shopify.com/s/files/1/0991/0717/6761/files/download_10.jpg?v=1778790017
+
+2. Add New Products:
+
+হাঁসের ডিম: ২১০ টাকা/ডজন - https://cdn.shopify.com/s/files/1/0991/0717/6761/files/1545578418923.jpg?v=1778790838
+
+গরুর দুধ: ৯০ টাকা/লিটার - https://cdn.shopify.com/s/files/1/0991/0717/6761/files/download_13.jpg?v=1778789927
+
+3. Replace All YouTube Links:
+The current YouTube links are broken. Replace them with these exact links:
+
+https://youtube.com/shorts/iRHqWnxj-jU?feature=share
+
+https://youtube.com/shorts/oLgAz7tiS-Y?feature=share
+
+https://youtube.com/shorts/4iph-cQWg3g?feature=share
+
+https://youtube.com/shorts/ivdux5l52TY?feature=share
+
+https://youtube.com/shorts/n6TW95vbqxo?feature=share
+
+https://youtube.com/shorts/lXgJgxP9frU?feature=share
+
+4. New Video Section (Above Footer):
+Add a specific section before the footer to explain 'Why use this app?'. Use these two video links:
+
+https://youtube.com/shorts/s-CMeMovJyY
+
+https://youtube.com/shorts/ybCj8e-L9_w?feature=share
+
+5. Final Check: Ensure the Riktaj AI (Gemini) is aware of these products and the internal Checkout system is working."

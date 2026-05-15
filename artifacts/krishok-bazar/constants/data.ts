@@ -74,7 +74,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     price: 60, unit: "কেজি", cat: "vege",
     farmer: "শামীম আহমেদ", farmerId: 4,
     desc: "কোমল কালো বেগুন, সদ্য তোলা। ভর্তা ও তরকারিতে অতুলনীয় স্বাদ।",
-    img: "https://images.pexels.com/photos/2325844/pexels-photo-2325844.jpeg?auto=compress&w=600",
+    img: "https://cdn.shopify.com/s/files/1/0991/0717/6761/files/download.jpg?v=1778788778",
     badge: "টাটকা", bestSeller: true,
   },
   {
@@ -83,7 +83,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     price: 70, unit: "কেজি", cat: "vege",
     farmer: "শামীম আহমেদ", farmerId: 4,
     desc: "স্বাস্থ্যকর তিতা করলা, ডায়াবেটিস ও রক্তচাপ নিয়ন্ত্রণে বিশেষ উপকারী।",
-    img: "https://images.pexels.com/photos/4110252/pexels-photo-4110252.jpeg?auto=compress&w=600",
+    img: "https://cdn.shopify.com/s/files/1/0991/0717/6761/files/download_1.jpg?v=1778788778",
     badge: "স্বাস্থ্যকর",
   },
   {
@@ -92,7 +92,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     price: 40, unit: "কেজি", cat: "vege",
     farmer: "করিম মিয়া", farmerId: 1,
     desc: "হলুদ মিষ্টি কুমড়া, ভিটামিন এ সমৃদ্ধ। শিশুদের জন্য বিশেষ উপকারী।",
-    img: "https://images.pexels.com/photos/5945557/pexels-photo-5945557.jpeg?auto=compress&w=600",
+    img: "https://cdn.shopify.com/s/files/1/0991/0717/6761/files/images_17.jpg?v=1778788778",
     badge: "ভিটামিন এ",
   },
   {
@@ -101,7 +101,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     price: 50, unit: "পিস", cat: "vege",
     farmer: "আব্দুর রহিম", farmerId: 12,
     desc: "সবুজ কচি লাউ, হালকা ও পুষ্টিকর। তরকারি ও লাউ-ডাল করার জন্য আদর্শ।",
-    img: "https://images.pexels.com/photos/6158088/pexels-photo-6158088.jpeg?auto=compress&w=600",
+    img: "https://cdn.shopify.com/s/files/1/0991/0717/6761/files/download_2.jpg?v=1778788779",
     badge: "কচি",
   },
   {
@@ -110,7 +110,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     price: 120, unit: "কেজি", cat: "vege",
     farmer: "ফারুক হোসেন", farmerId: 14,
     desc: "মিশ্র সবজির প্যাক — আলু, গাজর, পটল, মটর। রান্নায় সরাসরি ব্যবহারযোগ্য।",
-    img: "https://images.pexels.com/photos/1640777/pexels-photo-1640777.jpeg?auto=compress&w=600",
+    img: "https://cdn.shopify.com/s/files/1/0991/0717/6761/files/download_9.jpg?v=1778788777",
     badge: "মিক্স",
   },
   {
@@ -119,7 +119,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     price: 80, unit: "৫০০ গ্রাম", cat: "vege",
     farmer: "করিম মিয়া", farmerId: 1,
     desc: "পরিষ্কার করে কাটা পেঁয়াজ। সরাসরি ভাজায় ব্যবহার করুন — সময় বাঁচান।",
-    img: "https://images.pexels.com/photos/175753/pexels-photo-175753.jpeg?auto=compress&w=600",
+    img: "https://cdn.shopify.com/s/files/1/0991/0717/6761/files/images_21.jpg?v=1778788778",
     badge: "রেডি",
   },
   // ───────────────── শাক ─────────────────
@@ -129,7 +129,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     price: 30, unit: "আঁটি", cat: "leafy",
     farmer: "আব্দুর রহিম", farmerId: 12,
     desc: "মসৃণ পুঁই শাক, ক্যালসিয়াম সমৃদ্ধ। চিংড়ি দিয়ে রান্না করলে অপূর্ব স্বাদ।",
-    img: "https://images.pexels.com/photos/5529597/pexels-photo-5529597.jpeg?auto=compress&w=600",
+    img: "https://cdn.shopify.com/s/files/1/0991/0717/6761/files/download_6.jpg?v=1778788778",
     badge: "ক্যালসিয়াম", bestSeller: true,
   },
   {
@@ -138,7 +138,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     price: 20, unit: "আঁটি", cat: "leafy",
     farmer: "সামসুল হক", farmerId: 13,
     desc: "উজ্জ্বল লাল শাক, ভিটামিন ও মিনারেলে ভরপুর। ভর্তা ও ভাজায় সুস্বাদু।",
-    img: "https://images.pexels.com/photos/1656663/pexels-photo-1656663.jpeg?auto=compress&w=600",
+    img: "https://cdn.shopify.com/s/files/1/0991/0717/6761/files/download_5.jpg?v=1778788778",
     badge: "পুষ্টিকর",
   },
   {
@@ -147,7 +147,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     price: 25, unit: "আঁটি", cat: "leafy",
     farmer: "সামসুল হক", farmerId: 13,
     desc: "কচি মুলার পাতা, ডিটক্সে সহায়ক। ভাজা ও ডালে মিশিয়ে খাওয়া যায়।",
-    img: "https://images.pexels.com/photos/4871125/pexels-photo-4871125.jpeg?auto=compress&w=600",
+    img: "https://cdn.shopify.com/s/files/1/0991/0717/6761/files/download_7.jpg?v=1778788779",
     badge: "ডিটক্স",
   },
   // ───────────────── মাছ ─────────────────
@@ -157,7 +157,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     price: 1600, unit: "কেজি", cat: "fish",
     farmer: "মৎস্য আড়ত", farmerId: 10,
     desc: "বিশ্বখ্যাত পদ্মার ইলিশ, তেলে ভরা ও সুস্বাদু। ভাপে বা ভাজায় অতুলনীয়।",
-    img: "https://images.pexels.com/photos/3296434/pexels-photo-3296434.jpeg?auto=compress&w=600",
+    img: "https://cdn.shopify.com/s/files/1/0991/0717/6761/files/download_8.jpg?v=1778788778",
     badge: "পদ্মার", bestSeller: true,
   },
   {
@@ -166,7 +166,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     price: 700, unit: "কেজি", cat: "fish",
     farmer: "আলমগীর হোসেন", farmerId: 11,
     desc: "জীবন্ত দেশি শিং মাছ, কাদায় লালিত। অসুস্থদের জন্য বিশেষ পুষ্টিকর।",
-    img: "https://images.pexels.com/photos/6026712/pexels-photo-6026712.jpeg?auto=compress&w=600",
+    img: "https://cdn.shopify.com/s/files/1/0991/0717/6761/files/images_19.jpg?v=1778788778",
     badge: "জীবন্ত",
   },
   {
@@ -175,7 +175,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     price: 600, unit: "কেজি", cat: "fish",
     farmer: "আলমগীর হোসেন", farmerId: 11,
     desc: "দেশি কালো মাগুর, শক্তিবর্ধক ও রোগ নিরাময়ে উপকারী। প্রোটিনে ভরপুর।",
-    img: "https://images.pexels.com/photos/1382394/pexels-photo-1382394.jpeg?auto=compress&w=600",
+    img: "https://cdn.shopify.com/s/files/1/0991/0717/6761/files/images_20.jpg?v=1778788779",
     badge: "দেশি",
   },
   // ───────────────── ফল ─────────────────
@@ -185,7 +185,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     price: 220, unit: "কেজি", cat: "fruit",
     farmer: "মিনারা বেগম", farmerId: 8,
     desc: "তাজা দেশি কমলা, ভিটামিন সি সমৃদ্ধ। রোগ প্রতিরোধে অত্যন্ত কার্যকর।",
-    img: "https://images.pexels.com/photos/161559/background-bitter-breakfast-bright-161559.jpeg?auto=compress&w=600",
+    img: "https://cdn.shopify.com/s/files/1/0991/0717/6761/files/images_18.jpg?v=1778788778",
     badge: "রসালো", bestSeller: true,
   },
   {
@@ -194,7 +194,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     price: 400, unit: "১০০ পিস", cat: "fruit",
     farmer: "মিনারা বেগম", farmerId: 8,
     desc: "সুমিষ্ট লিচু, রাজশাহী থেকে সংগ্রহ। অ্যান্টিঅক্সিডেন্টে ভরপুর।",
-    img: "https://images.pexels.com/photos/1028950/pexels-photo-1028950.jpeg?auto=compress&w=600",
+    img: "https://cdn.shopify.com/s/files/1/0991/0717/6761/files/download_4.jpg?v=1778788779",
     badge: "দেশি",
   },
   {
@@ -203,7 +203,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     price: 80, unit: "কেজি", cat: "fruit",
     farmer: "কামাল হোসেন", farmerId: 9,
     desc: "ভিটামিন সি সমৃদ্ধ দেশি পেয়ারা। ডায়াবেটিস নিয়ন্ত্রণে সহায়ক।",
-    img: "https://images.pexels.com/photos/5945755/pexels-photo-5945755.jpeg?auto=compress&w=600",
+    img: "https://cdn.shopify.com/s/files/1/0991/0717/6761/files/download_10.jpg?v=1778790017",
     badge: "ভিটামিন সি",
   },
   // ───────────────── মাংস ─────────────────
@@ -268,7 +268,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     price: 90, unit: "লিটার", cat: "dairy",
     farmer: "গ্রামীণ গোচারণ", farmerId: 19,
     desc: "বিশুদ্ধ গরুর কাঁচা দুধ, প্রতিদিন সকালে সংগৃহীত। ক্যালসিয়ামে ভরপুর।",
-    img: "https://images.pexels.com/photos/236010/pexels-photo-236010.jpeg?auto=compress&w=600",
+    img: "https://cdn.shopify.com/s/files/1/0991/0717/6761/files/download_13.jpg?v=1778789927",
     badge: "খাঁটি",
   },
   {
@@ -289,6 +289,15 @@ export const INITIAL_PRODUCTS: Product[] = [
     img: "https://images.pexels.com/photos/4033639/pexels-photo-4033639.jpeg?auto=compress&w=600",
     badge: "খাঁটি",
   },
+  {
+    id: 26,
+    title: "হাঁসের ডিম",
+    price: 210, unit: "ডজন", cat: "dairy",
+    farmer: "গ্রামীণ খামার", farmerId: 18,
+    desc: "তাজা হাঁসের ডিম, বড় কুসুম ও অধিক পুষ্টিকর। হালুয়া ও কেকে অসাধারণ।",
+    img: "https://cdn.shopify.com/s/files/1/0991/0717/6761/files/1545578418923.jpg?v=1778790838",
+    badge: "হাঁসের",
+  },
   // ───────────────── মশলা ─────────────────
   {
     id: 25,
@@ -296,7 +305,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     price: 210, unit: "কেজি", cat: "spice",
     farmer: "ছালাম মিয়া", farmerId: 3,
     desc: "সুগন্ধি দেশি আদা, ঔষধিগুণে ভরা। চা, রান্না ও ঠান্ডা-সর্দিতে অত্যন্ত উপকারী।",
-    img: "https://images.pexels.com/photos/161556/ginger-root-plant-161556.jpeg?auto=compress&w=600",
+    img: "https://cdn.shopify.com/s/files/1/0991/0717/6761/files/download_3.jpg?v=1778788779",
     badge: "ঔষধি", bestSeller: true,
   },
 ];
@@ -311,78 +320,88 @@ export const BEST_SELLERS: { cat: Product["cat"]; label: string; emoji: string }
   { cat: "spice", label: "মশলা",      emoji: "🫚" },
 ];
 
-export const INITIAL_FARMERS: Farmer[] = [
+export const INITIAL_FARMERS = [
   {
     id: 1,  name: "করিম মিয়া",      phone: "01700000001", address: "রাজশাহী",
     password: "1234", verified: true, avatar: "", sales: 1250,
-    products: "সবজি, পেঁয়াজ, কুমড়া", rating: 4.9, gender: "male",
+    products: "সবজি, পেঁয়াজ, কুমড়া", rating: 4.9, gender: "male" as const,
   },
   {
     id: 2,  name: "রহিমা বেগম",      phone: "01700000002", address: "ঢাকা",
     password: "1234", verified: true, avatar: "", sales: 980,
-    products: "টমেটো, বাঁধাকপি, ক্যাপসিকাম", rating: 4.8, gender: "female",
+    products: "টমেটো, বাঁধাকপি, ক্যাপসিকাম", rating: 4.8, gender: "female" as const,
   },
   {
     id: 3,  name: "ছালাম মিয়া",      phone: "01700000003", address: "নরসিংদী",
     password: "1234", verified: true, avatar: "", sales: 450,
-    products: "আদা, রসুন, মশলা", rating: 4.7, gender: "male",
+    products: "আদা, রসুন, মশলা", rating: 4.7, gender: "male" as const,
   },
   {
     id: 4,  name: "শামীম আহমেদ",     phone: "01700000004", address: "গাজীপুর",
     password: "1234", verified: true, avatar: "", sales: 620,
-    products: "বেগুন, করলা, শাকসবজি", rating: 4.6, gender: "male",
+    products: "বেগুন, করলা, শাকসবজি", rating: 4.6, gender: "male" as const,
   },
   {
     id: 8,  name: "মিনারা বেগম",     phone: "01700000005", address: "চাঁপাইনবাবগঞ্জ",
     password: "1234", verified: true, avatar: "", sales: 890,
-    products: "কমলা, লিচু, মৌসুমী ফল", rating: 4.9, gender: "female",
+    products: "কমলা, লিচু, মৌসুমী ফল", rating: 4.9, gender: "female" as const,
   },
   {
     id: 10, name: "মৎস্য আড়ত",      phone: "01700000006", address: "পদ্মা তীর",
     password: "1234", verified: true, avatar: "", sales: 3200,
-    products: "ইলিশ, নদীর মাছ", rating: 4.8, gender: "male",
+    products: "ইলিশ, নদীর মাছ", rating: 4.8, gender: "male" as const,
   },
   {
     id: 11, name: "আলমগীর হোসেন",    phone: "01700000007", address: "ময়মনসিংহ",
     password: "1234", verified: false, avatar: "", sales: 210,
-    products: "শিং, মাগুর, দেশি মাছ", rating: 4.5, gender: "male",
+    products: "শিং, মাগুর, দেশি মাছ", rating: 4.5, gender: "male" as const,
   },
   {
     id: 12, name: "আব্দুর রহিম",     phone: "01700000008", address: "সিলেট",
     password: "1234", verified: true, avatar: "", sales: 380,
-    products: "লাউ, পালং, পুঁই শাক", rating: 4.7, gender: "male",
+    products: "লাউ, পালং, পুঁই শাক", rating: 4.7, gender: "male" as const,
   },
   {
     id: 16, name: "হালাল মাংস",      phone: "01700000009", address: "ঢাকা",
     password: "1234", verified: true, avatar: "", sales: 1100,
-    products: "গরু, খাসি, হালাল মাংস", rating: 4.8, gender: "male",
+    products: "গরু, খাসি, হালাল মাংস", rating: 4.8, gender: "male" as const,
   },
   {
     id: 17, name: "পোলট্রি খামার",   phone: "01700000010", address: "নারায়ণগঞ্জ",
     password: "1234", verified: true, avatar: "", sales: 2400,
-    products: "মুরগি, ফার্মের ডিম", rating: 4.6, gender: "male",
+    products: "মুরগি, ফার্মের ডিম", rating: 4.6, gender: "male" as const,
   },
   {
     id: 18, name: "নূর বেগম",        phone: "01700000011", address: "মানিকগঞ্জ",
     password: "1234", verified: false, avatar: "", sales: 160,
-    products: "দেশি ডিম, হাঁসের ডিম", rating: 4.4, gender: "female",
+    products: "দেশি ডিম, হাঁসের ডিম", rating: 4.4, gender: "female" as const,
   },
   {
     id: 19, name: "গ্রামীণ গোচারণ",  phone: "01700000012", address: "পাবনা",
     password: "1234", verified: true, avatar: "", sales: 750,
-    products: "গরুর দুধ, ঘি, মাখন", rating: 4.9, gender: "male",
+    products: "গরুর দুধ, ঘি, মাখন", rating: 4.9, gender: "male" as const,
   },
   {
     id: 20, name: "বগুড়া দুগ্ধ",    phone: "01700000013", address: "বগুড়া",
     password: "1234", verified: true, avatar: "", sales: 920,
-    products: "মিষ্টি দই, ছানা, রসগোল্লা", rating: 5.0, gender: "male",
+    products: "মিষ্টি দই, ছানা, রসগোল্লা", rating: 5.0, gender: "male" as const,
   },
 ];
 
+// YouTube Shorts IDs for the খেত থেকে লাইভ section
 export const VIDEO_IDS = [
-  "5RE2Gx6643U", "NRveNHaYbVU", "Qd1SfGJxPk8",
-  "8WOd3SfGXt0", "d-lmVLO9I-M", "Lp4F9gNm1zk",
-  "HIHkgZezJus", "116Yti89CKI", "fJ9rUzIMcZQ", "3JZ_D3ELwOQ",
+  "iRHqWnxj-jU",
+  "oLgAz7tiS-Y",
+  "4iph-cQWg3g",
+  "ivdux5l52TY",
+  "n6TW95vbqxo",
+  "lXgJgxP9frU",
+];
+
+// "Why use this app?" section videos
+export const WHY_APP_VIDEO_IDS = [
+  "s-CMeMovJyY",
+  "ybCj8e-L9_w",
 ];
 
 export const CATEGORIES = [
