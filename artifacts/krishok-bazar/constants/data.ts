@@ -213,7 +213,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     price: 750, unit: "কেজি", cat: "meat",
     farmer: "হালাল মাংস", farmerId: 16,
     desc: "তাজা হালাল গরুর মাংস, রান্নার জন্য প্রস্তুত। গ্রাম থেকে সরাসরি সংগৃহীত।",
-    img: "https://images.pexels.com/photos/1639562/pexels-photo-1639562.jpeg?auto=compress&w=600",
+    img: "https://cdn.shopify.com/s/files/1/0991/0717/6761/files/download_12.jpg?v=1778789927",
     badge: "হালাল", bestSeller: true,
   },
   {
@@ -231,7 +231,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     price: 550, unit: "কেজি", cat: "meat",
     farmer: "পোলট্রি খামার", farmerId: 17,
     desc: "বাড়িতে লালিত দেশি মুরগি। ঝোল রান্নায় অতুলনীয় স্বাদ ও পুষ্টি।",
-    img: "https://images.pexels.com/photos/2338407/pexels-photo-2338407.jpeg?auto=compress&w=600",
+    img: "https://cdn.shopify.com/s/files/1/0991/0717/6761/files/download_11.jpg?v=1778789927",
     badge: "দেশি",
   },
   {
@@ -240,7 +240,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     price: 190, unit: "কেজি", cat: "meat",
     farmer: "পোলট্রি খামার", farmerId: 17,
     desc: "সাশ্রয়ী ও পুষ্টিকর ফার্মের মুরগি। প্রতিদিনের রান্নার জন্য আদর্শ।",
-    img: "https://images.pexels.com/photos/6107614/pexels-photo-6107614.jpeg?auto=compress&w=600",
+    img: "https://cdn.shopify.com/s/files/1/0991/0717/6761/files/download_16.jpg?v=1778791062",
     badge: "সাশ্রয়ী",
   },
   // ───────────────── ডিম / দুগ্ধ ─────────────────
@@ -259,7 +259,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     price: 210, unit: "ডজন", cat: "dairy",
     farmer: "গ্রামীণ খামার", farmerId: 18,
     desc: "দেশি মুরগির ডিম, গভীর কুসুম ও অধিক পুষ্টিগুণ সম্পন্ন।",
-    img: "https://images.pexels.com/photos/1556707/pexels-photo-1556707.jpeg?auto=compress&w=600",
+    img: "https://cdn.shopify.com/s/files/1/0991/0717/6761/files/1545578418923.jpg?v=1778790838",
     badge: "দেশি",
   },
   {
@@ -277,7 +277,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     price: 260, unit: "কেজি", cat: "dairy",
     farmer: "বগুড়া দুগ্ধ", farmerId: 20,
     desc: "বগুড়ার বিখ্যাত মিষ্টি দই। ঐতিহ্যবাহী মাটির পাত্রে তৈরি, অপূর্ব স্বাদ।",
-    img: "https://images.pexels.com/photos/4021983/pexels-photo-4021983.jpeg?auto=compress&w=600",
+    img: "https://cdn.shopify.com/s/files/1/0991/0717/6761/files/images_24.jpg?v=1778789927",
     badge: "বগুড়ার",
   },
   {
@@ -286,7 +286,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     price: 1600, unit: "কেজি", cat: "dairy",
     farmer: "গ্রামীণ গোচারণ", farmerId: 19,
     desc: "খাঁটি গরুর দুধের ঘি, হাতে তৈরি। রান্না ও স্বাস্থ্যের জন্য অমূল্য।",
-    img: "https://images.pexels.com/photos/4033639/pexels-photo-4033639.jpeg?auto=compress&w=600",
+    img: "https://cdn.shopify.com/s/files/1/0991/0717/6761/files/download_14.jpg?v=1778789927",
     badge: "খাঁটি",
   },
   {
@@ -295,7 +295,7 @@ export const INITIAL_PRODUCTS: Product[] = [
     price: 210, unit: "ডজন", cat: "dairy",
     farmer: "গ্রামীণ খামার", farmerId: 18,
     desc: "তাজা হাঁসের ডিম, বড় কুসুম ও অধিক পুষ্টিকর। হালুয়া ও কেকে অসাধারণ।",
-    img: "https://cdn.shopify.com/s/files/1/0991/0717/6761/files/1545578418923.jpg?v=1778790838",
+    img: "https://cdn.shopify.com/s/files/1/0991/0717/6761/files/images_2.webp?v=1778803922",
     badge: "হাঁসের",
   },
   // ───────────────── মশলা ─────────────────

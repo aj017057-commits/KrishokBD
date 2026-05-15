@@ -29,7 +29,7 @@ const MALE_LOGO = require("@/assets/images/farmer-male.png");
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
-  const { products, farmers, searchQuery, setSearchQuery, activeCategory, setActiveCategory } = useApp();
+  const { products, farmers, searchQuery, setSearchQuery, activeCategory, setActiveCategory, newOrdersCount } = useApp();
   const [showCustomer, setShowCustomer] = useState(false);
   const [showFarmer, setShowFarmer] = useState(false);
   const [showChat, setShowChat] = useState(false);
@@ -78,6 +78,11 @@ export default function HomeScreen() {
           <TouchableOpacity style={[styles.headerIconBtn, styles.headerIconBtnFarmer]} onPress={() => setShowFarmer(true)}>
             <Image source={MALE_LOGO} style={styles.headerIconImg} resizeMode="cover" />
             <Text style={[styles.headerIconLabel, styles.headerIconLabelFarmer]}>কৃষক</Text>
+            {newOrdersCount > 0 && (
+              <View style={styles.notifBadge}>
+                <Text style={styles.notifBadgeText}>{newOrdersCount}</Text>
+              </View>
+            )}
           </TouchableOpacity>
         </View>
       </View>
@@ -462,6 +467,13 @@ const styles = StyleSheet.create({
   headerIconImg: { width: 30, height: 30, borderRadius: 15 },
   headerIconLabel: { fontSize: 9, color: colors.light.primary, fontWeight: "700" as const },
   headerIconLabelFarmer: { color: "#92400e" },
+  notifBadge: {
+    position: "absolute", top: -6, right: -6,
+    backgroundColor: "#ef4444", minWidth: 18, height: 18,
+    borderRadius: 9, alignItems: "center", justifyContent: "center",
+    paddingHorizontal: 4, borderWidth: 2, borderColor: "#fff",
+  },
+  notifBadgeText: { fontSize: 9, color: "#fff", fontWeight: "800" as const },
 
   /* Search */
   searchWrap: { paddingHorizontal: 16, paddingVertical: 10, backgroundColor: "#fff" },

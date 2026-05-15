@@ -27,12 +27,14 @@ interface AppContextType {
   currentFarmer: Farmer | null;
   searchQuery: string;
   activeCategory: string;
+  newOrdersCount: number;
   setSearchQuery: (q: string) => void;
   setActiveCategory: (c: string) => void;
   addToCart: (product: Product) => void;
   removeFromCart: (id: number) => void;
   updateQty: (id: number, delta: number) => void;
   clearCart: () => void;
+  clearNewOrders: () => void;
   checkout: (
     deliveryArea: "dhaka" | "outside",
     customerName: string,
@@ -74,6 +76,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
   const [currentFarmer, setCurrentFarmer] = useState<Farmer | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
   const [activeCategory, setActiveCategory] = useState("all");
+  const [newOrdersCount, setNewOrdersCount] = useState(0);
   const [loaded, setLoaded] = useState(false);
 
   useEffect(() => {
@@ -148,6 +151,10 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     save(KEYS.cart, []);
   }, [save]);
 
+  const clearNewOrders = useCallback(() => {
+    setNewOrdersCount(0);
+  }, []);
+
   const getDeliveryWeight = (cartItems: CartItem[], allProducts: Product[]) => {
     let total = 0;
     cartItems.forEach((item) => {
@@ -205,6 +212,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         save(KEYS.orders, next);
         return next;
       });
+      setNewOrdersCount((prev) => prev + 1);
       clearCart();
       return { success: true, grandTotal, deliveryCharge, orderId };
     },
@@ -310,8 +318,9 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       products, farmers, orders, cart, customers,
       currentCustomer, currentFarmer,
       searchQuery, activeCategory,
+      newOrdersCount,
       setSearchQuery, setActiveCategory,
-      addToCart, removeFromCart, updateQty, clearCart, checkout,
+      addToCart, removeFromCart, updateQty, clearCart, clearNewOrders, checkout,
       cartCount,
       customerRegister, customerLogin, customerLogout,
       farmerRegister, farmerLogin, farmerLogout,

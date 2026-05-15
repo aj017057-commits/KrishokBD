@@ -25,11 +25,14 @@ const FEMALE_LOGO = require("@/assets/images/farmer-female.png");
 
 type FarmerView = "login" | "register" | "dashboard";
 
-const CATEGORIES: { key: Product["cat"]; label: string }[] = [
-  { key: "vege", label: "সবজি" },
-  { key: "fruit", label: "ফল" },
+const PROD_CATEGORIES: { key: Product["cat"]; label: string }[] = [
+  { key: "vege",  label: "সবজি" },
   { key: "leafy", label: "শাক" },
-  { key: "fish", label: "মাছ" },
+  { key: "fish",  label: "মাছ" },
+  { key: "fruit", label: "ফল" },
+  { key: "meat",  label: "মাংস" },
+  { key: "dairy", label: "ডিম/দুগ্ধ" },
+  { key: "spice", label: "মশলা" },
   { key: "ready", label: "রেডি টু কুক" },
 ];
 
@@ -51,6 +54,9 @@ export default function FarmerModal({ visible, onClose }: Props) {
     deleteProduct,
     getFarmerProducts,
     getFarmerOrders,
+    orders,
+    newOrdersCount,
+    clearNewOrders,
   } = useApp();
 
   const [view, setView] = useState<FarmerView>(currentFarmer ? "dashboard" : "login");
@@ -73,8 +79,11 @@ export default function FarmerModal({ visible, onClose }: Props) {
   const [aiLoading, setAiLoading] = useState(false);
 
   React.useEffect(() => {
-    if (visible) setView(currentFarmer ? "dashboard" : "login");
-  }, [visible, currentFarmer]);
+    if (visible) {
+      setView(currentFarmer ? "dashboard" : "login");
+      if (currentFarmer && newOrdersCount > 0) clearNewOrders();
+    }
+  }, [visible, currentFarmer, newOrdersCount, clearNewOrders]);
 
   const handleLogin = () => {
     if (!loginPhone || !loginPass) { Alert.alert("সব তথ্য দিন"); return; }
@@ -189,6 +198,7 @@ export default function FarmerModal({ visible, onClose }: Props) {
   const farmerOrders = currentFarmer ? getFarmerOrders(currentFarmer.id) : [];
   const totalRevenue = farmerOrders.reduce((s, o) => s + o.grandTotal, 0);
   const farmerAvatar = currentFarmer?.gender === "female" ? FEMALE_LOGO : MALE_LOGO;
+  const allOrders = [...orders].reverse();
 
   return (
     <Modal visible={visible} animationType="slide" transparent onRequestClose={onClose}>
@@ -198,9 +208,19 @@ export default function FarmerModal({ visible, onClose }: Props) {
           <View style={styles.headerRow}>
             <View style={styles.headerLeft}>
               <Image source={require("@/assets/images/icon.png")} style={styles.headerLogo} />
-              <Text style={styles.headerTitle}>
-                {view === "login" ? "কৃষক লগইন" : view === "register" ? "কৃষক নিবন্ধন" : "কৃষক ড্যাশবোর্ড"}
-              </Text>
+              <View>
+                <Text style={styles.headerTitle}>
+                  {view === "login" ? "কৃষক লগইন" : view === "register" ? "কৃষক নিবন্ধন" : "কৃষক ড্যাশবোর্ড"}
+                </Text>
+                {view === "dashboard" && newOrdersCount > 0 && (
+                  <View style={styles.newOrderAlertRow}>
+                    <View style={styles.newOrderDot} />
+                    <Text style={styles.newOrderAlertText}>
+                      {newOrdersCount}টি নতুন অর্ডার!
+                    </Text>
+                  </View>
+                )}
+              </View>
             </View>
             <TouchableOpacity onPress={onClose} style={styles.closeBtn}>
               <Feather name="x" size={20} color={colors.light.mutedForeground} />
@@ -347,7 +367,7 @@ export default function FarmerModal({ visible, onClose }: Props) {
                     </View>
                     <Text style={styles.selectLabel}>ক্যাটাগরি</Text>
                     <View style={styles.optionRow}>
-                      {CATEGORIES.map((c) => (
+                      {PROD_CATEGORIES.map((c) => (
                         <TouchableOpacity key={c.key} style={[styles.option, prodCat === c.key && styles.optionActive]} onPress={() => setProdCat(c.key)}>
                           <Text style={[styles.optionText, prodCat === c.key && styles.optionTextActive]}>{c.label}</Text>
                         </TouchableOpacity>
@@ -382,8 +402,8 @@ export default function FarmerModal({ visible, onClose }: Props) {
                   ))
                 )}
 
-                {/* Orders List */}
-                <Text style={styles.sectionLabel}>প্রাপ্ত অর্ডার ({farmerOrders.length})</Text>
+                {/* My Orders */}
+                <Text style={styles.sectionLabel}>আমার পণ্যের অর্ডার ({farmerOrders.length})</Text>
                 {farmerOrders.length === 0 ? (
                   <View style={styles.empty}>
                     <Feather name="clipboard" size={28} color={colors.light.mutedForeground} />
@@ -402,6 +422,58 @@ export default function FarmerModal({ visible, onClose }: Props) {
                       <Text style={styles.orderMeta}>{o.customerName} · {o.customerPhone}</Text>
                       <Text style={styles.orderAddress} numberOfLines={1}>📍 {o.customerAddress}</Text>
                       <Text style={styles.orderDate}>{new Date(o.date).toLocaleDateString("bn-BD")}</Text>
+                    </View>
+                  ))
+                )}
+
+                {/* All Customer Orders (Admin View) */}
+                <View style={styles.adminSectionHeader}>
+                  <View style={styles.adminSectionTitleRow}>
+                    <Feather name="users" size={15} color={colors.light.primary} />
+                    <Text style={styles.sectionLabel}>সকল গ্রাহকের অর্ডার ({allOrders.length})</Text>
+                  </View>
+                  {allOrders.length > 0 && (
+                    <View style={styles.allOrdersBadge}>
+                      <Text style={styles.allOrdersBadgeText}>অ্যাডমিন</Text>
+                    </View>
+                  )}
+                </View>
+                {allOrders.length === 0 ? (
+                  <View style={styles.empty}>
+                    <Feather name="inbox" size={28} color={colors.light.mutedForeground} />
+                    <Text style={styles.emptyText}>এখনো কোনো গ্রাহক অর্ডার নেই</Text>
+                  </View>
+                ) : (
+                  allOrders.map((o) => (
+                    <View key={o.id} style={[styles.orderCard, styles.allOrderCard]}>
+                      <View style={styles.orderRow}>
+                        <View style={{ flexDirection: "row", alignItems: "center", gap: 6 }}>
+                          <Text style={styles.orderId}>#{o.id.slice(-6).toUpperCase()}</Text>
+                          <View style={[styles.statusChip, o.status === "confirmed" ? styles.statusConfirmed : styles.statusDelivered]}>
+                            <Text style={styles.statusChipText}>
+                              {o.status === "confirmed" ? "নিশ্চিত" : "ডেলিভারি হয়েছে"}
+                            </Text>
+                          </View>
+                        </View>
+                        <Text style={styles.orderAmount}>৳{o.grandTotal}</Text>
+                      </View>
+                      <Text style={styles.orderItems} numberOfLines={2}>
+                        {o.items.map(i => `${i.title} ×${i.qty}`).join(", ")}
+                      </Text>
+                      <View style={styles.customerInfoRow}>
+                        <Feather name="user" size={12} color={colors.light.mutedForeground} />
+                        <Text style={styles.orderMeta}>{o.customerName} · {o.customerPhone}</Text>
+                      </View>
+                      <View style={styles.customerInfoRow}>
+                        <Feather name="map-pin" size={12} color={colors.light.mutedForeground} />
+                        <Text style={styles.orderAddress} numberOfLines={1}>{o.customerAddress}</Text>
+                      </View>
+                      <View style={styles.orderFooterRow}>
+                        <Text style={styles.orderDate}>{new Date(o.date).toLocaleString("bn-BD")}</Text>
+                        <Text style={styles.deliveryAreaTag}>
+                          {o.deliveryArea === "dhaka" ? "🏙 ঢাকা" : "🗺 ঢাকার বাইরে"}
+                        </Text>
+                      </View>
                     </View>
                   ))
                 )}
@@ -508,6 +580,21 @@ const styles = StyleSheet.create({
   optionActive: { backgroundColor: colors.light.primary, borderColor: colors.light.primary },
   optionText: { fontSize: 12, color: colors.light.mutedForeground },
   optionTextActive: { color: "#fff", fontWeight: "600" as const },
+  newOrderAlertRow: { flexDirection: "row", alignItems: "center", gap: 5, marginTop: 2 },
+  newOrderDot: { width: 7, height: 7, borderRadius: 4, backgroundColor: "#ef4444" },
+  newOrderAlertText: { fontSize: 11, color: "#ef4444", fontWeight: "700" as const },
+  adminSectionHeader: { flexDirection: "row", alignItems: "center", justifyContent: "space-between", paddingTop: 4 },
+  adminSectionTitleRow: { flexDirection: "row", alignItems: "center", gap: 6 },
+  allOrdersBadge: { backgroundColor: "#fef3c7", paddingHorizontal: 8, paddingVertical: 3, borderRadius: 20, borderWidth: 1, borderColor: "#fde68a" },
+  allOrdersBadgeText: { fontSize: 10, color: "#92400e", fontWeight: "700" as const },
+  allOrderCard: { borderLeftWidth: 3, borderLeftColor: colors.light.primary },
+  statusChip: { paddingHorizontal: 7, paddingVertical: 2, borderRadius: 20 },
+  statusConfirmed: { backgroundColor: "#dcfce7" },
+  statusDelivered: { backgroundColor: colors.light.primarySoft },
+  statusChipText: { fontSize: 9, fontWeight: "700" as const, color: colors.light.primary },
+  customerInfoRow: { flexDirection: "row", alignItems: "center", gap: 5 },
+  orderFooterRow: { flexDirection: "row", justifyContent: "space-between", alignItems: "center", marginTop: 2 },
+  deliveryAreaTag: { fontSize: 10, color: colors.light.mutedForeground },
   sectionLabel: { fontSize: 15, fontWeight: "700" as const, color: colors.light.text, marginTop: 4 },
   empty: { alignItems: "center", paddingVertical: 20, gap: 8 },
   emptyText: { color: colors.light.mutedForeground, fontSize: 13 },
