@@ -1,10 +1,8 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
   Dimensions,
-  FlatList,
   Image,
   ImageBackground,
-  Linking,
   StyleSheet,
   Text,
   TouchableOpacity,
@@ -45,36 +43,29 @@ interface Props {
 
 export default function HeroCarousel({ onOrderPress }: Props) {
   const [activeIndex, setActiveIndex] = useState(0);
-  const listRef = useRef<FlatList>(null);
   const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
   useEffect(() => {
     intervalRef.current = setInterval(() => {
-      setActiveIndex((prev) => {
-        const next = (prev + 1) % SLIDES.length;
-        listRef.current?.scrollToIndex({ index: next, animated: true });
-        return next;
-      });
+      setActiveIndex((prev) => (prev + 1) % SLIDES.length);
     }, 3500);
     return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
   }, []);
 
   return (
     <View style={styles.container}>
-      <FlatList
-        ref={listRef}
-        data={SLIDES}
-        horizontal
-        pagingEnabled
-        showsHorizontalScrollIndicator={false}
-        keyExtractor={(item) => item.id}
-        scrollEnabled={true}
-        onMomentumScrollEnd={(e) => {
-          const idx = Math.round(e.nativeEvent.contentOffset.x / width);
-          setActiveIndex(idx);
-        }}
-        renderItem={({ item }) => (
-          <ImageBackground source={item.image} style={styles.slide} imageStyle={styles.slideImage}>
+      {/* Render all slides, show only the active one */}
+      {SLIDES.map((item, index) => (
+        <View
+          key={item.id}
+          style={[styles.slideWrapper, index !== activeIndex && styles.slideHidden]}
+          pointerEvents={index === activeIndex ? "auto" : "none"}
+        >
+          <ImageBackground
+            source={item.image}
+            style={styles.slide}
+            imageStyle={styles.slideImage}
+          >
             <View style={styles.overlay} />
             <View style={styles.content}>
               <Text style={styles.title}>{item.title}</Text>
@@ -84,11 +75,15 @@ export default function HeroCarousel({ onOrderPress }: Props) {
               </TouchableOpacity>
             </View>
           </ImageBackground>
-        )}
-      />
+        </View>
+      ))}
       <View style={styles.dots}>
         {SLIDES.map((_, i) => (
-          <View key={i} style={[styles.dot, i === activeIndex && styles.dotActive]} />
+          <TouchableOpacity
+            key={i}
+            style={[styles.dot, i === activeIndex && styles.dotActive]}
+            onPress={() => setActiveIndex(i)}
+          />
         ))}
       </View>
     </View>
@@ -96,7 +91,12 @@ export default function HeroCarousel({ onOrderPress }: Props) {
 }
 
 const styles = StyleSheet.create({
-  container: { width, height: 220, position: "relative" },
+  container: { width, height: 220, position: "relative", overflow: "hidden" },
+  slideWrapper: {
+    position: "absolute", top: 0, left: 0, right: 0, bottom: 0,
+    opacity: 1,
+  },
+  slideHidden: { opacity: 0 },
   slide: { width, height: 220, justifyContent: "flex-end" },
   slideImage: { resizeMode: "cover" },
   overlay: { ...StyleSheet.absoluteFillObject, backgroundColor: "rgba(0,0,0,0.42)" },

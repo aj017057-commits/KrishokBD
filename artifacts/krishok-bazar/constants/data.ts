@@ -8,13 +8,14 @@ export interface Product {
   title: string;
   price: number;
   unit: string;
-  cat: "vege" | "fruit" | "leafy" | "fish" | "meat" | "dairy" | "spice" | "ready" | "rice" | "honey";
+  cat: "vege" | "fruit" | "leafy" | "fish" | "meat" | "dairy" | "spice" | "ready" | "rice" | "honey" | "organic";
   farmer: string;
   farmerId: number;
   desc: string;
   img: string;
   badge?: string;
   bestSeller?: boolean;
+  gallery?: string[];
 }
 
 export interface Farmer {
@@ -63,7 +64,9 @@ export interface Order {
   farmerId?: number;
   farmerName?: string;
   date: string;
-  status: "pending" | "confirmed" | "delivered";
+  status: "pending" | "confirmed" | "processing" | "packed" | "shipped" | "out_for_delivery" | "delivered";
+  paymentMethod?: "COD" | "bKash" | "Nagad";
+  trackingNumber?: string;
 }
 
 export const INITIAL_PRODUCTS: Product[] = [
@@ -311,13 +314,16 @@ export const INITIAL_PRODUCTS: Product[] = [
 ];
 
 export const BEST_SELLERS: { cat: Product["cat"]; label: string; emoji: string }[] = [
-  { cat: "vege",  label: "সবজি",      emoji: "🥦" },
-  { cat: "leafy", label: "শাক",       emoji: "🌿" },
-  { cat: "fish",  label: "মাছ",       emoji: "🐟" },
-  { cat: "fruit", label: "ফল",        emoji: "🍊" },
-  { cat: "meat",  label: "মাংস",      emoji: "🥩" },
-  { cat: "dairy", label: "ডিম/দুগ্ধ", emoji: "🥚" },
-  { cat: "spice", label: "মশলা",      emoji: "🫚" },
+  { cat: "vege",    label: "সবজি",       emoji: "🥦" },
+  { cat: "leafy",   label: "শাক",        emoji: "🌿" },
+  { cat: "fish",    label: "মাছ",        emoji: "🐟" },
+  { cat: "fruit",   label: "ফল",         emoji: "🍊" },
+  { cat: "meat",    label: "মাংস",       emoji: "🥩" },
+  { cat: "dairy",   label: "ডিম/দুগ্ধ", emoji: "🥚" },
+  { cat: "spice",   label: "মশলা",       emoji: "🫚" },
+  { cat: "rice",    label: "চাল",        emoji: "🌾" },
+  { cat: "honey",   label: "মধু",        emoji: "🍯" },
+  { cat: "organic", label: "অর্গানিক",  emoji: "🌱" },
 ];
 
 export const INITIAL_FARMERS = [
@@ -405,30 +411,51 @@ export const WHY_APP_VIDEO_IDS = [
 ];
 
 export const CATEGORIES = [
-  { key: "all",   label: "সব",        emoji: "🛒" },
-  { key: "vege",  label: "সবজি",      emoji: "🥦" },
-  { key: "leafy", label: "শাক",       emoji: "🌿" },
-  { key: "fish",  label: "মাছ",       emoji: "🐟" },
-  { key: "fruit", label: "ফল",        emoji: "🍊" },
-  { key: "meat",  label: "মাংস",      emoji: "🥩" },
-  { key: "dairy", label: "ডিম/দুগ্ধ", emoji: "🥚" },
-  { key: "spice", label: "মশলা",      emoji: "🫚" },
-  { key: "rice",  label: "চাল",       emoji: "🌾" },
-  { key: "honey", label: "মধু",       emoji: "🍯" },
-  { key: "ready", label: "রেডি কুক",  emoji: "🍳" },
+  { key: "all",     label: "সব",          emoji: "🛒" },
+  { key: "vege",    label: "সবজি",        emoji: "🥦" },
+  { key: "leafy",   label: "শাক",         emoji: "🌿" },
+  { key: "fish",    label: "মাছ",         emoji: "🐟" },
+  { key: "fruit",   label: "ফল",          emoji: "🍊" },
+  { key: "meat",    label: "মাংস",        emoji: "🥩" },
+  { key: "dairy",   label: "ডিম/দুগ্ধ",  emoji: "🥚" },
+  { key: "spice",   label: "মশলা",        emoji: "🫚" },
+  { key: "rice",    label: "চাল",         emoji: "🌾" },
+  { key: "honey",   label: "মধু",         emoji: "🍯" },
+  { key: "ready",   label: "রেডি কুক",   emoji: "🍳" },
+  { key: "organic", label: "অর্গানিক",   emoji: "🌱" },
 ];
 
 // ─── Extra farmers for new categories ───
 export const EXTRA_FARMERS = [
+  {
+    id: 9,  name: "কামাল হোসেন",       phone: "01700000015", address: "বরিশাল",
+    password: "1234", verified: true, avatar: "", sales: 320,
+    products: "পেয়ারা, কলা, মৌসুমী ফল", rating: 4.6, gender: "male" as const,
+  },
+  {
+    id: 13, name: "সামসুল হক",         phone: "01700000016", address: "কুমিল্লা",
+    password: "1234", verified: true, avatar: "", sales: 280,
+    products: "লাল শাক, মুলা শাক, শাকসবজি", rating: 4.5, gender: "male" as const,
+  },
+  {
+    id: 14, name: "ফারুক হোসেন",       phone: "01700000017", address: "যশোর",
+    password: "1234", verified: true, avatar: "", sales: 410,
+    products: "মিক্স সবজি, রেডি কুক", rating: 4.7, gender: "male" as const,
+  },
   {
     id: 21, name: "ধান গবেষণা কেন্দ্র", phone: "01800000001", address: "বগুড়া",
     password: "1234", verified: true, avatar: "", sales: 4800,
     products: "মিনিকেট, নাজিরশাইল, বাসমতি", rating: 4.9, gender: "male" as const,
   },
   {
-    id: 22, name: "সুন্দরবন মধু", phone: "01800000002", address: "সাতক্ষীরা",
+    id: 22, name: "সুন্দরবন মধু",      phone: "01800000002", address: "সাতক্ষীরা",
     password: "1234", verified: true, avatar: "", sales: 3200,
     products: "সুন্দরবনের খাঁটি মধু", rating: 5.0, gender: "male" as const,
+  },
+  {
+    id: 23, name: "অর্গানিক খামার",    phone: "01800000003", address: "পাবনা",
+    password: "1234", verified: true, avatar: "", sales: 1850,
+    products: "সরিষার তেল, গুড়, জৈব পণ্য", rating: 4.8, gender: "male" as const,
   },
 ];
 

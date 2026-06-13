@@ -18,7 +18,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import colors from "@/constants/colors";
-import { CATEGORIES, Product } from "@/constants/data";
+import { CATEGORIES, Order, Product } from "@/constants/data";
 import { useApp } from "@/context/AppContext";
 
 const ADMIN_KEY = "krishok_admin_session_v1";
@@ -26,6 +26,26 @@ const ADMIN_USERNAME = "@Ajzakir2020";
 const ADMIN_PASSWORD = "Ajzakir@2020";
 
 type AdminTab = "orders" | "farmers" | "products" | "settings";
+
+const STATUS_BN: Record<NonNullable<Order["status"]>, string> = {
+  pending:          "অপেক্ষমাণ",
+  confirmed:        "নিশ্চিত",
+  processing:       "প্রস্তুতি",
+  packed:           "প্যাক করা",
+  shipped:          "শিপড",
+  out_for_delivery: "ডেলিভারিতে",
+  delivered:        "ডেলিভারড",
+};
+
+const STATUS_COLORS: Record<NonNullable<Order["status"]>, object> = {
+  pending:          { backgroundColor: "#fef9c3" },
+  confirmed:        { backgroundColor: "#dcfce7" },
+  processing:       { backgroundColor: "#dbeafe" },
+  packed:           { backgroundColor: "#ede9fe" },
+  shipped:          { backgroundColor: "#ffedd5" },
+  out_for_delivery: { backgroundColor: "#fce7f3" },
+  delivered:        { backgroundColor: "#d1fae5" },
+};
 
 function playAlertSound() {
   if (Platform.OS === "web" && typeof window !== "undefined") {
@@ -55,7 +75,7 @@ export default function AdminScreen() {
   const {
     products, farmers, orders,
     addProduct, updateProduct, deleteProduct,
-    newOrdersCount, clearNewOrders,
+    newOrdersCount, clearNewOrders, updateOrderStatus,
   } = useApp();
 
   const [loggedIn, setLoggedIn] = useState(false);
@@ -67,6 +87,22 @@ export default function AdminScreen() {
   const [activeTab, setActiveTab] = useState<AdminTab>("orders");
   const [newOrderBanner, setNewOrderBanner] = useState(false);
   const [bannerCount, setBannerCount] = useState(0);
+  const [expandedOrderId, setExpandedOrderId] = useState<string | null>(null);
+
+  // CMS site settings
+  const [cmsLoaded, setCmsLoaded] = useState(false);
+  const [dhakaCharge, setDhakaCharge] = useState("60");
+  const [outsideCharge, setOutsideCharge] = useState("120");
+  const [extraPerKg, setExtraPerKg] = useState("30");
+  const [bkashNum, setBkashNum] = useState("01700000000");
+  const [nagadNum, setNagadNum] = useState("01700000000");
+  const [rocketNum, setRocketNum] = useState("");
+  const [contactPhone, setContactPhone] = useState("01700000000");
+  const [contactEmail, setContactEmail] = useState("krishokbazar@gmail.com");
+  const [contactAddress, setContactAddress] = useState("ঢাকা, বাংলাদেশ");
+  const [siteNote, setSiteNote] = useState("সরাসরি কৃষকের কাছ থেকে তাজা পণ্য।");
+  const [cmsSaving, setCmsSaving] = useState(false);
+  const [cmsSaved, setCmsSaved] = useState(false);
 
   const prevOrderLen = useRef(orders.length);
   const bannerTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -89,6 +125,40 @@ export default function AdminScreen() {
       setSessionChecked(true);
     });
   }, []);
+
+  useEffect(() => {
+    AsyncStorage.getItem("krishok_site_settings_v1").then((v) => {
+      if (v) {
+        try {
+          const s = JSON.parse(v);
+          if (s.dhakaCharge)   setDhakaCharge(s.dhakaCharge);
+          if (s.outsideCharge) setOutsideCharge(s.outsideCharge);
+          if (s.extraPerKg)    setExtraPerKg(s.extraPerKg);
+          if (s.bkashNum)      setBkashNum(s.bkashNum);
+          if (s.nagadNum)      setNagadNum(s.nagadNum);
+          if (s.rocketNum)     setRocketNum(s.rocketNum);
+          if (s.contactPhone)  setContactPhone(s.contactPhone);
+          if (s.contactEmail)  setContactEmail(s.contactEmail);
+          if (s.contactAddress) setContactAddress(s.contactAddress);
+          if (s.siteNote)      setSiteNote(s.siteNote);
+        } catch { /* ignore */ }
+      }
+      setCmsLoaded(true);
+    });
+  }, []);
+
+  const saveCmsSettings = async () => {
+    setCmsSaving(true);
+    await AsyncStorage.setItem("krishok_site_settings_v1", JSON.stringify({
+      dhakaCharge, outsideCharge, extraPerKg,
+      bkashNum, nagadNum, rocketNum,
+      contactPhone, contactEmail, contactAddress, siteNote,
+    }));
+    setCmsSaving(false);
+    setCmsSaved(true);
+    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    setTimeout(() => setCmsSaved(false), 2500);
+  };
 
   useEffect(() => {
     if (!loggedIn || !sessionChecked) return;
@@ -326,48 +396,87 @@ export default function AdminScreen() {
                 <Text style={styles.emptyText}>এখনো কোনো অর্ডার নেই</Text>
               </View>
             ) : (
-              allOrders.map((o, idx) => (
-                <View key={o.id} style={[styles.orderCard, idx === 0 && styles.orderCardNew]}>
-                  {idx === 0 && <View style={styles.newBadge}><Text style={styles.newBadgeText}>নতুন</Text></View>}
-                  <View style={styles.orderHeaderRow}>
-                    <Text style={styles.orderId}>#{o.id.slice(-8).toUpperCase()}</Text>
-                    <View style={[styles.statusPill, o.status === "confirmed" ? styles.pillConfirm : styles.pillDelivered]}>
-                      <Text style={styles.statusPillText}>{o.status === "confirmed" ? "নিশ্চিত" : "ডেলিভারি"}</Text>
-                    </View>
-                    <Text style={styles.orderTotal}>৳{o.grandTotal}</Text>
-                  </View>
+              allOrders.map((o, idx) => {
+                const isExpanded = expandedOrderId === o.id;
+                return (
+                  <View key={o.id} style={[styles.orderCard, idx === 0 && styles.orderCardNew]}>
+                    {idx === 0 && <View style={styles.newBadge}><Text style={styles.newBadgeText}>নতুন</Text></View>}
 
-                  <View style={styles.orderMetaRow}>
-                    <Feather name="user" size={12} color={colors.light.mutedForeground} />
-                    <Text style={styles.orderMeta}>{o.customerName}</Text>
-                    <Text style={styles.orderMetaDot}>·</Text>
-                    <Feather name="phone" size={12} color={colors.light.mutedForeground} />
-                    <Text style={styles.orderMeta}>{o.customerPhone}</Text>
-                  </View>
-                  <View style={styles.orderMetaRow}>
-                    <Feather name="map-pin" size={12} color={colors.light.mutedForeground} />
-                    <Text style={styles.orderMeta} numberOfLines={1}>{o.customerAddress}</Text>
-                    <Text style={styles.deliveryTag}>{o.deliveryArea === "dhaka" ? "🏙 ঢাকা" : "🗺 বাইরে"}</Text>
-                  </View>
-
-                  <View style={styles.itemsBox}>
-                    {o.items.map((item, i) => (
-                      <View key={i} style={styles.itemRow}>
-                        <Text style={styles.itemName}>{item.title}</Text>
-                        <Text style={styles.itemQty}>×{item.qty} {item.unit}</Text>
-                        <Text style={styles.itemPrice}>৳{item.price * item.qty}</Text>
+                    {/* Tap header to expand */}
+                    <TouchableOpacity
+                      style={styles.orderHeaderRow}
+                      onPress={() => setExpandedOrderId(isExpanded ? null : o.id)}
+                      activeOpacity={0.8}
+                    >
+                      <Text style={styles.orderId}>#{o.id.slice(-8).toUpperCase()}</Text>
+                      <View style={[styles.statusPill, STATUS_COLORS[o.status ?? "confirmed"]]}>
+                        <Text style={styles.statusPillText}>{STATUS_BN[o.status ?? "confirmed"]}</Text>
                       </View>
-                    ))}
-                  </View>
+                      <Text style={styles.orderTotal}>৳{o.grandTotal}</Text>
+                      <Feather name={isExpanded ? "chevron-up" : "chevron-down"} size={14} color={colors.light.mutedForeground} />
+                    </TouchableOpacity>
 
-                  <View style={styles.orderTotalsRow}>
-                    <Text style={styles.orderTotalLabel}>পণ্যমূল্য: ৳{o.subtotal}</Text>
-                    <Text style={styles.orderTotalLabel}>ডেলিভারি: ৳{o.deliveryCharge}</Text>
-                    <Text style={styles.orderGrand}>মোট: ৳{o.grandTotal}</Text>
+                    <View style={styles.orderMetaRow}>
+                      <Feather name="user" size={12} color={colors.light.mutedForeground} />
+                      <Text style={styles.orderMeta}>{o.customerName}</Text>
+                      <Text style={styles.orderMetaDot}>·</Text>
+                      <Feather name="phone" size={12} color={colors.light.mutedForeground} />
+                      <Text style={styles.orderMeta}>{o.customerPhone}</Text>
+                    </View>
+                    <View style={styles.orderMetaRow}>
+                      <Feather name="map-pin" size={12} color={colors.light.mutedForeground} />
+                      <Text style={styles.orderMeta} numberOfLines={1}>{o.customerAddress}</Text>
+                      <Text style={styles.deliveryTag}>{o.deliveryArea === "dhaka" ? "🏙 ঢাকা" : "🗺 বাইরে"}</Text>
+                    </View>
+
+                    {isExpanded && (
+                      <>
+                        <View style={styles.itemsBox}>
+                          {o.items.map((item, i) => (
+                            <View key={i} style={styles.itemRow}>
+                              <Text style={styles.itemName}>{item.title}</Text>
+                              <Text style={styles.itemQty}>×{item.qty} {item.unit}</Text>
+                              <Text style={styles.itemPrice}>৳{item.price * item.qty}</Text>
+                            </View>
+                          ))}
+                        </View>
+
+                        <View style={styles.orderTotalsRow}>
+                          <Text style={styles.orderTotalLabel}>পণ্যমূল্য: ৳{o.subtotal}</Text>
+                          <Text style={styles.orderTotalLabel}>ডেলিভারি: ৳{o.deliveryCharge}</Text>
+                          <Text style={styles.orderGrand}>মোট: ৳{o.grandTotal}</Text>
+                        </View>
+
+                        {/* 7-step status update */}
+                        <View style={styles.statusUpdateBox}>
+                          <Text style={styles.statusUpdateLabel}>স্ট্যাটাস আপডেট করুন:</Text>
+                          <View style={styles.statusBtnRow}>
+                            {(Object.entries(STATUS_BN) as [Order["status"], string][]).map(([key, label]) => (
+                              <TouchableOpacity
+                                key={key}
+                                style={[
+                                  styles.statusBtn,
+                                  o.status === key && styles.statusBtnActive,
+                                ]}
+                                onPress={() => {
+                                  Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+                                  updateOrderStatus(o.id, key);
+                                }}
+                              >
+                                <Text style={[styles.statusBtnText, o.status === key && styles.statusBtnTextActive]}>
+                                  {label}
+                                </Text>
+                              </TouchableOpacity>
+                            ))}
+                          </View>
+                        </View>
+                      </>
+                    )}
+
+                    <Text style={styles.orderDate}>{new Date(o.date).toLocaleString("bn-BD")}</Text>
                   </View>
-                  <Text style={styles.orderDate}>{new Date(o.date).toLocaleString("bn-BD")}</Text>
-                </View>
-              ))
+                );
+              })
             )}
           </View>
         )}
@@ -448,16 +557,25 @@ export default function AdminScreen() {
         {/* ── SETTINGS ── */}
         {activeTab === "settings" && (
           <View style={styles.section}>
-            <Text style={styles.sectionTitle}>সেটিং ও তথ্য</Text>
+            <View style={styles.sectionHeaderRow}>
+              <Text style={styles.sectionTitle}>সাইট সেটিংস CMS</Text>
+              {cmsSaved && (
+                <View style={styles.savedBadge}>
+                  <Feather name="check-circle" size={12} color="#16a34a" />
+                  <Text style={styles.savedBadgeText}>সংরক্ষিত!</Text>
+                </View>
+              )}
+            </View>
+
+            {/* Stats summary */}
             <View style={styles.settingsCard}>
-              <Text style={styles.settingsLabel}>অ্যাপ তথ্য</Text>
+              <Text style={styles.settingsLabel}>📊 অ্যাপ পরিসংখ্যান</Text>
               {[
-                ["অ্যাপের নাম", "কৃষক বাজার"],
-                ["অ্যাডমিন", ADMIN_USERNAME],
                 ["পণ্য সংখ্যা", `${products.length}টি`],
                 ["কৃষক সংখ্যা", `${farmers.length}জন`],
                 ["মোট অর্ডার", `${orders.length}টি`],
                 ["মোট আয়", `৳${totalRevenue.toLocaleString()}`],
+                ["অ্যাডমিন", ADMIN_USERNAME],
               ].map(([label, val]) => (
                 <View key={label} style={styles.settingsRow}>
                   <Text style={styles.settingsKey}>{label}</Text>
@@ -466,30 +584,127 @@ export default function AdminScreen() {
               ))}
             </View>
 
+            {/* Delivery charges - editable */}
             <View style={styles.settingsCard}>
-              <Text style={styles.settingsLabel}>ডেলিভারি নীতি</Text>
-              {[
-                ["ঢাকা সিটি", "৳৬০"],
-                ["ঢাকার বাইরে", "৳১২০"],
-                ["৫ কেজির বেশি", "+৳৩০/কেজি"],
-              ].map(([label, val]) => (
-                <View key={label} style={styles.settingsRow}>
-                  <Text style={styles.settingsKey}>{label}</Text>
-                  <Text style={styles.settingsVal}>{val}</Text>
+              <Text style={styles.settingsLabel}>🚚 ডেলিভারি চার্জ</Text>
+              <View style={styles.cmsFieldRow}>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.cmsFieldLabel}>ঢাকা সিটি (৳)</Text>
+                  <TextInput
+                    style={styles.cmsInput}
+                    value={dhakaCharge}
+                    onChangeText={setDhakaCharge}
+                    keyboardType="numeric"
+                    placeholderTextColor={colors.light.mutedForeground}
+                  />
                 </View>
-              ))}
-            </View>
-
-            <View style={styles.settingsCard}>
-              <Text style={styles.settingsLabel}>ফুটার লোগো</Text>
-              <View style={styles.footerLogoPreview}>
-                <Image source={require("@/assets/images/icon.png")} style={styles.footerLogoImg} />
-                <View>
-                  <Text style={styles.footerLogoName}>কৃষক বাজার</Text>
-                  <Text style={styles.footerLogoStatus}>✅ অফিশিয়াল লোগো সেট আছে</Text>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.cmsFieldLabel}>ঢাকার বাইরে (৳)</Text>
+                  <TextInput
+                    style={styles.cmsInput}
+                    value={outsideCharge}
+                    onChangeText={setOutsideCharge}
+                    keyboardType="numeric"
+                    placeholderTextColor={colors.light.mutedForeground}
+                  />
+                </View>
+                <View style={{ flex: 1 }}>
+                  <Text style={styles.cmsFieldLabel}>৫কেজি+ প্রতি কেজি (৳)</Text>
+                  <TextInput
+                    style={styles.cmsInput}
+                    value={extraPerKg}
+                    onChangeText={setExtraPerKg}
+                    keyboardType="numeric"
+                    placeholderTextColor={colors.light.mutedForeground}
+                  />
                 </View>
               </View>
             </View>
+
+            {/* Payment numbers - editable */}
+            <View style={styles.settingsCard}>
+              <Text style={styles.settingsLabel}>💳 পেমেন্ট নম্বর</Text>
+              <Text style={styles.cmsFieldLabel}>bKash নম্বর</Text>
+              <TextInput
+                style={styles.cmsInput}
+                value={bkashNum}
+                onChangeText={setBkashNum}
+                keyboardType="phone-pad"
+                placeholder="01XXXXXXXXX"
+                placeholderTextColor={colors.light.mutedForeground}
+              />
+              <Text style={styles.cmsFieldLabel}>Nagad নম্বর</Text>
+              <TextInput
+                style={styles.cmsInput}
+                value={nagadNum}
+                onChangeText={setNagadNum}
+                keyboardType="phone-pad"
+                placeholder="01XXXXXXXXX"
+                placeholderTextColor={colors.light.mutedForeground}
+              />
+              <Text style={styles.cmsFieldLabel}>Rocket নম্বর (ঐচ্ছিক)</Text>
+              <TextInput
+                style={styles.cmsInput}
+                value={rocketNum}
+                onChangeText={setRocketNum}
+                keyboardType="phone-pad"
+                placeholder="01XXXXXXXXX"
+                placeholderTextColor={colors.light.mutedForeground}
+              />
+            </View>
+
+            {/* Contact info - editable */}
+            <View style={styles.settingsCard}>
+              <Text style={styles.settingsLabel}>📞 যোগাযোগ তথ্য</Text>
+              <Text style={styles.cmsFieldLabel}>ফোন নম্বর</Text>
+              <TextInput
+                style={styles.cmsInput}
+                value={contactPhone}
+                onChangeText={setContactPhone}
+                keyboardType="phone-pad"
+                placeholderTextColor={colors.light.mutedForeground}
+              />
+              <Text style={styles.cmsFieldLabel}>ইমেইল</Text>
+              <TextInput
+                style={styles.cmsInput}
+                value={contactEmail}
+                onChangeText={setContactEmail}
+                keyboardType="email-address"
+                autoCapitalize="none"
+                placeholderTextColor={colors.light.mutedForeground}
+              />
+              <Text style={styles.cmsFieldLabel}>ঠিকানা</Text>
+              <TextInput
+                style={styles.cmsInput}
+                value={contactAddress}
+                onChangeText={setContactAddress}
+                placeholderTextColor={colors.light.mutedForeground}
+              />
+            </View>
+
+            {/* Site note */}
+            <View style={styles.settingsCard}>
+              <Text style={styles.settingsLabel}>📝 সাইট নোট / ট্যাগলাইন</Text>
+              <TextInput
+                style={[styles.cmsInput, { height: 72, textAlignVertical: "top" }]}
+                value={siteNote}
+                onChangeText={setSiteNote}
+                multiline
+                placeholderTextColor={colors.light.mutedForeground}
+              />
+            </View>
+
+            {/* Save button */}
+            <TouchableOpacity
+              style={[styles.saveBtn, cmsSaving && { opacity: 0.7 }]}
+              onPress={saveCmsSettings}
+              disabled={cmsSaving}
+            >
+              <Feather name={cmsSaved ? "check-circle" : "save"} size={16} color="#fff" />
+              <Text style={styles.saveBtnText}>
+                {cmsSaving ? "সংরক্ষণ হচ্ছে..." : cmsSaved ? "সংরক্ষিত হয়েছে!" : "সেটিংস সংরক্ষণ করুন"}
+              </Text>
+            </TouchableOpacity>
 
             <TouchableOpacity style={styles.dangerBtn} onPress={handleLogout}>
               <Feather name="log-out" size={15} color="#fff" />
@@ -562,16 +777,17 @@ export default function AdminScreen() {
 
 const UNITS = ["কেজি", "পিস", "ডজন", "আঁটি", "প্যাক", "লিটার", "১০০ পিস", "৫০০ গ্রাম"];
 const PROD_CATS: { key: Product["cat"]; label: string }[] = [
-  { key: "vege",  label: "সবজি" },
-  { key: "leafy", label: "শাক" },
-  { key: "fish",  label: "মাছ" },
-  { key: "fruit", label: "ফল" },
-  { key: "meat",  label: "মাংস" },
-  { key: "dairy", label: "ডিম/দুগ্ধ" },
-  { key: "spice", label: "মশলা" },
-  { key: "rice",  label: "চাল" },
-  { key: "honey", label: "মধু" },
-  { key: "ready", label: "রেডি টু কুক" },
+  { key: "vege",    label: "সবজি" },
+  { key: "leafy",   label: "শাক" },
+  { key: "fish",    label: "মাছ" },
+  { key: "fruit",   label: "ফল" },
+  { key: "meat",    label: "মাংস" },
+  { key: "dairy",   label: "ডিম/দুগ্ধ" },
+  { key: "spice",   label: "মশলা" },
+  { key: "rice",    label: "চাল" },
+  { key: "honey",   label: "মধু" },
+  { key: "ready",   label: "রেডি টু কুক" },
+  { key: "organic", label: "অর্গানিক" },
 ];
 
 function ProductForm({
@@ -784,6 +1000,19 @@ const styles = StyleSheet.create({
   orderTotalLabel: { fontSize: 11, color: colors.light.mutedForeground },
   orderGrand: { fontSize: 13, fontWeight: "800" as const, color: colors.light.primary, marginLeft: "auto" as const },
   orderDate: { fontSize: 10, color: colors.light.mutedForeground },
+  statusUpdateBox: {
+    backgroundColor: colors.light.muted, borderRadius: 12, padding: 10,
+    borderWidth: 1, borderColor: colors.light.border, gap: 8,
+  },
+  statusUpdateLabel: { fontSize: 12, fontWeight: "700" as const, color: colors.light.text },
+  statusBtnRow: { flexDirection: "row", flexWrap: "wrap" as const, gap: 6 },
+  statusBtn: {
+    paddingHorizontal: 10, paddingVertical: 5, borderRadius: 16,
+    borderWidth: 1, borderColor: colors.light.border, backgroundColor: "#fff",
+  },
+  statusBtnActive: { backgroundColor: colors.light.primary, borderColor: colors.light.primary },
+  statusBtnText: { fontSize: 11, color: colors.light.mutedForeground, fontWeight: "600" as const },
+  statusBtnTextActive: { color: "#fff", fontWeight: "700" as const },
 
   farmerCard: {
     backgroundColor: "#fff", borderRadius: 18, padding: 16, gap: 12,
@@ -849,6 +1078,21 @@ const styles = StyleSheet.create({
     flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 8, marginTop: 8,
   },
   dangerBtnText: { color: "#fff", fontWeight: "700" as const, fontSize: 15 },
+
+  savedBadge: {
+    flexDirection: "row", alignItems: "center", gap: 4,
+    backgroundColor: "#f0fdf4", borderRadius: 12, paddingHorizontal: 10, paddingVertical: 4,
+    borderWidth: 1, borderColor: "#bbf7d0",
+  },
+  savedBadgeText: { fontSize: 12, color: "#16a34a", fontWeight: "700" as const },
+  cmsFieldRow: { flexDirection: "row", gap: 8 },
+  cmsFieldLabel: { fontSize: 12, fontWeight: "600" as const, color: colors.light.mutedForeground, marginBottom: 5, marginTop: 8 },
+  cmsInput: {
+    backgroundColor: colors.light.muted, borderRadius: 10,
+    paddingHorizontal: 12, paddingVertical: 10,
+    fontSize: 13, color: colors.light.text,
+    borderWidth: 1, borderColor: colors.light.border,
+  },
 
   modalOverlay: { flex: 1, backgroundColor: "rgba(0,0,0,0.55)", justifyContent: "flex-end" },
   modalSheet: {

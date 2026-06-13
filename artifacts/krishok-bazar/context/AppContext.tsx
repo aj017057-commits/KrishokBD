@@ -18,8 +18,9 @@ import {
   Order,
   Product,
 } from "@/constants/data";
+import { GITHUB_PRODUCTS } from "@/constants/github-products";
 
-const ALL_INITIAL_PRODUCTS = [...INITIAL_PRODUCTS, ...APP2_PRODUCTS];
+const ALL_INITIAL_PRODUCTS = [...INITIAL_PRODUCTS, ...APP2_PRODUCTS, ...GITHUB_PRODUCTS];
 const ALL_INITIAL_FARMERS = [...INITIAL_FARMERS, ...EXTRA_FARMERS];
 
 interface AppContextType {
@@ -59,6 +60,7 @@ interface AppContextType {
   getFarmerProducts: (farmerId: number) => Product[];
   getFarmerOrders: (farmerId: number) => Order[];
   getCustomerOrders: (customerId: string) => Order[];
+  updateOrderStatus: (orderId: string, status: Order["status"]) => void;
 }
 
 const AppContext = createContext<AppContextType | null>(null);
@@ -323,6 +325,14 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
     return orders.filter((o) => o.customerId === customerId);
   }, [orders]);
 
+  const updateOrderStatus = useCallback((orderId: string, status: Order["status"]) => {
+    setOrders((prev) => {
+      const next = prev.map((o) => o.id === orderId ? { ...o, status } : o);
+      save(KEYS.orders, next);
+      return next;
+    });
+  }, [save]);
+
   const cartCount = cart.reduce((s, i) => s + i.qty, 0);
 
   if (!loaded) return null;
@@ -341,6 +351,7 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       farmerRegister, farmerLogin, farmerLogout,
       addProduct, updateProduct, deleteProduct,
       getFarmerProducts, getFarmerOrders, getCustomerOrders,
+      updateOrderStatus,
     }}>
       {children}
     </AppContext.Provider>

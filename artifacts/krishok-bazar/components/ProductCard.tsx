@@ -1,5 +1,6 @@
 import { Feather } from "@expo/vector-icons";
 import * as Haptics from "expo-haptics";
+import { router } from "expo-router";
 import React, { useState } from "react";
 import {
   Image,
@@ -30,7 +31,11 @@ export default function ProductCard({ product }: Props) {
   };
 
   return (
-    <View style={styles.card}>
+    <TouchableOpacity
+      style={styles.card}
+      activeOpacity={0.92}
+      onPress={() => router.push(`/product/${product.id}`)}
+    >
       <View style={styles.imageContainer}>
         <Image source={{ uri: product.img }} style={styles.image} resizeMode="cover" />
         {product.badge && (
@@ -41,6 +46,11 @@ export default function ProductCard({ product }: Props) {
         {inCart && (
           <View style={styles.cartBadge}>
             <Text style={styles.cartBadgeText}>{inCart.qty}</Text>
+          </View>
+        )}
+        {product.bestSeller && (
+          <View style={styles.hotBadge}>
+            <Text style={styles.hotBadgeText}>🔥</Text>
           </View>
         )}
       </View>
@@ -72,7 +82,7 @@ export default function ProductCard({ product }: Props) {
           )}
         </TouchableOpacity>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 }
 
@@ -105,6 +115,13 @@ const styles = StyleSheet.create({
     alignItems: "center", justifyContent: "center",
   },
   cartBadgeText: { fontSize: 10, color: "#fff", fontWeight: "700" as const },
+  hotBadge: {
+    position: "absolute", bottom: 6, right: 6,
+    backgroundColor: "rgba(255,255,255,0.9)",
+    width: 24, height: 24, borderRadius: 12,
+    alignItems: "center", justifyContent: "center",
+  },
+  hotBadgeText: { fontSize: 13 },
   info: { padding: 10, gap: 4 },
   title: { fontSize: 13, fontWeight: "700" as const, color: colors.light.text },
   farmer: { fontSize: 10, color: colors.light.mutedForeground },

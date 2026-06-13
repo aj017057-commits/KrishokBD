@@ -10,6 +10,25 @@ import { Platform, StyleSheet, Text, View, useColorScheme } from "react-native";
 import colors from "@/constants/colors";
 import { useApp } from "@/context/AppContext";
 
+function CartBadge({ count }: { count: number }) {
+  if (count === 0) return null;
+  return (
+    <View style={badge.wrap}>
+      <Text style={badge.text}>{count > 99 ? "99+" : count}</Text>
+    </View>
+  );
+}
+
+const badge = StyleSheet.create({
+  wrap: {
+    position: "absolute", top: -6, right: -8,
+    minWidth: 17, height: 17, borderRadius: 9,
+    backgroundColor: "#e53935", alignItems: "center", justifyContent: "center",
+    paddingHorizontal: 3, borderWidth: 1.5, borderColor: "#fff",
+  },
+  text: { color: "#fff", fontSize: 9, fontWeight: "800" as const },
+});
+
 function NativeTabLayout() {
   return (
     <NativeTabs>
@@ -17,9 +36,17 @@ function NativeTabLayout() {
         <Icon sf={{ default: "house", selected: "house.fill" }} />
         <Label>হোম</Label>
       </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="categories">
+        <Icon sf={{ default: "square.grid.2x2", selected: "square.grid.2x2.fill" }} />
+        <Label>ক্যাটাগরি</Label>
+      </NativeTabs.Trigger>
       <NativeTabs.Trigger name="cart">
         <Icon sf={{ default: "cart", selected: "cart.fill" }} />
         <Label>কার্ট</Label>
+      </NativeTabs.Trigger>
+      <NativeTabs.Trigger name="orders">
+        <Icon sf={{ default: "list.bullet.clipboard", selected: "list.bullet.clipboard.fill" }} />
+        <Label>অর্ডার</Label>
       </NativeTabs.Trigger>
       <NativeTabs.Trigger name="account">
         <Icon sf={{ default: "person", selected: "person.fill" }} />
@@ -48,8 +75,9 @@ function ClassicTabLayout() {
           borderTopWidth: 1,
           borderTopColor: colors.light.border,
           elevation: 0,
-          height: isWeb ? 84 : 60,
+          height: isWeb ? 84 : 62,
         },
+        tabBarLabelStyle: { fontSize: 10 },
         tabBarBackground: () =>
           isIOS ? (
             <BlurView
@@ -66,9 +94,21 @@ function ClassicTabLayout() {
           title: "হোম",
           tabBarIcon: ({ color }) =>
             isIOS ? (
-              <SymbolView name="house" tintColor={color} size={24} />
+              <SymbolView name="house" tintColor={color} size={22} />
             ) : (
-              <Feather name="home" size={22} color={color} />
+              <Feather name="home" size={21} color={color} />
+            ),
+        }}
+      />
+      <Tabs.Screen
+        name="categories"
+        options={{
+          title: "ক্যাটাগরি",
+          tabBarIcon: ({ color }) =>
+            isIOS ? (
+              <SymbolView name="square.grid.2x2" tintColor={color} size={22} />
+            ) : (
+              <Feather name="grid" size={21} color={color} />
             ),
         }}
       />
@@ -76,13 +116,27 @@ function ClassicTabLayout() {
         name="cart"
         options={{
           title: "কার্ট",
-          tabBarBadge: cartCount > 0 ? cartCount : undefined,
-          tabBarBadgeStyle: { backgroundColor: "#e53935", fontSize: 10 },
+          tabBarIcon: ({ color, focused }) => (
+            <View>
+              {isIOS ? (
+                <SymbolView name="cart" tintColor={color} size={22} />
+              ) : (
+                <Feather name="shopping-cart" size={21} color={color} />
+              )}
+              <CartBadge count={cartCount} />
+            </View>
+          ),
+        }}
+      />
+      <Tabs.Screen
+        name="orders"
+        options={{
+          title: "অর্ডার",
           tabBarIcon: ({ color }) =>
             isIOS ? (
-              <SymbolView name="cart" tintColor={color} size={24} />
+              <SymbolView name="list.bullet.clipboard" tintColor={color} size={22} />
             ) : (
-              <Feather name="shopping-cart" size={22} color={color} />
+              <Feather name="package" size={21} color={color} />
             ),
         }}
       />
@@ -92,9 +146,9 @@ function ClassicTabLayout() {
           title: "অ্যাকাউন্ট",
           tabBarIcon: ({ color }) =>
             isIOS ? (
-              <SymbolView name="person" tintColor={color} size={24} />
+              <SymbolView name="person" tintColor={color} size={22} />
             ) : (
-              <Feather name="user" size={22} color={color} />
+              <Feather name="user" size={21} color={color} />
             ),
         }}
       />

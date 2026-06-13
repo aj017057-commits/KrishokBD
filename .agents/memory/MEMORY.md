@@ -1,0 +1,1 @@
+- [Krishok Bazar App](krishok-bazar.md) — Bengali agricultural e-commerce Expo PWA; key architecture, product IDs, admin creds, and design decisions.

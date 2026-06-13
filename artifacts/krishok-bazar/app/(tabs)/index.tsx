@@ -21,12 +21,11 @@ import CustomerModal from "@/components/CustomerModal";
 import FarmerCard from "@/components/FarmerCard";
 import FarmerModal from "@/components/FarmerModal";
 import HeroCarousel from "@/components/HeroCarousel";
+import MenuDrawer from "@/components/MenuDrawer";
 import ProductCard from "@/components/ProductCard";
 import colors from "@/constants/colors";
 import { BEST_SELLERS, CATEGORIES, Product, VIDEO_IDS, WHY_APP_VIDEO_IDS } from "@/constants/data";
 import { useApp } from "@/context/AppContext";
-
-const MALE_LOGO = require("@/assets/images/farmer-male.png");
 
 export default function HomeScreen() {
   const insets = useSafeAreaInsets();
@@ -34,6 +33,7 @@ export default function HomeScreen() {
   const [showCustomer, setShowCustomer] = useState(false);
   const [showFarmer, setShowFarmer] = useState(false);
   const [showChat, setShowChat] = useState(false);
+  const [showMenu, setShowMenu] = useState(false);
 
   const filtered = useMemo(() => {
     let list = products;
@@ -72,18 +72,38 @@ export default function HomeScreen() {
           </View>
         </View>
         <View style={styles.headerBtns}>
-          <TouchableOpacity style={styles.headerIconBtn} onPress={() => setShowCustomer(true)}>
-            <Image source={MALE_LOGO} style={styles.headerIconImg} resizeMode="cover" />
-            <Text style={styles.headerIconLabel}>গ্রাহক</Text>
+          <TouchableOpacity
+            style={styles.headerIconBtn}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              setShowChat(true);
+            }}
+          >
+            <Feather name="message-circle" size={20} color={colors.light.primary} />
+            <Text style={styles.headerIconLabel}>AI</Text>
           </TouchableOpacity>
-          <TouchableOpacity style={[styles.headerIconBtn, styles.headerIconBtnFarmer]} onPress={() => setShowFarmer(true)}>
-            <Image source={MALE_LOGO} style={styles.headerIconImg} resizeMode="cover" />
-            <Text style={[styles.headerIconLabel, styles.headerIconLabelFarmer]}>কৃষক</Text>
+          <TouchableOpacity
+            style={[styles.headerIconBtn, { position: "relative" }]}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              router.push("/orders");
+            }}
+          >
+            <Feather name="bell" size={20} color={colors.light.primary} />
             {newOrdersCount > 0 && (
               <View style={styles.notifBadge}>
                 <Text style={styles.notifBadgeText}>{newOrdersCount}</Text>
               </View>
             )}
+          </TouchableOpacity>
+          <TouchableOpacity
+            style={[styles.headerIconBtn, styles.headerIconBtnMenu]}
+            onPress={() => {
+              Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
+              setShowMenu(true);
+            }}
+          >
+            <Feather name="menu" size={20} color="#fff" />
           </TouchableOpacity>
         </View>
       </View>
@@ -343,7 +363,7 @@ export default function HomeScreen() {
               {"\n\n"}ন্যায্য দাম। টাটকা পণ্য। সম্মানিত কৃষক।
             </Text>
             <View style={styles.storyStats}>
-              {[["২৫+", "পণ্য"], ["১৩+", "কৃষক"], ["৮টি", "ক্যাটাগরি"], ["৯৯%", "সন্তুষ্ট"]].map(
+              {[["২০০+", "পণ্য"], ["২৩+", "কৃষক"], ["১২টি", "ক্যাটাগরি"], ["৯৯%", "সন্তুষ্ট"]].map(
                 ([num, label]) => (
                   <View key={label} style={styles.storyStat}>
                     <Text style={styles.storyStatNum}>{num}</Text>
@@ -410,6 +430,12 @@ export default function HomeScreen() {
       <CustomerModal visible={showCustomer} onClose={() => setShowCustomer(false)} />
       <FarmerModal visible={showFarmer} onClose={() => setShowFarmer(false)} />
       <ChatBotModal visible={showChat} onClose={() => setShowChat(false)} />
+      <MenuDrawer
+        visible={showMenu}
+        onClose={() => setShowMenu(false)}
+        onCustomer={() => setShowCustomer(true)}
+        onFarmer={() => setShowFarmer(true)}
+      />
     </View>
   );
 }
@@ -466,24 +492,25 @@ const styles = StyleSheet.create({
   logoImg: { width: 40, height: 40, borderRadius: 20 },
   brandName: { fontSize: 20, fontWeight: "800" as const, color: colors.light.primary },
   brandTagline: { fontSize: 10, color: colors.light.mutedForeground },
-  headerBtns: { flexDirection: "row", gap: 8 },
+  headerBtns: { flexDirection: "row", gap: 8, alignItems: "center" },
   headerIconBtn: {
-    alignItems: "center", justifyContent: "center", gap: 2,
-    paddingHorizontal: 8, paddingVertical: 4,
-    borderRadius: 14, borderWidth: 1, borderColor: colors.light.border,
+    width: 38, height: 38,
+    alignItems: "center", justifyContent: "center",
+    borderRadius: 19, borderWidth: 1, borderColor: colors.light.border,
     backgroundColor: colors.light.primarySoft,
   },
-  headerIconBtnFarmer: { backgroundColor: "#fef3c7", borderColor: "#fde68a" },
-  headerIconImg: { width: 30, height: 30, borderRadius: 15 },
-  headerIconLabel: { fontSize: 9, color: colors.light.primary, fontWeight: "700" as const },
-  headerIconLabelFarmer: { color: "#92400e" },
-  notifBadge: {
-    position: "absolute", top: -6, right: -6,
-    backgroundColor: "#ef4444", minWidth: 18, height: 18,
-    borderRadius: 9, alignItems: "center", justifyContent: "center",
-    paddingHorizontal: 4, borderWidth: 2, borderColor: "#fff",
+  headerIconBtnMenu: {
+    backgroundColor: colors.light.primary,
+    borderColor: colors.light.primary,
   },
-  notifBadgeText: { fontSize: 9, color: "#fff", fontWeight: "800" as const },
+  headerIconLabel: { fontSize: 9, color: colors.light.primary, fontWeight: "700" as const },
+  notifBadge: {
+    position: "absolute", top: -2, right: -2,
+    backgroundColor: "#ef4444", minWidth: 16, height: 16,
+    borderRadius: 8, alignItems: "center", justifyContent: "center",
+    paddingHorizontal: 3, borderWidth: 2, borderColor: "#fff",
+  },
+  notifBadgeText: { fontSize: 8, color: "#fff", fontWeight: "800" as const },
 
   /* Search */
   searchWrap: { paddingHorizontal: 16, paddingVertical: 10, backgroundColor: "#fff" },

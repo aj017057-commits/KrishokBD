@@ -26,16 +26,17 @@ const FEMALE_LOGO = require("@/assets/images/farmer-female.png");
 type FarmerView = "login" | "register" | "dashboard";
 
 const PROD_CATEGORIES: { key: Product["cat"]; label: string }[] = [
-  { key: "vege",  label: "সবজি" },
-  { key: "leafy", label: "শাক" },
-  { key: "fish",  label: "মাছ" },
-  { key: "fruit", label: "ফল" },
-  { key: "meat",  label: "মাংস" },
-  { key: "dairy", label: "ডিম/দুগ্ধ" },
-  { key: "spice", label: "মশলা" },
-  { key: "rice",  label: "চাল" },
-  { key: "honey", label: "মধু" },
-  { key: "ready", label: "রেডি টু কুক" },
+  { key: "vege",    label: "সবজি" },
+  { key: "leafy",   label: "শাক" },
+  { key: "fish",    label: "মাছ" },
+  { key: "fruit",   label: "ফল" },
+  { key: "meat",    label: "মাংস" },
+  { key: "dairy",   label: "ডিম/দুগ্ধ" },
+  { key: "spice",   label: "মশলা" },
+  { key: "rice",    label: "চাল" },
+  { key: "honey",   label: "মধু" },
+  { key: "ready",   label: "রেডি টু কুক" },
+  { key: "organic", label: "অর্গানিক" },
 ];
 
 const UNITS = ["কেজি", "পিস", "ডজন", "আটি", "প্যাক"];
