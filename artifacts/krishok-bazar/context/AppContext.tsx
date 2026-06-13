@@ -8,14 +8,19 @@ import React, {
 } from "react";
 
 import {
+  APP2_PRODUCTS,
   CartItem,
   Customer,
+  EXTRA_FARMERS,
   Farmer,
   INITIAL_FARMERS,
   INITIAL_PRODUCTS,
   Order,
   Product,
 } from "@/constants/data";
+
+const ALL_INITIAL_PRODUCTS = [...INITIAL_PRODUCTS, ...APP2_PRODUCTS];
+const ALL_INITIAL_FARMERS = [...INITIAL_FARMERS, ...EXTRA_FARMERS];
 
 interface AppContextType {
   products: Product[];
@@ -91,15 +96,15 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
           AsyncStorage.getItem(KEYS.customers),
           AsyncStorage.getItem(KEYS.currentCustomer),
         ]);
-        setProducts(p ? JSON.parse(p) : INITIAL_PRODUCTS);
-        setFarmers(f ? JSON.parse(f) : INITIAL_FARMERS);
+        setProducts(p ? JSON.parse(p) : ALL_INITIAL_PRODUCTS);
+        setFarmers(f ? JSON.parse(f) : ALL_INITIAL_FARMERS);
         setOrders(o ? JSON.parse(o) : []);
         setCart(c ? JSON.parse(c) : []);
         setCustomers(cu ? JSON.parse(cu) : []);
         setCurrentCustomer(cc ? JSON.parse(cc) : null);
       } catch {
-        setProducts(INITIAL_PRODUCTS);
-        setFarmers(INITIAL_FARMERS);
+        setProducts(ALL_INITIAL_PRODUCTS);
+        setFarmers(ALL_INITIAL_FARMERS);
       }
       setLoaded(true);
     })();

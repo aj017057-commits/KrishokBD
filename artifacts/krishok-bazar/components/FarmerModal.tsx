@@ -33,6 +33,8 @@ const PROD_CATEGORIES: { key: Product["cat"]; label: string }[] = [
   { key: "meat",  label: "মাংস" },
   { key: "dairy", label: "ডিম/দুগ্ধ" },
   { key: "spice", label: "মশলা" },
+  { key: "rice",  label: "চাল" },
+  { key: "honey", label: "মধু" },
   { key: "ready", label: "রেডি টু কুক" },
 ];
 

@@ -8,7 +8,7 @@ export interface Product {
   title: string;
   price: number;
   unit: string;
-  cat: "vege" | "fruit" | "leafy" | "fish" | "meat" | "dairy" | "spice" | "ready";
+  cat: "vege" | "fruit" | "leafy" | "fish" | "meat" | "dairy" | "spice" | "ready" | "rice" | "honey";
   farmer: string;
   farmerId: number;
   desc: string;
@@ -413,6 +413,93 @@ export const CATEGORIES = [
   { key: "meat",  label: "মাংস",      emoji: "🥩" },
   { key: "dairy", label: "ডিম/দুগ্ধ", emoji: "🥚" },
   { key: "spice", label: "মশলা",      emoji: "🫚" },
+  { key: "rice",  label: "চাল",       emoji: "🌾" },
+  { key: "honey", label: "মধু",       emoji: "🍯" },
+  { key: "ready", label: "রেডি কুক",  emoji: "🍳" },
+];
+
+// ─── Extra farmers for new categories ───
+export const EXTRA_FARMERS = [
+  {
+    id: 21, name: "ধান গবেষণা কেন্দ্র", phone: "01800000001", address: "বগুড়া",
+    password: "1234", verified: true, avatar: "", sales: 4800,
+    products: "মিনিকেট, নাজিরশাইল, বাসমতি", rating: 4.9, gender: "male" as const,
+  },
+  {
+    id: 22, name: "সুন্দরবন মধু", phone: "01800000002", address: "সাতক্ষীরা",
+    password: "1234", verified: true, avatar: "", sales: 3200,
+    products: "সুন্দরবনের খাঁটি মধু", rating: 5.0, gender: "male" as const,
+  },
+];
+
+// ─── App-2 merged products: চাল ও মধু ───
+export const APP2_PRODUCTS: Product[] = [
+  // ── চাল ──
+  {
+    id: 101, title: "মিনিকেট চাল", price: 72, unit: "কেজি", cat: "rice",
+    farmer: "ধান গবেষণা কেন্দ্র", farmerId: 21,
+    desc: "সুগন্ধি মিনিকেট চাল, পাতলা ও নরম। প্রতিদিনের ভাতের জন্য সেরা পছন্দ।",
+    img: "https://images.unsplash.com/photo-1586201375761-83865001e31c?w=600&auto=format&fit=crop&q=70",
+    badge: "সুগন্ধি", bestSeller: true,
+  },
+  {
+    id: 102, title: "নাজিরশাইল চাল", price: 85, unit: "কেজি", cat: "rice",
+    farmer: "ধান গবেষণা কেন্দ্র", farmerId: 21,
+    desc: "বিশ্বখ্যাত নাজিরশাইল চাল, পোলাও ও বিরিয়ানির জন্য অতুলনীয়।",
+    img: "https://images.unsplash.com/photo-1574323347407-f5e1ad6d020b?w=600&auto=format&fit=crop&q=70",
+    badge: "প্রিমিয়াম",
+  },
+  {
+    id: 103, title: "কালিজিরা চাল", price: 130, unit: "কেজি", cat: "rice",
+    farmer: "ধান গবেষণা কেন্দ্র", farmerId: 21,
+    desc: "দুর্লভ কালিজিরা সুগন্ধি চাল, মেহমানদারিতে বিশেষ জনপ্রিয়। হালকা ও মসৃণ।",
+    img: "https://images.unsplash.com/photo-1533240332313-0db49b439ad3?w=600&auto=format&fit=crop&q=70",
+    badge: "দুর্লভ",
+  },
+  {
+    id: 104, title: "বাসমতি চাল", price: 180, unit: "কেজি", cat: "rice",
+    farmer: "ধান গবেষণা কেন্দ্র", farmerId: 21,
+    desc: "লম্বা দানার বাসমতি চাল, পোলাও ও বিরিয়ানিতে অসাধারণ সুগন্ধ আনে।",
+    img: "https://images.unsplash.com/photo-1516253593875-bd7ba052fbc5?w=600&auto=format&fit=crop&q=70",
+    badge: "লম্বা দানা",
+  },
+  // ── মধু ──
+  {
+    id: 105, title: "সুন্দরবনের মধু", price: 850, unit: "কেজি", cat: "honey",
+    farmer: "সুন্দরবন মধু", farmerId: 22,
+    desc: "বিশ্বখ্যাত সুন্দরবন থেকে সংগ্রহ করা খাঁটি মধু। অ্যান্টিব্যাকটেরিয়াল গুণে ভরপুর।",
+    img: "https://images.unsplash.com/photo-1587049352846-4a222e784d38?w=600&auto=format&fit=crop&q=70",
+    badge: "সুন্দরবন", bestSeller: true,
+  },
+  {
+    id: 106, title: "সরিষা ফুলের মধু", price: 680, unit: "কেজি", cat: "honey",
+    farmer: "সুন্দরবন মধু", farmerId: 22,
+    desc: "সরিষা ফুল থেকে সংগৃহীত হালকা রঙের মধু। ঠান্ডা ও কাশিতে অত্যন্ত কার্যকর।",
+    img: "https://images.unsplash.com/photo-1471193945509-9ad0617afabf?w=600&auto=format&fit=crop&q=70",
+    badge: "ঔষধি",
+  },
+  {
+    id: 107, title: "লিচু ফুলের মধু", price: 920, unit: "কেজি", cat: "honey",
+    farmer: "সুন্দরবন মধু", farmerId: 22,
+    desc: "রাজশাহীর লিচু বাগান থেকে সংগ্রহ করা প্রিমিয়াম মধু। মিষ্টি ও সুগন্ধি।",
+    img: "https://images.unsplash.com/photo-1558642452-9d2a7deb7f62?w=600&auto=format&fit=crop&q=70",
+    badge: "প্রিমিয়াম",
+  },
+  // ── রেডি টু কুক (from App-2) ──
+  {
+    id: 108, title: "মিক্স ভেজিটেবল কাট", price: 150, unit: "৫০০ গ্রাম", cat: "ready",
+    farmer: "ফারুক হোসেন", farmerId: 14,
+    desc: "ধোয়া ও কাটা মিশ্র সবজি — আলু, গাজর, মটরশুঁটি, বরবটি। সরাসরি ভাজুন।",
+    img: "https://images.unsplash.com/photo-1540420773420-3366772f4999?w=600&auto=format&fit=crop&q=70",
+    badge: "প্রস্তুত",
+  },
+  {
+    id: 109, title: "মুরগির কাবাব মিক্স", price: 280, unit: "৫০০ গ্রাম", cat: "ready",
+    farmer: "পোলট্রি খামার", farmerId: 17,
+    desc: "মশলা মাখানো মুরগির টুকরো, সরাসরি গ্রিল বা ভাজুন। পার্টি ও ডেইলি মিলে পারফেক্ট।",
+    img: "https://images.unsplash.com/photo-1532407191490-e4066c1500d4?w=600&auto=format&fit=crop&q=70",
+    badge: "মশলাদার",
+  },
 ];
 
 export const SUPPORT_PHONE = "8801931355398";

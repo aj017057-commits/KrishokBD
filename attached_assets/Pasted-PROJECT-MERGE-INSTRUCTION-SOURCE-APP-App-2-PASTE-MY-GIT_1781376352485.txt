@@ -1,0 +1,267 @@
+PROJECT MERGE INSTRUCTION
+
+SOURCE APP (App-2):
+[PASTE MY GITHUB LINK HERE]
+
+TARGET APP (App-1):
+Your current Krishok Bazar application.
+
+IMPORTANT:
+
+DO NOT redesign App-1.
+
+DO NOT change App-1 branding.
+
+DO NOT change App-1 logo.
+
+DO NOT change App-1 colors.
+
+DO NOT change App-1 layout structure.
+
+DO NOT remove any existing feature.
+
+==================================================
+
+MISSION
+
+Use App-2 as a COMPLETE FEATURE SOURCE.
+
+Copy and merge EVERYTHING useful from App-2 into App-1.
+
+App-1 must remain the final application.
+
+App-2 is only the source of features, content, products, dashboards and systems.
+
+==================================================
+
+COPY FROM APP-2
+
+1. ALL PRODUCTS
+
+Import all products.
+
+Import all product names.
+
+Import all product descriptions.
+
+Import all product images.
+
+Import all product categories.
+
+Import all ratings.
+
+Import all product data.
+
+Keep existing App-1 products.
+
+Add imported products below existing products.
+
+==================================================
+
+2. ALL PRODUCT PAGES
+
+Copy the complete product page structure.
+
+Each product page must contain:
+
+* Product gallery
+* Product details
+* Product description
+* Farmer information
+* Rating
+* Related products
+* WhatsApp order button
+* Add to cart button
+* Buy now button
+
+Every product must have 5 gallery images.
+
+If only 1 image exists:
+
+Use the same image repeatedly to create 5 gallery slots.
+
+Maintain existing gallery design.
+
+==================================================
+
+3. ALL CATEGORIES
+
+Copy all categories from App-2.
+
+Merge with App-1 categories.
+
+Do not delete existing categories.
+
+==================================================
+
+4. FARMER SYSTEM
+
+Copy:
+
+* Farmer dashboard
+* Farmer profile
+* Farmer verification
+* Farmer products
+* Farmer orders
+* Farmer earnings
+
+Merge into App-1.
+
+==================================================
+
+5. CUSTOMER SYSTEM
+
+Copy:
+
+* Customer dashboard
+* Orders
+* Wishlist
+* Profile
+* Notifications
+* Reviews
+
+Merge into App-1.
+
+==================================================
+
+6. ADMIN SYSTEM
+
+Copy everything:
+
+* Admin dashboard
+* CMS
+* Product management
+* Category management
+* Farmer management
+* Order management
+* User management
+* Notification management
+* Settings management
+
+==================================================
+
+7. AI SYSTEM
+
+Copy all AI features.
+
+Copy chatbot logic.
+
+Copy AI assistant system.
+
+Merge into App-1.
+
+==================================================
+
+8. ORDER SYSTEM
+
+Copy complete order workflow.
+
+Cart → Checkout → Order → Dashboard
+
+Fix all order submission issues.
+
+Admin must instantly receive new order notifications.
+
+Farmer must instantly receive order notifications.
+
+==================================================
+
+9. VIDEO SYSTEM
+
+Copy:
+
+* YouTube section
+* Video feeds
+* Shorts section
+
+Merge into App-1.
+
+==================================================
+
+10. CONTENT SYSTEM
+
+Copy:
+
+* Banners
+* Sections
+* Text
+* Descriptions
+* Blog system
+* Review system
+
+==================================================
+
+11. MOBILE APP IMPROVEMENTS
+
+Keep App-1 design.
+
+Mobile Header must only contain:
+
+* Logo
+* Slogan
+* Notification Icon
+* Menu Icon
+
+Remove clutter.
+
+==================================================
+
+BOTTOM NAVIGATION
+
+Fixed bottom navigation:
+
+* Home
+* Categories
+* Cart
+* Orders
+* Account
+
+Customer = Customer Dashboard
+
+Farmer = Farmer Dashboard
+
+Admin = Admin Dashboard
+
+==================================================
+
+ADMIN EDIT CONTROL
+
+Everything must be editable.
+
+Admin can:
+
+* Edit products
+* Edit images
+* Edit categories
+* Edit banners
+* Edit text
+* Edit sections
+* Reorder sections
+* Manage videos
+* Manage dashboard content
+
+No coding required.
+
+==================================================
+
+FINAL RULE
+
+App-1 design remains unchanged.
+
+App-2 becomes the feature source.
+
+Merge all useful features, products, pages, dashboards, content and systems from App-2 into App-1.
+
+Goal:
+
+App-1 Design
++
+App-2 Features
++
+App-2 Products
++
+App-2 Dashboards
++
+App-2 Content
+
+= Final Production Version of Krishok Bazar.

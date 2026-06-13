@@ -16,9 +16,21 @@
     "ios": {
       "supportsTablet": false
     },
-    "android": {},
+    "android": {
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/images/icon.png",
+        "backgroundColor": "#ffffff"
+      }
+    },
     "web": {
-      "favicon": "./assets/images/favicon.png"
+      "favicon": "./assets/images/favicon.png",
+      "bundler": "metro",
+      "name": "কৃষক বাজার",
+      "shortName": "কৃষক বাজার",
+      "description": "সরাসরি কৃষকের কাছ থেকে তাজা শাকসবজি, ফল, মাছ ও মাংস। দালালমুক্ত কৃষি বাজার। Fresh vegetables, fish, meat and dairy direct from Bangladesh farmers.",
+      "themeColor": "#059669",
+      "backgroundColor": "#ffffff",
+      "lang": "bn"
     },
     "plugins": [
       [
