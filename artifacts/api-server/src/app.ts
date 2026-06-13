@@ -1,15 +1,15 @@
 import express, { type Express, Request, Response, NextFunction } from "express";
 import cors from "cors";
-import pinoHttp from "pino-http";
+import { pinoHttp } from "pino-http"; // এখানে কারেক্ট করা হলো
 import router from "./routes";
 import { logger } from "./lib/logger";
 
 const app: Express = express();
 
-// pinoHttp কল করার সময় req এবং res-এর টাইপ ফিক্স করা হলো
+// pinoHttp কল করার সমস্যাটি সমাধান করা হলো
 app.use(
   pinoHttp({
-    logger,
+    logger: logger,
     serializers: {
       req(req: any) {
         return {
@@ -33,7 +33,7 @@ app.use(express.json());
 // মূল রাউটার যুক্ত করা
 app.use(router);
 
-// গ্লোবাল এরর হ্যান্ডলার (এখানেও টাইপ ডিফাইন করা হলো)
+// গ্লোবাল এরর হ্যান্ডলার
 app.use((err: any, req: Request, res: Response, next: NextFunction) => {
   const statusCode = err.statusCode || 500;
   const message = err.message || "Internal Server Error";
