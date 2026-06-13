@@ -1,4 +1,5 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import * as Linking from "expo-linking";
 import React, {
   createContext,
   useCallback,
@@ -221,6 +222,16 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
         return next;
       });
       setNewOrdersCount((prev) => prev + 1);
+
+      // WhatsApp notification to admin
+      try {
+        const itemsText = cart.map((i) => `${i.title} ×${i.qty}`).join(", ");
+        const waMsg = encodeURIComponent(
+          `🛒 নতুন অর্ডার!\nঅর্ডার ID: ${orderId.slice(-8).toUpperCase()}\nগ্রাহক: ${customerName} (${customerPhone})\nঠিকানা: ${customerAddress}\nপণ্য: ${itemsText}\nমোট: ৳${grandTotal} (ডেলিভারি: ৳${deliveryCharge})`
+        );
+        Linking.openURL(`https://wa.me/8801700000000?text=${waMsg}`).catch(() => {});
+      } catch { /* ignore if WhatsApp not available */ }
+
       clearCart();
       return { success: true, grandTotal, deliveryCharge, orderId };
     },
@@ -345,7 +356,6 @@ export function AppProvider({ children }: { children: React.ReactNode }) {
       newOrdersCount,
       setSearchQuery, setActiveCategory,
       addToCart, removeFromCart, updateQty, clearCart, clearNewOrders, checkout,
-      updateProduct,
       cartCount,
       customerRegister, customerLogin, customerLogout,
       farmerRegister, farmerLogin, farmerLogout,

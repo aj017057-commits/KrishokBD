@@ -25,7 +25,7 @@ const ADMIN_KEY = "krishok_admin_session_v1";
 const ADMIN_USERNAME = "@Ajzakir2020";
 const ADMIN_PASSWORD = "Ajzakir@2020";
 
-type AdminTab = "orders" | "farmers" | "products" | "settings";
+type AdminTab = "orders" | "farmers" | "products" | "analytics" | "withdrawals" | "settings";
 
 const STATUS_BN: Record<NonNullable<Order["status"]>, string> = {
   pending:          "অপেক্ষমাণ",
@@ -360,10 +360,12 @@ export default function AdminScreen() {
       {/* Tabs */}
       <View style={styles.tabBar}>
         {([
-          { key: "orders",   icon: "clipboard",  label: "অর্ডার",  badge: newOrdersCount },
-          { key: "farmers",  icon: "users",      label: "কৃষক",    badge: 0 },
-          { key: "products", icon: "package",    label: "পণ্য",    badge: 0 },
-          { key: "settings", icon: "settings",   label: "সেটিং",   badge: 0 },
+          { key: "orders",      icon: "clipboard",  label: "অর্ডার",    badge: newOrdersCount },
+          { key: "farmers",     icon: "users",      label: "কৃষক",      badge: 0 },
+          { key: "products",    icon: "package",    label: "পণ্য",      badge: 0 },
+          { key: "analytics",   icon: "bar-chart-2",label: "বিশ্লেষণ", badge: 0 },
+          { key: "withdrawals", icon: "credit-card",label: "উত্তোলন",  badge: 0 },
+          { key: "settings",    icon: "settings",   label: "সেটিং",    badge: 0 },
         ] as { key: AdminTab; icon: string; label: string; badge: number }[]).map((t) => (
           <TouchableOpacity
             key={t.key}
@@ -551,6 +553,115 @@ export default function AdminScreen() {
                 </View>
               </View>
             ))}
+          </View>
+        )}
+
+        {/* ── ANALYTICS ── */}
+        {activeTab === "analytics" && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>বিক্রয় বিশ্লেষণ</Text>
+
+            {/* Revenue Cards */}
+            <View style={{ flexDirection: "row", gap: 10, marginBottom: 14 }}>
+              {[
+                { label: "মোট আয়", value: `৳${totalRevenue.toLocaleString()}`, icon: "dollar-sign", color: "#16a34a" },
+                { label: "মোট অর্ডার", value: allOrders.length, icon: "shopping-bag", color: colors.light.primary },
+                { label: "সক্রিয় কৃষক", value: farmers.length, icon: "users", color: "#d97706" },
+                { label: "মোট পণ্য", value: products.length, icon: "package", color: "#7c3aed" },
+              ].map((item) => (
+                <View key={item.label} style={[styles.analyticsCard, { flex: 1 }]}>
+                  <Feather name={item.icon as never} size={18} color={item.color} />
+                  <Text style={[styles.analyticsNum, { color: item.color }]}>{item.value}</Text>
+                  <Text style={styles.analyticsLabel}>{item.label}</Text>
+                </View>
+              ))}
+            </View>
+
+            {/* Order Status Breakdown */}
+            <Text style={[styles.sectionTitle, { fontSize: 14, marginBottom: 10 }]}>অর্ডার অবস্থা</Text>
+            {(["pending","confirmed","processing","packed","shipped","out_for_delivery","delivered"] as const).map((status) => {
+              const count = allOrders.filter((o) => o.status === status).length;
+              const pct = allOrders.length > 0 ? Math.round((count / allOrders.length) * 100) : 0;
+              const statusLabels: Record<string, string> = {
+                pending: "অপেক্ষমাণ", confirmed: "নিশ্চিত", processing: "প্রস্তুতি",
+                packed: "প্যাকড", shipped: "শিপড", out_for_delivery: "ডেলিভারিতে", delivered: "সম্পন্ন"
+              };
+              return (
+                <View key={status} style={styles.analyticsBarRow}>
+                  <Text style={styles.analyticsBarLabel}>{statusLabels[status]}</Text>
+                  <View style={styles.analyticsBarTrack}>
+                    <View style={[styles.analyticsBarFill, { width: `${pct}%` as any }]} />
+                  </View>
+                  <Text style={styles.analyticsBarCount}>{count}</Text>
+                </View>
+              );
+            })}
+
+            {/* Category Sales */}
+            <Text style={[styles.sectionTitle, { fontSize: 14, marginTop: 16, marginBottom: 10 }]}>ক্যাটাগরি অনুযায়ী পণ্য</Text>
+            {[
+              { key: "vege", label: "সবজি" }, { key: "fruit", label: "ফলমূল" },
+              { key: "fish", label: "মাছ" }, { key: "rice", label: "চাল/ডাল" },
+              { key: "dairy", label: "দুগ্ধ" }, { key: "organic", label: "অর্গানিক" },
+              { key: "ready", label: "রেডি টু কুক" },
+            ].map((cat) => {
+              const count = products.filter((p) => p.cat === cat.key).length;
+              return (
+                <View key={cat.key} style={styles.analyticsBarRow}>
+                  <Text style={styles.analyticsBarLabel}>{cat.label}</Text>
+                  <View style={styles.analyticsBarTrack}>
+                    <View style={[styles.analyticsBarFill, { width: `${Math.round((count / Math.max(1, products.length)) * 100)}%` as any, backgroundColor: "#d97706" }]} />
+                  </View>
+                  <Text style={styles.analyticsBarCount}>{count}</Text>
+                </View>
+              );
+            })}
+
+            {/* Top Farmers */}
+            <Text style={[styles.sectionTitle, { fontSize: 14, marginTop: 16, marginBottom: 10 }]}>শীর্ষ কৃষক (রেটিং অনুযায়ী)</Text>
+            {[...farmers].sort((a, b) => b.rating - a.rating).slice(0, 5).map((f) => (
+              <View key={f.id} style={styles.analyticsFarmerRow}>
+                <View style={styles.analyticsRank}>
+                  <Feather name="award" size={12} color="#d97706" />
+                </View>
+                <Text style={styles.analyticsFarmerName}>{f.name}</Text>
+                <Text style={styles.analyticsFarmerMeta}>{f.address}</Text>
+                <Text style={styles.analyticsFarmerRating}>⭐ {f.rating}</Text>
+              </View>
+            ))}
+          </View>
+        )}
+
+        {/* ── WITHDRAWALS ── */}
+        {activeTab === "withdrawals" && (
+          <View style={styles.section}>
+            <Text style={styles.sectionTitle}>উত্তোলন অনুরোধ</Text>
+            <View style={styles.emptyBox}>
+              <Feather name="credit-card" size={36} color={colors.light.mutedForeground} />
+              <Text style={styles.emptyText}>উত্তোলন ব্যবস্থাপনা</Text>
+              <Text style={[styles.emptyText, { fontSize: 12, marginTop: 4 }]}>
+                কৃষকদের উত্তোলন অনুরোধ এখানে দেখাবে
+              </Text>
+            </View>
+            <View style={{ marginTop: 16 }}>
+              {farmers.map((f) => (
+                <View key={f.id} style={styles.withdrawalCard}>
+                  <View style={{ flex: 1 }}>
+                    <Text style={styles.productName}>{f.name}</Text>
+                    <Text style={styles.productMeta}>📞 {f.phone} · {f.address}</Text>
+                    <Text style={[styles.productMeta, { color: "#16a34a", fontWeight: "700" as const }]}>
+                      মোট বিক্রয়: ৳{f.sales.toLocaleString()}
+                    </Text>
+                  </View>
+                  <View style={{ gap: 6 }}>
+                    <TouchableOpacity style={styles.approveBtn}>
+                      <Feather name="check" size={12} color="#fff" />
+                      <Text style={styles.approveBtnText}>অনুমোদন</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              ))}
+            </View>
           </View>
         )}
 
@@ -838,12 +949,12 @@ function ProductForm({
         ))}
       </View>
 
-      <Text style={styles.formLabel}>Shopify ইমেজ লিঙ্ক</Text>
+      <Text style={styles.formLabel}>ইমেজ URL (Shopify / Pexels / যেকোনো লিঙ্ক)</Text>
       <TextInput
-        style={[styles.formInput, { height: 72 }]}
+        style={[styles.formInput, { height: 64 }]}
         value={img}
         onChangeText={setImg}
-        placeholder="https://cdn.shopify.com/..."
+        placeholder="https://images.pexels.com/... অথবা Shopify CDN লিঙ্ক পেস্ট করুন"
         placeholderTextColor={colors.light.mutedForeground}
         multiline
         autoCapitalize="none"
@@ -1014,6 +1125,43 @@ const styles = StyleSheet.create({
   statusBtnText: { fontSize: 11, color: colors.light.mutedForeground, fontWeight: "600" as const },
   statusBtnTextActive: { color: "#fff", fontWeight: "700" as const },
 
+  analyticsCard: {
+    backgroundColor: "#fff", borderRadius: 16, padding: 12, alignItems: "center", gap: 4,
+    borderWidth: 1, borderColor: colors.light.border,
+    shadowColor: "#000", shadowOffset: { width: 0, height: 1 }, shadowOpacity: 0.04, shadowRadius: 4,
+  },
+  analyticsNum: { fontSize: 15, fontWeight: "800" as const, color: colors.light.text },
+  analyticsLabel: { fontSize: 9, color: colors.light.mutedForeground, textAlign: "center" as const },
+  analyticsBarRow: { flexDirection: "row", alignItems: "center", gap: 8, marginBottom: 6 },
+  analyticsBarLabel: { fontSize: 11, color: colors.light.text, width: 80 },
+  analyticsBarTrack: {
+    flex: 1, height: 8, backgroundColor: colors.light.muted,
+    borderRadius: 4, overflow: "hidden",
+  },
+  analyticsBarFill: { height: "100%", backgroundColor: colors.light.primary, borderRadius: 4 },
+  analyticsBarCount: { fontSize: 11, fontWeight: "700" as const, color: colors.light.text, width: 24, textAlign: "right" as const },
+  analyticsFarmerRow: {
+    flexDirection: "row", alignItems: "center", gap: 8,
+    backgroundColor: "#fff", borderRadius: 12, padding: 10, marginBottom: 6,
+    borderWidth: 1, borderColor: colors.light.border,
+  },
+  analyticsRank: {
+    width: 28, height: 28, borderRadius: 14, backgroundColor: "#fef3c7",
+    alignItems: "center", justifyContent: "center",
+  },
+  analyticsFarmerName: { flex: 1, fontSize: 13, fontWeight: "700" as const, color: colors.light.text },
+  analyticsFarmerMeta: { fontSize: 10, color: colors.light.mutedForeground },
+  analyticsFarmerRating: { fontSize: 12, fontWeight: "700" as const, color: "#d97706" },
+  withdrawalCard: {
+    flexDirection: "row", alignItems: "center", gap: 10,
+    backgroundColor: "#fff", borderRadius: 14, padding: 14, marginBottom: 8,
+    borderWidth: 1, borderColor: colors.light.border,
+  },
+  approveBtn: {
+    flexDirection: "row", alignItems: "center", gap: 4,
+    backgroundColor: "#16a34a", borderRadius: 10, paddingHorizontal: 10, paddingVertical: 6,
+  },
+  approveBtnText: { fontSize: 11, color: "#fff", fontWeight: "700" as const },
   farmerCard: {
     backgroundColor: "#fff", borderRadius: 18, padding: 16, gap: 12,
     borderWidth: 1, borderColor: colors.light.border,

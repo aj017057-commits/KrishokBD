@@ -17,7 +17,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import colors from "@/constants/colors";
 import { useApp } from "@/context/AppContext";
 
-type PanelView = "login" | "register" | "history";
+type PanelView = "login" | "otp" | "register" | "history";
 
 interface Props {
   visible: boolean;
@@ -31,6 +31,9 @@ export default function CustomerModal({ visible, onClose }: Props) {
   const [view, setView] = useState<PanelView>(currentCustomer ? "history" : "login");
   const [loginPhone, setLoginPhone] = useState("");
   const [loginPass, setLoginPass] = useState("");
+  const [otpSent, setOtpSent] = useState(false);
+  const [otpValue, setOtpValue] = useState("");
+  const [otpVerified, setOtpVerified] = useState(false);
   const [regName, setRegName] = useState("");
   const [regPhone, setRegPhone] = useState("");
   const [regAddress, setRegAddress] = useState("");
@@ -40,6 +43,28 @@ export default function CustomerModal({ visible, onClose }: Props) {
   React.useEffect(() => {
     if (visible) setView(currentCustomer ? "history" : "login");
   }, [visible, currentCustomer]);
+
+  const handleSendOtp = () => {
+    if (!loginPhone || loginPhone.length < 11) { Alert.alert("সঠিক নম্বর দিন", "১১ ডিজিটের মোবাইল নম্বর দিন"); return; }
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      setOtpSent(true);
+      setOtpValue("");
+      setView("otp");
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    }, 1200);
+  };
+
+  const handleVerifyOtp = () => {
+    if (!otpValue || otpValue.length < 4) { Alert.alert("OTP দিন", "৬ ডিজিটের OTP কোড দিন"); return; }
+    setLoading(true);
+    setTimeout(() => {
+      setLoading(false);
+      setOtpVerified(true);
+      Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+    }, 800);
+  };
 
   const handleLogin = () => {
     if (!loginPhone || !loginPass) { Alert.alert("তথ্য দিন", "নম্বর ও পাসওয়ার্ড দিন"); return; }
@@ -95,13 +120,80 @@ export default function CustomerModal({ visible, onClose }: Props) {
           <ScrollView showsVerticalScrollIndicator={false} keyboardShouldPersistTaps="handled">
             {view === "login" && (
               <View style={styles.form}>
-                <TextInput style={styles.input} placeholder="মোবাইল নম্বর (01XXXXXXXXX)" value={loginPhone} onChangeText={setLoginPhone} keyboardType="phone-pad" placeholderTextColor={colors.light.mutedForeground} />
+                <View style={styles.otpBanner}>
+                  <Feather name="smartphone" size={16} color={colors.light.primary} />
+                  <Text style={styles.otpBannerText}>ফোন নম্বরে OTP পাঠানো হবে</Text>
+                </View>
+                <TextInput
+                  style={styles.input}
+                  placeholder="মোবাইল নম্বর (01XXXXXXXXX)"
+                  value={loginPhone}
+                  onChangeText={setLoginPhone}
+                  keyboardType="phone-pad"
+                  placeholderTextColor={colors.light.mutedForeground}
+                />
+                <TouchableOpacity style={styles.primaryBtn} onPress={handleSendOtp} disabled={loading}>
+                  {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.primaryBtnText}>OTP পাঠান</Text>}
+                </TouchableOpacity>
+                <View style={styles.orDivider}>
+                  <View style={styles.orLine} />
+                  <Text style={styles.orText}>অথবা সরাসরি লগইন</Text>
+                  <View style={styles.orLine} />
+                </View>
                 <TextInput style={styles.input} placeholder="পাসওয়ার্ড" value={loginPass} onChangeText={setLoginPass} secureTextEntry placeholderTextColor={colors.light.mutedForeground} />
-                <TouchableOpacity style={styles.primaryBtn} onPress={handleLogin} disabled={loading}>
-                  {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.primaryBtnText}>লগইন</Text>}
+                <TouchableOpacity style={[styles.primaryBtn, { backgroundColor: colors.light.primary + "cc" }]} onPress={handleLogin} disabled={loading}>
+                  {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.primaryBtnText}>পাসওয়ার্ড দিয়ে লগইন</Text>}
                 </TouchableOpacity>
                 <TouchableOpacity onPress={() => setView("register")}>
                   <Text style={styles.linkText}>নতুন অ্যাকাউন্ট খুলুন</Text>
+                </TouchableOpacity>
+              </View>
+            )}
+
+            {view === "otp" && (
+              <View style={styles.form}>
+                <View style={styles.otpSentBox}>
+                  <Feather name="check-circle" size={32} color={colors.light.primary} />
+                  <Text style={styles.otpSentTitle}>OTP পাঠানো হয়েছে</Text>
+                  <Text style={styles.otpSentSub}>{loginPhone} নম্বরে ৬ সংখ্যার কোড পাঠানো হয়েছে</Text>
+                  <View style={styles.demoBadge}>
+                    <Text style={styles.demoBadgeText}>ডেমো OTP: 123456</Text>
+                  </View>
+                </View>
+                <TextInput
+                  style={[styles.input, styles.otpInput]}
+                  placeholder="OTP কোড লিখুন"
+                  value={otpValue}
+                  onChangeText={setOtpValue}
+                  keyboardType="number-pad"
+                  maxLength={6}
+                  placeholderTextColor={colors.light.mutedForeground}
+                />
+                {otpVerified ? (
+                  <>
+                    <View style={styles.otpVerifiedRow}>
+                      <Feather name="check-circle" size={16} color="#16a34a" />
+                      <Text style={styles.otpVerifiedText}>OTP যাচাই সফল! এখন পাসওয়ার্ড দিন</Text>
+                    </View>
+                    <TextInput
+                      style={styles.input}
+                      placeholder="পাসওয়ার্ড"
+                      value={loginPass}
+                      onChangeText={setLoginPass}
+                      secureTextEntry
+                      placeholderTextColor={colors.light.mutedForeground}
+                    />
+                    <TouchableOpacity style={styles.primaryBtn} onPress={handleLogin} disabled={loading}>
+                      {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.primaryBtnText}>লগইন সম্পন্ন করুন</Text>}
+                    </TouchableOpacity>
+                  </>
+                ) : (
+                  <TouchableOpacity style={styles.primaryBtn} onPress={handleVerifyOtp} disabled={loading}>
+                    {loading ? <ActivityIndicator color="#fff" /> : <Text style={styles.primaryBtnText}>OTP যাচাই করুন</Text>}
+                  </TouchableOpacity>
+                )}
+                <TouchableOpacity onPress={() => { setView("login"); setOtpSent(false); setOtpVerified(false); }}>
+                  <Text style={styles.linkText}>← ফিরে যান</Text>
                 </TouchableOpacity>
               </View>
             )}
@@ -253,4 +345,30 @@ const styles = StyleSheet.create({
     borderWidth: 1, borderColor: "#fee2e2", backgroundColor: "#fff5f5",
   },
   logoutText: { color: colors.light.destructive, fontWeight: "600" as const, fontSize: 14 },
+  otpBanner: {
+    flexDirection: "row", alignItems: "center", gap: 8,
+    backgroundColor: colors.light.primarySoft, borderRadius: 12,
+    padding: 10, borderWidth: 1, borderColor: colors.light.primary + "30",
+  },
+  otpBannerText: { fontSize: 13, color: colors.light.primary, fontWeight: "600" as const },
+  orDivider: { flexDirection: "row", alignItems: "center", gap: 10 },
+  orLine: { flex: 1, height: 1, backgroundColor: colors.light.border },
+  orText: { fontSize: 11, color: colors.light.mutedForeground },
+  otpSentBox: {
+    alignItems: "center", backgroundColor: colors.light.primarySoft,
+    borderRadius: 18, padding: 20, gap: 8,
+  },
+  otpSentTitle: { fontSize: 18, fontWeight: "700" as const, color: colors.light.primary },
+  otpSentSub: { fontSize: 13, color: colors.light.mutedForeground, textAlign: "center" as const },
+  demoBadge: {
+    backgroundColor: "#fef3c7", paddingHorizontal: 12, paddingVertical: 6, borderRadius: 20,
+    borderWidth: 1, borderColor: "#fde68a",
+  },
+  demoBadgeText: { fontSize: 12, color: "#92400e", fontWeight: "700" as const },
+  otpInput: {
+    textAlign: "center" as const, fontSize: 22, fontWeight: "700" as const,
+    letterSpacing: 8,
+  },
+  otpVerifiedRow: { flexDirection: "row", alignItems: "center", gap: 8 },
+  otpVerifiedText: { fontSize: 13, color: "#16a34a", fontWeight: "600" as const, flex: 1 },
 });

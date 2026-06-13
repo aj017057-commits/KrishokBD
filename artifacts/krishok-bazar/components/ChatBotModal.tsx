@@ -31,39 +31,56 @@ interface Props {
   onClose: () => void;
 }
 
-const SYSTEM_PROMPT = `তুমি একজন বাংলাদেশী কৃষি বিশেষজ্ঞ এবং পুষ্টি পরামর্শদাতা AI সহায়ক। তোমার নাম রিক্তাজ। কৃষক বাজারের অফিশিয়াল AI সহায়ক হিসেবে তুমি কাজ করো।
+function buildSystemPrompt(products: ReturnType<typeof useApp>["products"], farmers: ReturnType<typeof useApp>["farmers"]) {
+  const top10 = [...products].sort((a, b) => a.price - b.price).slice(0, 10);
+  const bestSellers = products.filter((p) => p.bestSeller).slice(0, 8);
+  const topFarmers = farmers.slice(0, 8);
+
+  const priceList = top10.map((p) => `${p.title}: ৳${p.price}/${p.unit}`).join(", ");
+  const bestList = bestSellers.map((p) => `${p.title} (৳${p.price}/${p.unit})`).join(", ");
+  const farmerList = topFarmers.map((f) => `${f.name} (${f.address})`).join(", ");
+
+  return `তুমি একজন বাংলাদেশী কৃষি বিশেষজ্ঞ এবং পুষ্টি পরামর্শদাতা AI সহায়ক। তোমার নাম রিক্তাজ। কৃষক বাজারের অফিশিয়াল AI সহায়ক হিসেবে তুমি কাজ করো।
+
+🛒 কৃষক বাজারের লাইভ ডেটা (আজকের বাজার দর):
+সাশ্রয়ী পণ্যসমূহ: ${priceList}
+সেরা বিক্রিত পণ্য: ${bestList}
+নিবন্ধিত কৃষক: ${farmerList}
+মোট পণ্য: ${products.length}টি, মোট কৃষক: ${farmers.length}জন
 
 তুমি যেসব বিষয়ে সাহায্য করো:
-1. পরিবারের সদস্য সংখ্যা অনুযায়ী সাপ্তাহিক/মাসিক সবজি-ফলের তালিকা তৈরি
-2. শাকসবজির পুষ্টিগুণ ও স্বাস্থ্য উপকারিতা
-3. রান্নার রেসিপি ও টিপস
-4. শাকসবজি সংরক্ষণের পদ্ধতি ও শেলফ লাইফ
-5. ফসলের রোগ, সার ও কীটনাশক পরামর্শ
-6. বাজার মূল্য ও কৃষি তথ্য
+1. কৃষক বাজারের পণ্যের দাম ও তুলনা (উপরের লাইভ ডেটা ব্যবহার করো)
+2. সেরা পণ্য সুপারিশ (পরিবারের চাহিদা অনুযায়ী)
+3. কৃষক যাচাই ও তথ্য
+4. সাপ্তাহিক/মাসিক বাজার তালিকা তৈরি (বাজেট অনুযায়ী)
+5. পুষ্টিগুণ ও রান্নার পরামর্শ
+6. ফসলের রোগ ও কৃষি তথ্য
 
 গুরুত্বপূর্ণ নিয়ম:
 - সব উত্তর বাংলায় দাও
-- পেশাদার কিন্তু বন্ধুত্বপূর্ণ ভাষায় উত্তর দাও
-- পরিবারের সাইজ জিজ্ঞেস করলে নির্দিষ্ট সবজির নাম ও পরিমাণ উল্লেখ করো
-- সংক্ষিপ্ত কিন্তু কার্যকর উত্তর দাও (৩-৫ লাইন)
+- দাম জিজ্ঞেস করলে উপরের লাইভ ডেটা থেকে সরাসরি উত্তর দাও
+- সংক্ষিপ্ত কিন্তু কার্যকর উত্তর দাও (৩-৬ লাইন)
 - প্রয়োজনে বুলেট পয়েন্ট ব্যবহার করো`;
+}
 
 const INITIAL_MSG: Message = {
   id: "0",
   role: "bot",
-  text: "আসসালামু আলাইকুম, আমি রিক্তাজ। আপনাকে কীভাবে সাহায্য করতে পারি?\n\nআপনি জিজ্ঞেস করতে পারেন:\n• ৪ জনের পরিবারে সাপ্তাহিক সবজির তালিকা\n• রেসিপি আইডিয়া\n• পুষ্টিগুণ সম্পর্কে তথ্য\n• ফসলের পরামর্শ",
+  text: "আসসালামু আলাইকুম! আমি রিক্তাজ — কৃষক বাজারের AI সহায়ক 🌿\n\nআমি জানি আমাদের সব পণ্যের দাম, সেরা কৃষক, এবং বাজার তথ্য।\n\nআপনি জিজ্ঞেস করতে পারেন:\n• আলুর দাম কত?\n• সেরা বিক্রিত পণ্য কী?\n• ৪ জনের পরিবারে সাপ্তাহিক তালিকা",
 };
 
 const QUICK_QUESTIONS = [
-  "৪ জনের পরিবারের সাপ্তাহিক সবজির তালিকা দাও",
-  "আলুর সেরা রেসিপি কী?",
-  "পালং শাকের পুষ্টিগুণ বলো",
-  "সবজি কতদিন ভালো থাকে?",
+  "আজকে সেরা দামে কোন সবজি পাবো?",
+  "সেরা বিক্রিত পণ্যগুলো কী কী?",
+  "৫০০ টাকায় সাপ্তাহিক বাজার করতে চাই",
+  "সবচেয়ে সেরা কৃষক কে?",
+  "মাছের দাম কত?",
+  "অর্গানিক পণ্য কোনগুলো?",
 ];
 
 export default function ChatBotModal({ visible, onClose }: Props) {
   const insets = useSafeAreaInsets();
-  const { currentCustomer } = useApp();
+  const { currentCustomer, products, farmers } = useApp();
   const [messages, setMessages] = useState<Message[]>([INITIAL_MSG]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(false);
@@ -91,7 +108,7 @@ export default function ChatBotModal({ visible, onClose }: Props) {
         contents: [
           {
             role: "user",
-            parts: [{ text: SYSTEM_PROMPT }],
+            parts: [{ text: buildSystemPrompt(products, farmers) }],
           },
           {
             role: "model",

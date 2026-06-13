@@ -170,6 +170,15 @@ export default function OrdersScreen() {
                 </View>
                 <Text style={styles.grandTotal}>৳{order.grandTotal.toLocaleString()}</Text>
               </View>
+
+              <TouchableOpacity
+                style={styles.trackBtn}
+                onPress={() => router.push(`/order-tracking/${order.id}` as any)}
+              >
+                <Feather name="navigation" size={14} color={colors.light.primary} />
+                <Text style={styles.trackBtnText}>লাইভ ট্র্যাকিং দেখুন</Text>
+                <Feather name="chevron-right" size={14} color={colors.light.primary} />
+              </TouchableOpacity>
             </View>
           ))}
         </ScrollView>
@@ -245,4 +254,10 @@ const styles = StyleSheet.create({
   deliveryArea: { fontSize: 12, color: colors.light.mutedForeground },
   tracking: { fontSize: 11, color: colors.light.primary, marginTop: 2 },
   grandTotal: { fontSize: 20, fontWeight: "800" as const, color: colors.light.primary },
+  trackBtn: {
+    flexDirection: "row", alignItems: "center", justifyContent: "center", gap: 6,
+    backgroundColor: "#f0fdf4", borderRadius: 12, paddingVertical: 10, marginTop: 10,
+    borderWidth: 1, borderColor: colors.light.primary + "40",
+  },
+  trackBtnText: { fontSize: 13, fontWeight: "700" as const, color: colors.light.primary, flex: 1, textAlign: "center" as const },
 });

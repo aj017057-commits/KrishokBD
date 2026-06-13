@@ -14,6 +14,7 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+import ReviewModal from "@/components/ReviewModal";
 import colors from "@/constants/colors";
 import { useApp } from "@/context/AppContext";
 
@@ -28,6 +29,7 @@ export default function ProductDetailScreen() {
   const scrollRef = useRef<ScrollView>(null);
 
   const product = products.find((p) => p.id === Number(id));
+  const [showReview, setShowReview] = useState(false);
 
   if (!product) {
     return (
@@ -49,6 +51,7 @@ export default function ProductDetailScreen() {
   const inCart = !!cartItem;
 
   function handleAdd() {
+    if (!product) return;
     Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Medium);
     addToCart(product);
   }
@@ -152,8 +155,21 @@ export default function ProductDetailScreen() {
               <Text style={styles.deliveryText}>২৪-৪৮ ঘন্টায় ডেলিভারি</Text>
             </View>
           </View>
+
+          <TouchableOpacity style={styles.reviewBtn} onPress={() => setShowReview(true)}>
+            <Feather name="star" size={16} color="#f59e0b" />
+            <Text style={styles.reviewBtnText}>রিভিউ দেখুন / রিভিউ দিন</Text>
+            <Feather name="chevron-right" size={14} color={colors.light.mutedForeground} />
+          </TouchableOpacity>
         </View>
       </ScrollView>
+
+      <ReviewModal
+        visible={showReview}
+        onClose={() => setShowReview(false)}
+        productId={product.id}
+        productTitle={product.title}
+      />
 
       {/* Add to Cart Bar */}
       <View style={[styles.cartBar, { paddingBottom: (Platform.OS === "web" ? 18 : insets.bottom) + 10 }]}>
@@ -243,6 +259,12 @@ const styles = StyleSheet.create({
     alignItems: "center", justifyContent: "center",
   },
   farmerName: { flex: 1, fontSize: 14, fontWeight: "600" as const, color: colors.light.text },
+  reviewBtn: {
+    flexDirection: "row", alignItems: "center", gap: 8, marginTop: 12,
+    backgroundColor: "#fffbeb", borderRadius: 12, padding: 12,
+    borderWidth: 1, borderColor: "#fde68a",
+  },
+  reviewBtnText: { flex: 1, fontSize: 13, fontWeight: "600" as const, color: "#92400e" },
   catBadge: {
     backgroundColor: colors.light.primarySoft,
     paddingHorizontal: 10, paddingVertical: 4, borderRadius: 20,

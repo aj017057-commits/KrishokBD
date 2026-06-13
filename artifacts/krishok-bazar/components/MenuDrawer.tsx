@@ -141,6 +141,18 @@ export default function MenuDrawer({
             <MenuItem icon="grid" label="সব ক্যাটাগরি" onPress={() => { onClose(); router.push("/categories"); }} />
             <MenuItem icon="package" label="আমার অর্ডার" onPress={() => { onClose(); router.push("/orders"); }} />
             <MenuItem icon="shopping-cart" label="কার্ট" onPress={() => { onClose(); router.push("/cart"); }} />
+            <MenuItem icon="user" label="অ্যাকাউন্ট" onPress={() => { onClose(); router.push("/account"); }} />
+          </View>
+
+          {/* More pages */}
+          <View style={styles.section}>
+            <Text style={styles.sectionLabel}>আরো পেজ</Text>
+            <MenuItem icon="youtube" label="সোশ্যাল ফিড (YouTube/FB/TikTok)" onPress={() => { onClose(); router.push("/social-feeds" as any); }} />
+            <MenuItem icon="info" label="কৃষক বাজার সম্পর্কে" onPress={() => { onClose(); router.push("/"); }} />
+            <MenuItem icon="sun" label="কৃষকদের গল্প" onPress={() => { onClose(); router.push("/"); }} />
+            <MenuItem icon="shopping-bag" label="রেডি টু কুক" onPress={() => { setActiveCategory("ready"); onClose(); router.push("/"); }} />
+            <MenuItem icon="box" label="অর্গানিক পণ্য" onPress={() => { setActiveCategory("organic"); onClose(); router.push("/"); }} />
+            <MenuItem icon="star" label="সেরা বিক্রিত পণ্য" onPress={() => { onClose(); router.push("/"); }} />
           </View>
 
           {/* Categories */}

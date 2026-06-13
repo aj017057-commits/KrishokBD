@@ -13,6 +13,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import CustomerModal from "@/components/CustomerModal";
 import FarmerModal from "@/components/FarmerModal";
+import WithdrawalModal from "@/components/WithdrawalModal";
 import colors from "@/constants/colors";
 import { useApp } from "@/context/AppContext";
 
@@ -21,6 +22,7 @@ export default function AccountScreen() {
   const { currentCustomer, currentFarmer, getCustomerOrders, getFarmerOrders, getFarmerProducts } = useApp();
   const [showCustomer, setShowCustomer] = useState(false);
   const [showFarmer, setShowFarmer] = useState(false);
+  const [showWithdrawal, setShowWithdrawal] = useState(false);
 
   const topPad = Platform.OS === "web" ? 67 : insets.top;
   const bottomPad = Platform.OS === "web" ? 34 : insets.bottom;
@@ -124,6 +126,26 @@ export default function AccountScreen() {
           <Feather name="chevron-right" size={20} color={colors.light.mutedForeground} />
         </TouchableOpacity>
 
+        {/* Farmer Withdrawal Button */}
+        {currentFarmer && (
+          <TouchableOpacity
+            style={styles.withdrawalBtn}
+            onPress={() => setShowWithdrawal(true)}
+            activeOpacity={0.88}
+          >
+            <View style={styles.withdrawalBtnIcon}>
+              <Feather name="credit-card" size={20} color="#16a34a" />
+            </View>
+            <View style={{ flex: 1 }}>
+              <Text style={styles.withdrawalBtnTitle}>উপার্জন উত্তোলন করুন</Text>
+              <Text style={styles.withdrawalBtnSub}>
+                মোট আয়: ৳{totalRevenue.toLocaleString()} · bKash / Nagad / Rocket
+              </Text>
+            </View>
+            <Feather name="arrow-right" size={18} color="#16a34a" />
+          </TouchableOpacity>
+        )}
+
         {/* Recent Orders */}
         {currentCustomer && customerOrders.length > 0 && (
           <>
@@ -185,6 +207,15 @@ export default function AccountScreen() {
 
       <CustomerModal visible={showCustomer} onClose={() => setShowCustomer(false)} />
       <FarmerModal visible={showFarmer} onClose={() => setShowFarmer(false)} />
+      {currentFarmer && (
+        <WithdrawalModal
+          visible={showWithdrawal}
+          onClose={() => setShowWithdrawal(false)}
+          farmerId={currentFarmer.id}
+          farmerName={currentFarmer.name}
+          availableBalance={totalRevenue}
+        />
+      )}
     </View>
   );
 }
@@ -229,6 +260,19 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8, paddingVertical: 2, borderRadius: 8, marginTop: 4,
   },
   demoTagText: { fontSize: 10, color: "#92400e" },
+  withdrawalBtn: {
+    flexDirection: "row", alignItems: "center", gap: 14,
+    backgroundColor: "#f0fdf4", borderRadius: 18, padding: 16,
+    borderWidth: 1.5, borderColor: "#86efac",
+    shadowColor: "#000", shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.04, shadowRadius: 6, elevation: 2,
+  },
+  withdrawalBtnIcon: {
+    width: 48, height: 48, borderRadius: 24,
+    backgroundColor: "#dcfce7", alignItems: "center", justifyContent: "center",
+  },
+  withdrawalBtnTitle: { fontSize: 15, fontWeight: "700" as const, color: "#166534" },
+  withdrawalBtnSub: { fontSize: 12, color: "#16a34a", marginTop: 2 },
   recentOrder: {
     flexDirection: "row", justifyContent: "space-between", alignItems: "center",
     backgroundColor: "#fff", borderRadius: 14, padding: 14,

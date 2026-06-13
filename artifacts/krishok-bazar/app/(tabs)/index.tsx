@@ -22,6 +22,7 @@ import FarmerCard from "@/components/FarmerCard";
 import FarmerModal from "@/components/FarmerModal";
 import HeroCarousel from "@/components/HeroCarousel";
 import MenuDrawer from "@/components/MenuDrawer";
+import NotificationsModal from "@/components/NotificationsModal";
 import ProductCard from "@/components/ProductCard";
 import colors from "@/constants/colors";
 import { BEST_SELLERS, CATEGORIES, Product, VIDEO_IDS, WHY_APP_VIDEO_IDS } from "@/constants/data";
@@ -34,6 +35,7 @@ export default function HomeScreen() {
   const [showFarmer, setShowFarmer] = useState(false);
   const [showChat, setShowChat] = useState(false);
   const [showMenu, setShowMenu] = useState(false);
+  const [showNotifs, setShowNotifs] = useState(false);
 
   const filtered = useMemo(() => {
     let list = products;
@@ -73,20 +75,19 @@ export default function HomeScreen() {
         </View>
         <View style={styles.headerBtns}>
           <TouchableOpacity
-            style={styles.headerIconBtn}
+            style={styles.aiMiniBtn}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
               setShowChat(true);
             }}
           >
-            <Feather name="message-circle" size={20} color={colors.light.primary} />
-            <Text style={styles.headerIconLabel}>AI</Text>
+            <Feather name="cpu" size={15} color={colors.light.primary} />
           </TouchableOpacity>
           <TouchableOpacity
             style={[styles.headerIconBtn, { position: "relative" }]}
             onPress={() => {
               Haptics.impactAsync(Haptics.ImpactFeedbackStyle.Light);
-              router.push("/orders");
+              setShowNotifs(true);
             }}
           >
             <Feather name="bell" size={20} color={colors.light.primary} />
@@ -429,6 +430,7 @@ export default function HomeScreen() {
 
       <CustomerModal visible={showCustomer} onClose={() => setShowCustomer(false)} />
       <FarmerModal visible={showFarmer} onClose={() => setShowFarmer(false)} />
+      <NotificationsModal visible={showNotifs} onClose={() => setShowNotifs(false)} />
       <ChatBotModal visible={showChat} onClose={() => setShowChat(false)} />
       <MenuDrawer
         visible={showMenu}
@@ -504,6 +506,11 @@ const styles = StyleSheet.create({
     borderColor: colors.light.primary,
   },
   headerIconLabel: { fontSize: 9, color: colors.light.primary, fontWeight: "700" as const },
+  aiMiniBtn: {
+    width: 30, height: 30, borderRadius: 15,
+    alignItems: "center", justifyContent: "center",
+    backgroundColor: "#f0fdf4", borderWidth: 1, borderColor: colors.light.primary + "30",
+  },
   notifBadge: {
     position: "absolute", top: -2, right: -2,
     backgroundColor: "#ef4444", minWidth: 16, height: 16,
